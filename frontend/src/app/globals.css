@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+:root {
+  --font-lateef: 'Lateef', 'Noto Nastaliq Urdu', 'Scheherazade New', system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--font-lateef);
+  direction: rtl;
+  text-align: right;
+}
+
+input, textarea, select {
+  font-family: var(--font-lateef);
+}
