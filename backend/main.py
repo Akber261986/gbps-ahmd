@@ -31,7 +31,14 @@ from password_reset import (
 )
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
-import google.generativeai as genai
+try:
+    # Try new package first
+    import google.genai as genai
+    GENAI_NEW = True
+except ImportError:
+    # Fall back to old package
+    import google.generativeai as genai
+    GENAI_NEW = False
 import os
 from datetime import timedelta
 
@@ -63,20 +70,33 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Create uploads directory if it doesn't exist
-UPLOAD_DIR = Path("uploads")
-UPLOAD_DIR.mkdir(exist_ok=True)
-(UPLOAD_DIR / "profiles").mkdir(exist_ok=True)
-(UPLOAD_DIR / "schools").mkdir(exist_ok=True)
+# Detect if running on Vercel (serverless environment)
+IS_SERVERLESS = os.getenv("VERCEL", "").lower() == "1" or os.getenv("AWS_LAMBDA_FUNCTION_NAME") is not None
 
-# Mount static files for serving uploaded images
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+# Create uploads directory only if not in serverless environment
+if not IS_SERVERLESS:
+    UPLOAD_DIR = Path("uploads")
+    UPLOAD_DIR.mkdir(exist_ok=True)
+    (UPLOAD_DIR / "profiles").mkdir(exist_ok=True)
+    (UPLOAD_DIR / "schools").mkdir(exist_ok=True)
+
+    # Mount static files for serving uploaded images
+    app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+else:
+    # In serverless, we'll need to use cloud storage (S3, Vercel Blob, etc.)
+    UPLOAD_DIR = None
 
 # Allowed image extensions
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
 
 def save_upload_file(upload_file: UploadFile, directory: str) -> str:
     """Save uploaded file and return the file path."""
+    if IS_SERVERLESS:
+        # In serverless environment, file uploads are not supported without cloud storage
+        raise HTTPException(
+            status_code=status.HTTP_501_NOT_IMPLEMENTED,
+            detail="File uploads require cloud storage configuration in serverless environment"
+        )
     # Validate file extension
     file_ext = Path(upload_file.filename).suffix.lower()
     if file_ext not in ALLOWED_EXTENSIONS:
