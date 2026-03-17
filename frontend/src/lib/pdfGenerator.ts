@@ -4,7 +4,7 @@ interface PDFOptions {
   filename: string;
   orientation?: 'portrait' | 'landscape';
   format?: string;
-  margin?: number | number[];
+  margin?: number | [number, number] | [number, number, number, number];
 }
 
 export const generatePDF = async (
