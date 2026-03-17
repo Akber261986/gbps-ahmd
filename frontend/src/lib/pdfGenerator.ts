@@ -21,14 +21,14 @@ export const generatePDF = async (
   const opt = {
     margin: margin,
     filename: filename,
-    image: { type: 'jpeg', quality: 0.98 },
+    image: { type: 'jpeg' as const, quality: 0.98 },
     html2canvas: {
       scale: 2,
       useCORS: true,
       letterRendering: true
     },
     jsPDF: {
-      unit: 'mm',
+      unit: 'mm' as const,
       format: format,
       orientation: orientation
     }
