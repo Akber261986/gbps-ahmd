@@ -147,8 +147,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (data: RegisterData) => {
     try {
       await axios.post('/api/auth/register', data);
-      // After registration, automatically log in
-      await login({ email: data.email, password: data.password });
+      // Don't auto-login, let user login manually
+      // This avoids potential token timing issues
+      router.push('/login?registered=true');
     } catch (error) {
       console.error('Registration failed:', error);
       throw error;
