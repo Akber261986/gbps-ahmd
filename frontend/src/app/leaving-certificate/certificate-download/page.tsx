@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CertificateDocument from '@/components/CertificateDocument';
 import { leavingCertificateApi, SchoolLeavingCertificate } from '@/lib/api';
+import { generatePDF } from '@/lib/pdfGenerator';
 
 function LeavingCertificateContent() {
   const searchParams = useSearchParams();
@@ -12,6 +13,7 @@ function LeavingCertificateContent() {
 
   const [data, setData] = useState<SchoolLeavingCertificate | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingPdf, setLoadingPdf] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -32,36 +34,26 @@ function LeavingCertificateContent() {
   if (error || !data) return <p className="p-10 text-red-600">{error}</p>;
 
   const handlePdfDownload = async () => {
-    if (!studentId) {
-      alert("Student ID is missing");
+    if (!certRef.current) {
+      alert("Certificate not found");
       return;
     }
 
     try {
-      // Call the specific leaving certificate PDF API route with studentId
-      const response = await fetch(`/api/pdf/leaving-certificate?studentId=${studentId}`, {
-        method: "GET",
+      setLoadingPdf(true);
+
+      await generatePDF(certRef.current, {
+        filename: `leaving-certificate-${data?.gr_number || 'certificate'}.pdf`,
+        orientation: 'portrait',
+        format: 'a4',
+        margin: [10, 10, 10, 10]
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch PDF");
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-
-      // Create a temporary link and trigger the download
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "leaving-certificate.pdf";
-      document.body.appendChild(a);
-      a.click();
-      // Cleanup
-      a.remove();
-      window.URL.revokeObjectURL(url);
+      setLoadingPdf(false);
     } catch (err) {
       alert("PDF download failed.");
       console.error(err);
+      setLoadingPdf(false);
     }
   };
 
@@ -71,9 +63,10 @@ function LeavingCertificateContent() {
       <div className="max-w-5xl mx-auto mb-4 flex justify-end gap-3 print:hidden">
         <button
           onClick={handlePdfDownload}
-          className="px-6 py-2 bg-black text-white rounded"
+          disabled={loadingPdf}
+          className="px-6 py-2 bg-black text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          ڊائون لوڊ PDF
+          {loadingPdf ? "تيار ڪري رهيو آهي..." : "ڊائون لوڊ PDF"}
         </button>
         <button
           onClick={() => window.print()}

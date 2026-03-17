@@ -89,40 +89,9 @@ const StudentsPage = () => {
     }
   };
 
-  const handleViewGR = async (student: Student) => {
-    try {
-      const token = getToken();
-
-      // Fetch the GR PDF with authentication
-      const response = await fetch(`/api/pdf/gr?studentId=${student.id}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate GR PDF");
-      }
-
-      // Create a blob from the response
-      const blob = await response.blob();
-
-      // Create a download link and trigger it
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `gr-${student.gr_number}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-
-      // Cleanup
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error("Error downloading GR PDF:", error);
-      alert("GR PDF ڊائونلوڊ ڪرڻ ۾ مسئلو آيو");
-    }
+  const handleViewGR = (student: Student) => {
+    // Redirect to GR page where they can view and download the full register
+    window.location.href = '/gr';
   };
 
   const handleViewLeavingCertificate = async (student: Student) => {
