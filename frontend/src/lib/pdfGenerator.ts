@@ -1,5 +1,3 @@
-import html2pdf from 'html2pdf.js';
-
 interface PDFOptions {
   filename: string;
   orientation?: 'portrait' | 'landscape';
@@ -11,6 +9,9 @@ export const generatePDF = async (
   element: HTMLElement,
   options: PDFOptions
 ): Promise<void> => {
+  // Dynamically import html2pdf only in the browser
+  const html2pdf = (await import('html2pdf.js')).default;
+
   const {
     filename,
     orientation = 'portrait',
