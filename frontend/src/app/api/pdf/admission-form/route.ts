@@ -1,7 +1,7 @@
 import student_age from "@/lib/student_age";
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
+import chromium from "@sparticuz/chromium-min";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
