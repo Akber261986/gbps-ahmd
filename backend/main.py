@@ -45,10 +45,9 @@ from datetime import timedelta
 
 Base.metadata.create_all(bind=engine)
 
-# Disable automatic trailing slash redirects to preserve Authorization headers
+# FastAPI app with automatic trailing slash redirects enabled
 app = FastAPI(
     title="School Management System - Backend",
-    redirect_slashes=False
 )
 
 # Detect if running on Vercel (serverless environment)
