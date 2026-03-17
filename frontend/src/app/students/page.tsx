@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { studentApi, classApi } from "@/lib/api";
 import { Student, Class } from "@/lib/api";
 import { useSchool } from "@/contexts/SchoolContext";
@@ -8,7 +8,6 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import ViewAdmission from "@/components/view_admission";
 import ViewLeavingCertificate from "@/components/view_leaving_certificate";
 import { getToken } from "@/lib/auth";
-import { generatePDF } from "@/lib/pdfGenerator";
 
 const StudentsPage = () => {
   const { school } = useSchool();
@@ -24,8 +23,6 @@ const StudentsPage = () => {
   const [showLeavingCertModal, setShowLeavingCertModal] = useState(false);
   const [leavingCertData, setLeavingCertData] = useState<any>(null);
   const [loadingCert, setLoadingCert] = useState(false);
-  const admissionRef = useRef<HTMLDivElement>(null);
-  const leavingCertRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,29 +66,81 @@ const StudentsPage = () => {
   };
 
   const handlePrintAdmission = async () => {
-    if (!selectedStudent || !admissionRef.current) return;
+    if (!selectedStudent || !selectedStudent.id) return;
 
     try {
+
+      // Get the auth token using the auth utility
       setLoadingPdf(true);
+      const token = getToken();
 
-      await generatePDF(admissionRef.current, {
-        filename: `admission-form-${selectedStudent.gr_number}.pdf`,
-        orientation: 'portrait',
-        format: 'a4',
-        margin: [10, 10, 10, 10]
+      // Fetch the PDF with authentication
+      const response = await fetch(`/api/pdf/admission-form?studentId=${selectedStudent.id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-
       setLoadingPdf(false);
+
+      if (!response.ok) {
+        throw new Error("Failed to generate PDF");
+      }
+
+      // Create a blob from the response
+      const blob = await response.blob();
+
+      // Create a download link and trigger it
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `admission-form-${selectedStudent.gr_number}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+
+      // Cleanup
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     } catch (error) {
       console.error("Error downloading PDF:", error);
       alert("PDF ڊائونلوڊ ڪرڻ ۾ مسئلو آيو");
-      setLoadingPdf(false);
     }
   };
 
-  const handleViewGR = (student: Student) => {
-    // Redirect to GR page where they can view and download the full register
-    window.location.href = '/gr';
+  const handleViewGR = async (student: Student) => {
+    try {
+      const token = getToken();
+
+      // Fetch the GR PDF with authentication
+      const response = await fetch(`/api/pdf/gr?studentId=${student.id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate GR PDF");
+      }
+
+      // Create a blob from the response
+      const blob = await response.blob();
+
+      // Create a download link and trigger it
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `gr-${student.gr_number}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+
+      // Cleanup
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error downloading GR PDF:", error);
+      alert("GR PDF ڊائونلوڊ ڪرڻ ۾ مسئلو آيو");
+    }
   };
 
   const handleViewLeavingCertificate = async (student: Student) => {
@@ -124,17 +173,33 @@ const StudentsPage = () => {
   };
 
   const handlePrintLeavingCertificate = async () => {
-    if (!selectedStudent || !leavingCertRef.current) return;
+    if (!selectedStudent || !selectedStudent.id) return;
 
     try {
       setLoadingPdf(true);
+      const token = getToken();
 
-      await generatePDF(leavingCertRef.current, {
-        filename: `leaving-certificate-${selectedStudent.gr_number}.pdf`,
-        orientation: 'portrait',
-        format: 'a4',
-        margin: [10, 10, 10, 10]
+      const response = await fetch(`/api/pdf/leaving-certificate?studentId=${selectedStudent.id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate PDF");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `leaving-certificate-${selectedStudent.gr_number}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     } catch (error) {
       console.error("Error downloading PDF:", error);
       alert("PDF ڊائونلوڊ ڪرڻ ۾ مسئلو آيو");
@@ -560,16 +625,14 @@ const StudentsPage = () => {
               </div>
 
               <div className="p-6">
-                <div ref={admissionRef}>
-                  <ViewAdmission
-                    formData={{
-                      ...selectedStudent,
-                      class_id: selectedStudent.admission_class_id,
-                      address: selectedStudent.current_address
-                    }}
-                    classes={classes}
-                  />
-                </div>
+                <ViewAdmission
+                  formData={{
+                    ...selectedStudent,
+                    class_id: selectedStudent.admission_class_id,
+                    address: selectedStudent.current_address
+                  }}
+                  classes={classes}
+                />
 
                 <div className="mt-6 flex justify-end gap-4">
                   <button
@@ -669,9 +732,7 @@ const StudentsPage = () => {
               </div>
 
               <div className="p-6">
-                <div ref={leavingCertRef}>
-                  <ViewLeavingCertificate formData={leavingCertData} />
-                </div>
+                <ViewLeavingCertificate formData={leavingCertData} />
 
                 <div className="mt-6 flex justify-end gap-4">
                   <button

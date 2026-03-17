@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { leavingCertificateApi, SchoolLeavingCertificate } from "@/lib/api";
 import { useSchool } from "@/contexts/SchoolContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ViewLeavingCertificate from "@/components/view_leaving_certificate";
 import { getToken } from "@/lib/auth";
-import { generatePDF } from "@/lib/pdfGenerator";
 
 const LeavingCertificatesPage = () => {
   const { school } = useSchool();
@@ -17,7 +16,6 @@ const LeavingCertificatesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showCertificateModal, setShowCertificateModal] = useState(false);
   const [selectedCertificate, setSelectedCertificate] = useState<SchoolLeavingCertificate | null>(null);
-  const certificateRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchCertificates = async () => {
@@ -62,23 +60,37 @@ const LeavingCertificatesPage = () => {
   };
 
   const handlePrintCertificate = async () => {
-    if (!selectedCertificate || !certificateRef.current) return;
+    if (!selectedCertificate || !selectedCertificate.student_id) return;
 
     try {
       setLoadingPdf(true);
+      const token = getToken();
 
-      await generatePDF(certificateRef.current, {
-        filename: `leaving-certificate-${selectedCertificate.gr_number}.pdf`,
-        orientation: 'portrait',
-        format: 'a4',
-        margin: [10, 10, 10, 10]
+      const response = await fetch(`/api/pdf/leaving-certificate?studentId=${selectedCertificate.student_id}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-
       setLoadingPdf(false);
+
+      if (!response.ok) {
+        throw new Error("Failed to generate PDF");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `leaving-certificate-${selectedCertificate.gr_number}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     } catch (error) {
       console.error("Error downloading PDF:", error);
       alert("PDF ڊائونلوڊ ڪرڻ ۾ مسئلو آيو");
-      setLoadingPdf(false);
     }
   };
 
@@ -325,9 +337,7 @@ const LeavingCertificatesPage = () => {
               </div>
 
               <div className="p-6">
-                <div ref={certificateRef}>
-                  <ViewLeavingCertificate formData={selectedCertificate} />
-                </div>
+                <ViewLeavingCertificate formData={selectedCertificate} />
 
                 <div className="mt-6 flex justify-end gap-4">
                   <button

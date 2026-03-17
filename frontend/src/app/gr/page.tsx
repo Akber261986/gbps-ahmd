@@ -1,19 +1,16 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { studentApi, classApi } from '@/lib/api';
 import { Student, Class } from '@/lib/api';
 import GRRegisterPage from '@/components/gr_modal';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { generatePDF } from '@/lib/pdfGenerator';
 
 const GRComponent = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingPDF, setLoadingPDF] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const printAreaRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -69,26 +66,31 @@ const GRComponent = () => {
   }
 
   const handlePdfDownload = async () => {
-    if (!printAreaRef.current) {
-      alert("Content not found");
-      return;
-    }
-
     try {
-      setLoadingPDF(true);
-
-      await generatePDF(printAreaRef.current, {
-        filename: 'gr-register.pdf',
-        orientation: 'landscape',
-        format: 'legal',
-        margin: [10, 10, 10, 10]
+      // Call the specific GR register PDF API route
+      const response = await fetch("/api/pdf/gr", {
+        method: "GET",
       });
 
-      setLoadingPDF(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch PDF");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a temporary link and trigger the download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "gr-register.pdf";
+      document.body.appendChild(a);
+      a.click();
+      // Cleanup
+      a.remove();
+      window.URL.revokeObjectURL(url);
     } catch (err) {
       alert("PDF download failed.");
       console.error(err);
-      setLoadingPDF(false);
     }
   };
 
@@ -113,14 +115,13 @@ const GRComponent = () => {
           }
         }
       `}</style>
-      <div className="print-area" ref={printAreaRef}>
+      <div className="print-area">
         <div className="p-4 border-b print:hidden">
           <button
             onClick={handlePdfDownload}
-            className="px-4 py-2 bg-black text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={loadingPDF}
+            className="px-4 py-2 bg-black text-white rounded"
           >
-            {loadingPDF ? "Generating PDF..." : "Download PDF"}
+            Download PDF
           </button>
         </div>
         <GRRegisterPage students={students} classes={classes} />

@@ -2,10 +2,9 @@
 
 import { Class, classApi, Student, studentApi } from "@/lib/api";
 import { useSchool } from "@/contexts/SchoolContext";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { generatePDF } from "@/lib/pdfGenerator";
 
 function ResultSheetUI() {
   const { school } = useSchool();
@@ -14,7 +13,6 @@ function ResultSheetUI() {
   const [loading, setLoading] = useState(true);
   const [loadingPDF, setLoadingPDF] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const tableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,22 +36,37 @@ function ResultSheetUI() {
   }, []);
 
   const handlePdfDownload = async () => {
-    if (!tableRef.current) {
-      alert("Table not found");
-      return;
-    }
-
     try {
+      // Call the specific resultsheet PDF API route
       setLoadingPDF(true);
 
-      await generatePDF(tableRef.current, {
-        filename: 'resultsheet.pdf',
-        orientation: 'landscape',
-        format: 'legal',
-        margin: [10, 8, 10, 8]
+      // Get auth token from localStorage
+      const token = localStorage.getItem('auth_token');
+
+      const response = await fetch("/api/pdf/resultsheet", {
+        method: "GET",
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : ''
+        }
       });
 
+      if (!response.ok) {
+        throw new Error("Failed to fetch PDF");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a temporary link and trigger the download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "resultsheet.pdf";
+      document.body.appendChild(a);
+      a.click();
+      // Cleanup
+      a.remove();
       setLoadingPDF(false);
+      window.URL.revokeObjectURL(url);
     } catch (err) {
       alert("PDF download failed.");
       console.error(err);
@@ -132,7 +145,6 @@ function ResultSheetUI() {
         }
       `}</style>
       {/* MAIN TABLE */}
-      <div ref={tableRef}>
       <table className="w-full">
         <colgroup>
           <col style={{ width: "20mm" }} /> {/* GR */}
@@ -338,14 +350,13 @@ function ResultSheetUI() {
           )}
         </tbody>
       </table>
-      </div>
       <div className="p-4 border-b print:hidden">
         <button
           onClick={handlePdfDownload}
           className="px-4 py-2 bg-black text-white rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loadingPDF ? "...Preparing PDF" : "Download PDF"}
-          
+
         </button>
       </div>
     </div>
