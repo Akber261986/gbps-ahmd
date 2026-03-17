@@ -6,8 +6,12 @@ export async function GET(req: NextRequest) {
   let browser;
 
   try {
+    console.log('=== PDF Generation Started ===');
     const authHeader = req.headers.get('authorization') || '';
+    console.log('Auth header present:', !!authHeader);
+    console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
 
+    console.log('Fetching data from backend...');
     const [studentsRes, classesRes, schoolRes] = await Promise.all([
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/students`, {
         headers: {
@@ -26,8 +30,21 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
-    if (!studentsRes.ok || !classesRes.ok) {
-      throw new Error("Failed to fetch data");
+    // Log response status for debugging
+    console.log('Students API status:', studentsRes.status);
+    console.log('Classes API status:', classesRes.status);
+    console.log('School API status:', schoolRes.status);
+
+    if (!studentsRes.ok) {
+      const errorText = await studentsRes.text();
+      console.error('Students API error:', errorText);
+      throw new Error(`Failed to fetch students: ${studentsRes.status} - ${errorText}`);
+    }
+
+    if (!classesRes.ok) {
+      const errorText = await classesRes.text();
+      console.error('Classes API error:', errorText);
+      throw new Error(`Failed to fetch classes: ${classesRes.status} - ${errorText}`);
     }
 
     const students = await studentsRes.json();
@@ -294,15 +311,25 @@ export async function GET(req: NextRequest) {
 </html>
 `;
 
+    console.log('Data fetched successfully. Students:', students.length, 'Classes:', classes.length);
+    console.log('Launching Puppeteer with Chromium...');
+
+    const execPath = await chromium.executablePath();
+    console.log('Chromium executable path:', execPath);
+
     browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
+      executablePath: execPath,
       headless: chromium.headless,
     });
 
+    console.log('Browser launched successfully');
     const page = await browser.newPage();
+    console.log('New page created');
+
     await page.setContent(html, { waitUntil: "networkidle0" });
+    console.log('HTML content set');
 
     const pdf = await page.pdf({
       format: "A4" as any,
@@ -316,6 +343,8 @@ export async function GET(req: NextRequest) {
       },
     });
 
+    console.log('PDF generated successfully, size:', pdf.length, 'bytes');
+
     return new NextResponse(Buffer.from(pdf), {
       headers: {
         "Content-Type": "application/pdf",
@@ -323,8 +352,19 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    console.error('=== PDF Generation Error ===');
+    console.error('Error name:', e.name);
+    console.error('Error message:', e.message);
+    console.error('Error stack:', e.stack);
+    return NextResponse.json({
+      error: e.message,
+      details: e.stack,
+      name: e.name
+    }, { status: 500 });
   } finally {
-    if (browser) await browser.close();
+    if (browser) {
+      console.log('Closing browser...');
+      await browser.close();
+    }
   }
 }
