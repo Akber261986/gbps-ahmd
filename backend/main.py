@@ -51,6 +51,9 @@ app = FastAPI(
     redirect_slashes=False
 )
 
+# Detect if running on Vercel (serverless environment)
+IS_SERVERLESS = os.getenv("VERCEL", "").lower() == "1" or os.getenv("AWS_LAMBDA_FUNCTION_NAME") is not None
+
 # Allow frontend (Next.js on localhost:3000) to connect
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3001")
 # Support both the configured URL and common alternatives
@@ -74,9 +77,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Detect if running on Vercel (serverless environment)
-IS_SERVERLESS = os.getenv("VERCEL", "").lower() == "1" or os.getenv("AWS_LAMBDA_FUNCTION_NAME") is not None
 
 # Create uploads directory only if not in serverless environment
 if not IS_SERVERLESS:
