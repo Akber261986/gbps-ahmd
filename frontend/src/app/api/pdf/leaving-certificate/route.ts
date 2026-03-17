@@ -15,9 +15,15 @@ export async function GET(req: NextRequest) {
 
   let browser;
   try {
+    console.log('=== Leaving Certificate PDF Generation Started ===');
+    console.log('Student ID:', studentId);
+
     const authHeader = req.headers.get("authorization") || "";
+    console.log('Auth header present:', !!authHeader);
+    console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
 
     // Fetch the certificate data and school data from your backend API
+    console.log('Fetching data from backend...');
     const [certResponse, schoolResponse] = await Promise.all([
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/school-leaving-certificates/${studentId}`, {
         headers: {
@@ -31,8 +37,13 @@ export async function GET(req: NextRequest) {
       })
     ]);
 
+    console.log('Certificate API status:', certResponse.status);
+    console.log('School API status:', schoolResponse.status);
+
     if (!certResponse.ok) {
-      throw new Error("Failed to fetch certificate data");
+      const errorText = await certResponse.text();
+      console.error('Certificate API error:', errorText);
+      throw new Error(`Failed to fetch certificate data: ${certResponse.status} - ${errorText}`);
     }
 
     const data = await certResponse.json();
@@ -274,19 +285,30 @@ export async function GET(req: NextRequest) {
       </html>
     `;
 
+    console.log('Data fetched successfully');
+    console.log('Launching Puppeteer with Chromium...');
+
+    const execPath = await chromium.executablePath();
+    console.log('Chromium executable path:', execPath);
+
     browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
+      executablePath: execPath,
       headless: chromium.headless,
     });
 
+    console.log('Browser launched successfully');
     const page = await browser.newPage();
+    console.log('New page created');
 
+    console.log('Setting HTML content...');
     await page.setContent(htmlContent, {
       waitUntil: "networkidle0",
     });
+    console.log('HTML content set');
 
+    console.log('Generating PDF...');
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
@@ -298,20 +320,31 @@ export async function GET(req: NextRequest) {
       },
     });
 
+    console.log('PDF generated successfully, size:', pdfBuffer.length, 'bytes');
+
     return new NextResponse(Buffer.from(pdfBuffer), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename=leaving-certificate-${data.gr_number}.pdf`,
       },
     });
-  } catch (error) {
-    console.error("PDF generation failed:", error);
+  } catch (error: any) {
+    console.error('=== Leaving Certificate PDF Generation Error ===');
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
     return NextResponse.json(
-      { error: "PDF generation failed", details: error instanceof Error ? error.message : "Unknown error" },
+      {
+        error: "PDF generation failed",
+        details: error.message,
+        name: error.name,
+        stack: error.stack
+      },
       { status: 500 }
     );
   } finally {
     if (browser) {
+      console.log('Closing browser...');
       await browser.close();
     }
   }

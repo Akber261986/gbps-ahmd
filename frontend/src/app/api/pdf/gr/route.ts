@@ -5,13 +5,19 @@ import chromium from "@sparticuz/chromium";
 export async function GET(req: NextRequest) {
   let browser;
   try {
+    console.log('=== GR PDF Generation Started ===');
+
     // Check if studentId is provided in query params
     const { searchParams } = new URL(req.url);
     const studentId = searchParams.get('studentId');
+    console.log('Student ID:', studentId || 'All students');
 
     // Fetch students, classes, and school data from your backend API
     const authHeader = req.headers.get('authorization') || '';
+    console.log('Auth header present:', !!authHeader);
+    console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
 
+    console.log('Fetching data from backend...');
     let studentsResponse;
     if (studentId) {
       // Fetch single student
@@ -34,8 +40,20 @@ export async function GET(req: NextRequest) {
       })
     ]);
 
-    if (!studentsResponse.ok || !classesResponse.ok) {
-      throw new Error("Failed to fetch GR data");
+    console.log('Students API status:', studentsResponse.status);
+    console.log('Classes API status:', classesResponse.status);
+    console.log('School API status:', schoolResponse.status);
+
+    if (!studentsResponse.ok) {
+      const errorText = await studentsResponse.text();
+      console.error('Students API error:', errorText);
+      throw new Error(`Failed to fetch students: ${studentsResponse.status} - ${errorText}`);
+    }
+
+    if (!classesResponse.ok) {
+      const errorText = await classesResponse.text();
+      console.error('Classes API error:', errorText);
+      throw new Error(`Failed to fetch classes: ${classesResponse.status} - ${errorText}`);
     }
 
     const studentData = await studentsResponse.json();
@@ -43,6 +61,8 @@ export async function GET(req: NextRequest) {
     const students = studentId ? [studentData] : studentData;
     const classes = await classesResponse.json();
     const school = schoolResponse.ok ? await schoolResponse.json() : { name: 'اسڪول' };
+
+    console.log('Data fetched successfully. Students:', students.length, 'Classes:', classes.length);
 
     // Helper function to get class name
     const getClassName = (classId: number) => {
@@ -241,20 +261,29 @@ export async function GET(req: NextRequest) {
       </html>
     `;
 
+    console.log('Launching Puppeteer with Chromium...');
+    const execPath = await chromium.executablePath();
+    console.log('Chromium executable path:', execPath);
+
     browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
+      executablePath: execPath,
       headless: chromium.headless,
     });
 
+    console.log('Browser launched successfully');
     const page = await browser.newPage();
+    console.log('New page created');
 
     // Set content directly instead of navigating to a URL
+    console.log('Setting HTML content...');
     await page.setContent(htmlContent, {
       waitUntil: "networkidle0",
     });
+    console.log('HTML content set');
 
+    console.log('Generating PDF...');
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
@@ -272,20 +301,31 @@ export async function GET(req: NextRequest) {
       ? `gr-${students[0]?.gr_number || studentId}.pdf`
       : 'gr-register.pdf';
 
+    console.log('PDF generated successfully, size:', pdfBuffer.length, 'bytes, filename:', filename);
+
     return new NextResponse(Buffer.from(pdfBuffer), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename=${filename}`,
       },
     });
-  } catch (error) {
-    console.error("PDF generation failed:", error);
+  } catch (error: any) {
+    console.error('=== GR PDF Generation Error ===');
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
     return NextResponse.json(
-      { error: "PDF generation failed", details: error instanceof Error ? error.message : "Unknown error" },
+      {
+        error: "PDF generation failed",
+        details: error.message,
+        name: error.name,
+        stack: error.stack
+      },
       { status: 500 }
     );
   } finally {
     if (browser) {
+      console.log('Closing browser...');
       await browser.close();
     }
   }

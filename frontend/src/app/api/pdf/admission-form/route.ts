@@ -17,10 +17,15 @@ export async function GET(req: NextRequest) {
   let browser;
 
   try {
+    console.log('=== Admission Form PDF Generation Started ===');
+    console.log('Student ID:', studentId);
 
     // fetch admission data
     const authHeader = req.headers.get("authorization") || "";
+    console.log('Auth header present:', !!authHeader);
+    console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
 
+    console.log('Fetching data from backend...');
     const [studentRes, schoolRes, classesRes] = await Promise.all([
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/students/${studentId}`, {
         headers: {
@@ -39,8 +44,14 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
+    console.log('Student API status:', studentRes.status);
+    console.log('School API status:', schoolRes.status);
+    console.log('Classes API status:', classesRes.status);
+
     if (!studentRes.ok) {
-      throw new Error("Failed to fetch student data");
+      const errorText = await studentRes.text();
+      console.error('Student API error:', errorText);
+      throw new Error(`Failed to fetch student data: ${studentRes.status} - ${errorText}`);
     }
 
     const student = await studentRes.json();
@@ -290,17 +301,28 @@ body{
 </html>
 `;
 
+    console.log('Data fetched successfully');
+    console.log('Launching Puppeteer with Chromium...');
+
+    const execPath = await chromium.executablePath();
+    console.log('Chromium executable path:', execPath);
+
     browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
+      executablePath: execPath,
       headless: chromium.headless,
     });
 
+    console.log('Browser launched successfully');
     const page = await browser.newPage();
+    console.log('New page created');
 
+    console.log('Setting HTML content...');
     await page.setContent(html, { waitUntil: "networkidle0" });
+    console.log('HTML content set');
 
+    console.log('Generating PDF...');
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
@@ -312,6 +334,8 @@ body{
       },
     });
 
+    console.log('PDF generated successfully, size:', pdf.length, 'bytes');
+
     return new NextResponse(Buffer.from(pdf), {
       headers: {
         "Content-Type": "application/pdf",
@@ -319,18 +343,29 @@ body{
       },
     });
 
-  } catch (error) {
+  } catch (error: any) {
 
-    console.error(error);
+    console.error('=== Admission Form PDF Generation Error ===');
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
 
     return NextResponse.json(
-      { error: "PDF generation failed" },
+      {
+        error: "PDF generation failed",
+        details: error.message,
+        name: error.name,
+        stack: error.stack
+      },
       { status: 500 }
     );
 
   } finally {
 
-    if (browser) await browser.close();
+    if (browser) {
+      console.log('Closing browser...');
+      await browser.close();
+    }
 
   }
 }
