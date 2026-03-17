@@ -7,11 +7,19 @@ const nextConfig: NextConfig = {
     return [
       // Proxy uploads through Next.js to avoid localhost image restrictions
       { source: "/uploads/:path*", destination: `${backend}/uploads/:path*` },
-      // API rewrites
-      { source: "/api/:path*/", destination: `${backend}/:path*/` },
-      { source: "/api/:path*", destination: `${backend}/:path*` },
+      // API rewrites - handle trailing slashes by removing them
+      {
+        source: "/api/:path((?:[^/]+/?)*)/",
+        destination: `${backend}/:path*`
+      },
+      {
+        source: "/api/:path*",
+        destination: `${backend}/:path*`
+      },
     ];
   },
+  // Disable automatic trailing slash to prevent redirects
+  trailingSlash: false,
 };
 
 export default nextConfig;
