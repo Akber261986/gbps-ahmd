@@ -60,7 +60,12 @@ allowed_origins = [
     "http://localhost:3001",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:3001",
+    "https://school-management-system-iota-khaki.vercel.app",  # Deployed frontend
 ]
+
+# In production, allow all Vercel preview deployments
+if IS_SERVERLESS:
+    allowed_origins.append("https://*.vercel.app")
 
 app.add_middleware(
     CORSMiddleware,
