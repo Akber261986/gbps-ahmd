@@ -1,0 +1,43 @@
+import html2pdf from 'html2pdf.js';
+
+interface PDFOptions {
+  filename: string;
+  orientation?: 'portrait' | 'landscape';
+  format?: string;
+  margin?: number | number[];
+}
+
+export const generatePDF = async (
+  element: HTMLElement,
+  options: PDFOptions
+): Promise<void> => {
+  const {
+    filename,
+    orientation = 'portrait',
+    format = 'a4',
+    margin = 10
+  } = options;
+
+  const opt = {
+    margin: margin,
+    filename: filename,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      letterRendering: true
+    },
+    jsPDF: {
+      unit: 'mm',
+      format: format,
+      orientation: orientation
+    }
+  };
+
+  try {
+    await html2pdf().set(opt).from(element).save();
+  } catch (error) {
+    console.error('PDF generation failed:', error);
+    throw new Error('Failed to generate PDF');
+  }
+};
