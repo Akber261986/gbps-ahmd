@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "app/api/pdf/**/*.ts": {
+      "memory": 3008,
+      "maxDuration": 60
+    }
+  },
+  "regions": ["iad1"]
+}
