@@ -10,13 +10,13 @@
   },
   "dependencies": {
     "@fontsource/harmattan": "^5.2.7",
-    "@sparticuz/chromium": "^123.0.1",
+    "@sparticuz/chromium": "^119.0.2",
     "axios": "^1.13.4",
     "html2pdf.js": "^0.14.0",
     "jspdf": "^4.1.0",
     "jspdf-autotable": "^5.0.7",
     "next": "16.1.6",
-    "puppeteer-core": "^22.6.5",
+    "puppeteer-core": "^21.11.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.1"
