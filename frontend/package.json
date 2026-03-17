@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@fontsource/harmattan": "^5.2.7",
-    "@sparticuz/chromium": "^131.0.2",
+    "@sparticuz/chromium": "^126.0.0",
     "axios": "^1.13.4",
     "html2pdf.js": "^0.14.0",
     "jspdf": "^4.1.0",
