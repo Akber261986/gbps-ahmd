@@ -4,13 +4,13 @@ export async function GET(req: NextRequest) {
   let browser;
   try {
     console.log('=== GR PDF Generation Started ===');
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('Is Vercel:', !!process.env.VERCEL);
 
     // Check if studentId is provided in query params
     const { searchParams } = new URL(req.url);
     const studentId = searchParams.get('studentId');
     console.log('Student ID:', studentId || 'All students');
-    console.log('Environment:', process.env.NODE_ENV);
-    console.log('Is Vercel:', !!process.env.VERCEL);
 
     // Fetch students, classes, and school data from your backend API
     const authHeader = req.headers.get('authorization') || '';
@@ -267,9 +267,9 @@ export async function GET(req: NextRequest) {
     const isProduction = process.env.VERCEL || process.env.NODE_ENV === 'production';
 
     if (isProduction) {
-      // Production: Use puppeteer-core + chromium-min
+      // Production: Use puppeteer-core + chromium (full package)
       const puppeteerCore = await import('puppeteer-core');
-      const chromium = await import('@sparticuz/chromium-min');
+      const chromium = await import('@sparticuz/chromium');
 
       const execPath = await chromium.default.executablePath();
       console.log('Production - Chromium executable path:', execPath);

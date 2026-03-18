@@ -4,10 +4,9 @@ export async function GET(req: NextRequest) {
   let browser;
 
   try {
-    console.log('=== PDF Generation Started ===');
+    console.log('=== Resultsheet PDF Generation Started ===');
     console.log('Environment:', process.env.NODE_ENV);
     console.log('Is Vercel:', !!process.env.VERCEL);
-
     const authHeader = req.headers.get('authorization') || '';
     console.log('Auth header present:', !!authHeader);
     console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
@@ -319,9 +318,9 @@ export async function GET(req: NextRequest) {
     const isProduction = process.env.VERCEL || process.env.NODE_ENV === 'production';
 
     if (isProduction) {
-      // Production: Use puppeteer-core + chromium-min
+      // Production: Use puppeteer-core + chromium (full package)
       const puppeteerCore = await import('puppeteer-core');
-      const chromium = await import('@sparticuz/chromium-min');
+      const chromium = await import('@sparticuz/chromium');
 
       const execPath = await chromium.default.executablePath();
       console.log('Production - Chromium executable path:', execPath);

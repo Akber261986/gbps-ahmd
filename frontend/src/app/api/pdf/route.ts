@@ -14,10 +14,10 @@ export async function GET(req: NextRequest) {
   let browser;
   try {
     console.log('=== Generic PDF Generation Started ===');
-    console.log('Target URL:', url);
-    console.log('APP_URL:', process.env.APP_URL);
     console.log('Environment:', process.env.NODE_ENV);
     console.log('Is Vercel:', !!process.env.VERCEL);
+    console.log('Target URL:', url);
+    console.log('APP_URL:', process.env.APP_URL);
 
     const fullUrl = `${process.env.APP_URL}${url}`;
     console.log('Full URL:', fullUrl);
@@ -28,9 +28,9 @@ export async function GET(req: NextRequest) {
     const isProduction = process.env.VERCEL || process.env.NODE_ENV === 'production';
 
     if (isProduction) {
-      // Production: Use puppeteer-core + chromium-min
+      // Production: Use puppeteer-core + chromium (full package)
       const puppeteerCore = await import('puppeteer-core');
-      const chromium = await import('@sparticuz/chromium-min');
+      const chromium = await import('@sparticuz/chromium');
 
       const execPath = await chromium.default.executablePath();
       console.log('Production - Chromium executable path:', execPath);
