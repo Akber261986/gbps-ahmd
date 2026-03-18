@@ -311,7 +311,6 @@ export async function GET(req: NextRequest) {
         defaultViewport: chromium.defaultViewport,
         executablePath: execPath,
         headless: chromium.headless,
-        ignoreHTTPSErrors: true,
       });
     } else {
       // Development: Use full puppeteer package
