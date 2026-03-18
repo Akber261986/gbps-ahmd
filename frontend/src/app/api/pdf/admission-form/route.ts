@@ -1,7 +1,5 @@
 import student_age from "@/lib/student_age";
 import { NextRequest, NextResponse } from "next/server";
-import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium-min";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -19,6 +17,8 @@ export async function GET(req: NextRequest) {
   try {
     console.log('=== Admission Form PDF Generation Started ===');
     console.log('Student ID:', studentId);
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('Is Vercel:', !!process.env.VERCEL);
 
     // fetch admission data
     const authHeader = req.headers.get("authorization") || "";
@@ -304,15 +304,32 @@ body{
     console.log('Data fetched successfully');
     console.log('Launching Puppeteer with Chromium...');
 
-    const execPath = await chromium.executablePath();
-    console.log('Chromium executable path:', execPath);
+    // Use different approach based on environment
+    const isProduction = process.env.VERCEL || process.env.NODE_ENV === 'production';
 
-    browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: execPath,
-      headless: chromium.headless,
-    });
+    if (isProduction) {
+      // Production: Use puppeteer-core + chromium-min
+      const puppeteerCore = await import('puppeteer-core');
+      const chromium = await import('@sparticuz/chromium-min');
+
+      const execPath = await chromium.default.executablePath();
+      console.log('Production - Chromium executable path:', execPath);
+
+      browser = await puppeteerCore.default.launch({
+        args: chromium.default.args,
+        defaultViewport: chromium.default.defaultViewport,
+        executablePath: execPath,
+        headless: chromium.default.headless,
+      });
+    } else {
+      // Development: Use full puppeteer package
+      const puppeteer = await import('puppeteer');
+      console.log('Development - Using bundled Chromium');
+
+      browser = await puppeteer.default.launch({
+        headless: true,
+      });
+    }
 
     console.log('Browser launched successfully');
     const page = await browser.newPage();
