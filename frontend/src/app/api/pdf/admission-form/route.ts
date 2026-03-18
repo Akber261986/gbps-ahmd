@@ -308,9 +308,9 @@ body{
     const isProduction = process.env.VERCEL || process.env.NODE_ENV === 'production';
 
     if (isProduction) {
-      // Production: Use puppeteer-core + chromium-min
+      // Production: Use puppeteer-core + chromium (full package)
       const puppeteerCore = await import('puppeteer-core');
-      const chromium = await import('@sparticuz/chromium-min');
+      const chromium = await import('@sparticuz/chromium');
 
       const execPath = await chromium.default.executablePath();
       console.log('Production - Chromium executable path:', execPath);
