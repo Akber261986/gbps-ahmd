@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@fontsource/harmattan": "^5.2.7",
-    "@sparticuz/chromium-min": "^131.0.1",
+    "@sparticuz/chromium": "^131.0.1",
     "axios": "^1.13.4",
     "next": "16.1.6",
     "puppeteer-core": "^23.11.1",
