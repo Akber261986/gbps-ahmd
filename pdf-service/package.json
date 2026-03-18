@@ -1,0 +1,18 @@
+{
+  "name": "pdf-service",
+  "version": "1.0.0",
+  "description": "Standalone PDF generation service for GBPS school management system",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
+  },
+  "keywords": ["pdf", "puppeteer", "express"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "puppeteer": "^24.39.1",
+    "cors": "^2.8.5"
+  }
+}
