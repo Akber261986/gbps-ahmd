@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import chromium from '@sparticuz/chromium-min';
+import puppeteerCore from 'puppeteer-core';
 
 export async function GET(req: NextRequest) {
   let browser;
@@ -318,18 +320,24 @@ export async function GET(req: NextRequest) {
     const isProduction = process.env.VERCEL || process.env.NODE_ENV === 'production';
 
     if (isProduction) {
-      // Production: Use puppeteer-core + chromium (full package)
-      const puppeteerCore = await import('puppeteer-core');
-      const chromium = await import('@sparticuz/chromium');
+      // Production: Use puppeteer-core + chromium-min with remote pack
+      console.log('Production mode - Using chromium-min with remote pack');
 
-      const execPath = await chromium.default.executablePath();
+      // Use environment variable for remote Chromium pack URL
+      const chromiumPackUrl = process.env.CHROMIUM_PACK_URL ||
+        'https://github.com/Sparticuz/chromium/releases/download/v131.0.0/chromium-v131.0.0-pack.tar';
+
+      console.log('Chromium pack URL:', chromiumPackUrl);
+
+      const execPath = await chromium.executablePath(chromiumPackUrl);
       console.log('Production - Chromium executable path:', execPath);
 
-      browser = await puppeteerCore.default.launch({
-        args: chromium.default.args,
-        defaultViewport: chromium.default.defaultViewport,
+      browser = await puppeteerCore.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
         executablePath: execPath,
-        headless: chromium.default.headless,
+        headless: chromium.headless,
+        ignoreHTTPSErrors: true,
       });
     } else {
       // Development: Use full puppeteer package
