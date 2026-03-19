@@ -235,7 +235,7 @@ router.post('/', async (req, res) => {
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=gr-register.pdf');
-    res.send(pdfBuffer);
+    res.end(pdfBuffer, 'binary');
 
   } catch (error) {
     console.error('=== GR PDF Generation Error ===');

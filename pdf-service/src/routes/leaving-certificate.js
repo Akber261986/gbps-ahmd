@@ -276,7 +276,7 @@ router.post('/', async (req, res) => {
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename=leaving-certificate-${data.gr_number}.pdf`);
-    res.send(pdfBuffer);
+    res.end(pdfBuffer, 'binary');
 
   } catch (error) {
     console.error('=== Leaving Certificate PDF Generation Error ===');

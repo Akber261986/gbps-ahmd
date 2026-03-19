@@ -306,7 +306,7 @@ body{
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=admission-form.pdf');
-    res.send(pdfBuffer);
+    res.end(pdfBuffer, 'binary');
 
   } catch (error) {
     console.error('=== Admission Form PDF Generation Error ===');
