@@ -103,7 +103,7 @@ const GRRegisterPage: React.FC<GRRegisterPageProps> = ({
                 <td className="border px-2">{student.caste}</td>
                 <td className="border px-2">{student.previous_school}</td>
                 <td className="border px-2 text-center">
-                  {getClassName(student.admit_in_class ? parseInt(student.admit_in_class) : student.class_id)}
+                  {getClassName(student.admission_class_id === null ? -1 : student.admission_class_id)}
                 </td>
                 <td className="border px-2 w-24">
                   {(student.admission_date) ? new Date(student.admission_date).toLocaleDateString("en-GB") : ""}
@@ -112,7 +112,7 @@ const GRRegisterPage: React.FC<GRRegisterPageProps> = ({
                 {/* Leaving-related fields (empty if active) */}
                 <td className="border px-2 text-sm font-normal w-32"
                 >
-                  {student.gr_of_previos_school}
+                  {student.gr_of_previos_school ? student.gr_of_previos_school : "-"}
                 </td>
                 <td className="border px-2 w-24"
                 >

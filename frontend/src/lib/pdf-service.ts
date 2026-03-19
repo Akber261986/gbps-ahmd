@@ -1,19 +1,17 @@
-import { NextResponse } from "next/server";
-
 const PDF_SERVICE_URL = (process.env.PDF_SERVICE_URL || 'https://gbps-ahmd-production.up.railway.app').replace(/\/$/, '');
 
 /**
- * Calls the Railway PDF service and returns the PDF as a NextResponse
+ * Calls the Railway PDF service and returns the PDF as a Response
  * @param endpoint - The PDF service endpoint (e.g., '/pdf/admission-form')
  * @param data - The data to send to the PDF service
  * @param filename - The filename for the downloaded PDF
- * @returns NextResponse with PDF binary data
+ * @returns Response with PDF binary data
  */
 export async function generatePDF(
   endpoint: string,
   data: any,
   filename: string
-): Promise<NextResponse> {
+): Promise<Response> {
   try {
     console.log(`Calling PDF service: ${PDF_SERVICE_URL}${endpoint}`);
 
@@ -36,7 +34,10 @@ export async function generatePDF(
     const pdfBuffer = await pdfResponse.arrayBuffer();
     console.log('PDF generated successfully, size:', pdfBuffer.byteLength, 'bytes');
 
-    return new NextResponse(pdfBuffer, {
+    // Convert ArrayBuffer to Buffer to prevent JSON serialization
+    const buffer = Buffer.from(pdfBuffer);
+
+    return new Response(buffer, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename=${filename}`,
