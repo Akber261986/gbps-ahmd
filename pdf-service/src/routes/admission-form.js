@@ -61,7 +61,7 @@ router.post('/', async (req, res) => {
 <style>
 
 body{
-  font-family: 'MB Nargis New', 'MB Khursheed', sans-serif;
+  font-family: 'sans-serif', 'MB Khursheed', 'MB Nargis New';
   direction: rtl;
   padding:0;
   margin:0;
