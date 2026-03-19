@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
         <meta charset="UTF-8">
         <style>
           body {
-            font-family: 'sans-serif';
+            font-family: 'Noto Nastaliq Urdu', 'Noto Naskh Arabic', 'Noto Sans Arabic', sans-serif;
             direction: rtl;
             padding: 0;
             margin: 0;
