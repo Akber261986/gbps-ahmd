@@ -13,7 +13,17 @@ export async function GET(req: NextRequest) {
     // Fetch students, classes, and school data from backend API
     const authHeader = req.headers.get('authorization') || '';
     console.log('Auth header present:', !!authHeader);
+    console.log('Auth header value:', authHeader ? authHeader.substring(0, 20) + '...' : 'NONE');
+    console.log('All headers:', Object.fromEntries(req.headers.entries()));
     console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
+
+    if (!authHeader) {
+      console.error('No authorization header found!');
+      return NextResponse.json(
+        { error: "No authorization header provided" },
+        { status: 401 }
+      );
+    }
 
     console.log('Fetching data from backend...');
     let studentsResponse;
