@@ -29,11 +29,11 @@ RUN apt-get update && apt-get install -y \
 # Download and install Sindhi and Urdu fonts from Google Fonts
 RUN mkdir -p /usr/share/fonts/truetype/sindhi && \
     cd /usr/share/fonts/truetype/sindhi && \
-    wget -q https://github.com/google/fonts/raw/main/ofl/notosanssindhi/NotoSansSindhi-Regular.ttf && \
-    wget -q https://github.com/google/fonts/raw/main/ofl/notosanssindhi/NotoSansSindhi-Bold.ttf && \
-    wget -q https://github.com/google/fonts/raw/main/ofl/notonastaliqurdu/NotoNastaliqUrdu-Regular.ttf && \
-    wget -q https://github.com/google/fonts/raw/main/ofl/notonastaliqurdu/NotoNastaliqUrdu-Bold.ttf && \
-    fc-cache -f -v
+    wget https://github.com/google/fonts/raw/main/ofl/notosanssindhi/NotoSansSindhi-Regular.ttf || echo "Failed to download NotoSansSindhi-Regular" && \
+    wget https://github.com/google/fonts/raw/main/ofl/notosanssindhi/NotoSansSindhi-Bold.ttf || echo "Failed to download NotoSansSindhi-Bold" && \
+    wget https://github.com/google/fonts/raw/main/ofl/notonastaliqurdu/NotoNastaliqUrdu-Regular.ttf || echo "Failed to download NotoNastaliqUrdu-Regular" && \
+    wget https://github.com/google/fonts/raw/main/ofl/notonastaliqurdu/NotoNastaliqUrdu-Bold.ttf || echo "Failed to download NotoNastaliqUrdu-Bold" && \
+    fc-cache -f
 
 # Set Puppeteer to use installed Chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
