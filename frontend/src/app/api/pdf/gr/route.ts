@@ -10,21 +10,27 @@ export async function GET(req: NextRequest) {
     const studentId = searchParams.get('studentId');
     console.log('Student ID:', studentId || 'All students');
 
-    // Try multiple ways to get the authorization header
-    const authHeader =
+    // Get authorization header - Vercel may move it to x-vercel-sc-headers
+    let authHeader =
       req.headers.get('authorization') ||
       req.headers.get('Authorization') ||
       '';
 
+    // If not found, check Vercel's special header
+    if (!authHeader) {
+      const vercelHeaders = req.headers.get('x-vercel-sc-headers');
+      if (vercelHeaders) {
+        try {
+          const parsed = JSON.parse(vercelHeaders);
+          authHeader = parsed.Authorization || '';
+        } catch (e) {
+          console.error('Failed to parse x-vercel-sc-headers:', e);
+        }
+      }
+    }
+
     console.log('Auth header present:', !!authHeader);
     console.log('Auth header value:', authHeader ? authHeader.substring(0, 20) + '...' : 'NONE');
-
-    // Log all headers for debugging
-    const allHeaders: Record<string, string> = {};
-    req.headers.forEach((value, key) => {
-      allHeaders[key] = value;
-    });
-    console.log('All headers:', allHeaders);
     console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
 
     if (!authHeader) {
