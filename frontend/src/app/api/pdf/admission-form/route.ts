@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
     const pdfBuffer = await pdfResponse.arrayBuffer();
     console.log('PDF generated successfully, size:', pdfBuffer.byteLength, 'bytes');
 
-    return new NextResponse(Buffer.from(pdfBuffer), {
+    return new Response(pdfBuffer, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": "attachment; filename=admission-form.pdf",
