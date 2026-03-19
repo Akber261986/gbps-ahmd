@@ -5,6 +5,7 @@ import { studentApi, classApi } from '@/lib/api';
 import { Student, Class } from '@/lib/api';
 import GRRegisterPage from '@/components/gr_modal';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { getAuthHeader } from '@/lib/auth';
 
 const GRComponent = () => {
   const [students, setStudents] = useState<Student[]>([]);
@@ -70,10 +71,14 @@ const GRComponent = () => {
       // Call the specific GR register PDF API route
       const response = await fetch("/api/pdf/gr", {
         method: "GET",
+        headers: {
+          ...getAuthHeader(),
+        },
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch PDF");
+        const errText = await response.text().catch(() => '');
+        throw new Error(`Failed to fetch PDF: ${response.status} ${response.statusText} ${errText}`);
       }
 
       const blob = await response.blob();
