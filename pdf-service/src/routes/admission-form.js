@@ -61,7 +61,7 @@ router.post('/', async (req, res) => {
 <style>
 
 body{
-  font-family: 'Noto Nastaliq Urdu', 'Noto Naskh Arabic', 'Noto Sans Arabic', sans-serif;
+  font-family: 'Noto Sans Sindhi', 'Noto Nastaliq Urdu', sans-serif;
   direction: rtl;
   padding:0;
   margin:0;
