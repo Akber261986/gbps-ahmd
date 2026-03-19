@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const PDF_SERVICE_URL = (process.env.PDF_SERVICE_URL || 'https://gbps-ahmd-production.up.railway.app').replace(/\/$/, '');
+import { generatePDF } from "@/lib/pdf-service";
 
 export async function GET(req: NextRequest) {
   try {
     console.log('=== Resultsheet PDF Generation Started ===');
-    console.log('PDF Service URL:', PDF_SERVICE_URL);
 
     const authHeader = req.headers.get('authorization') || '';
     console.log('Auth header present:', !!authHeader);
@@ -14,19 +12,13 @@ export async function GET(req: NextRequest) {
     console.log('Fetching data from backend...');
     const [studentsRes, classesRes, schoolRes] = await Promise.all([
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/students`, {
-        headers: {
-          'Authorization': authHeader
-        }
+        headers: { 'Authorization': authHeader }
       }),
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/classes`, {
-        headers: {
-          'Authorization': authHeader
-        }
+        headers: { 'Authorization': authHeader }
       }),
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/schools/my-school`, {
-        headers: {
-          'Authorization': authHeader
-        }
+        headers: { 'Authorization': authHeader }
       }),
     ]);
 
@@ -52,38 +44,14 @@ export async function GET(req: NextRequest) {
     const school = schoolRes.ok ? await schoolRes.json() : { school_name: 'اسڪول مئنيجمينٽ سسٽم', semis_code: '' };
 
     console.log('Data fetched successfully. Students:', students.length, 'Classes:', classes.length);
-    console.log('Calling PDF service on Railway...');
 
-    // Call Railway PDF service
-    const pdfResponse = await fetch(`${PDF_SERVICE_URL}/pdf/resultsheet`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        students,
-        classes,
-        school
-      })
-    });
+    // Call PDF service using reusable function
+    return await generatePDF(
+      '/pdf/resultsheet',
+      { students, classes, school },
+      'resultsheet.pdf'
+    );
 
-    console.log('PDF service response status:', pdfResponse.status);
-
-    if (!pdfResponse.ok) {
-      const errorText = await pdfResponse.text();
-      console.error('PDF service error:', errorText);
-      throw new Error(`PDF generation failed: ${pdfResponse.status} - ${errorText}`);
-    }
-
-    const pdfBuffer = await pdfResponse.arrayBuffer();
-    console.log('PDF generated successfully, size:', pdfBuffer.byteLength, 'bytes');
-
-    return new NextResponse(pdfBuffer, {
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": "attachment; filename=resultsheet.pdf",
-      },
-    });
   } catch (e: any) {
     console.error('=== Resultsheet PDF Generation Error ===');
     console.error('Error name:', e.name);

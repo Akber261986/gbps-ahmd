@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const PDF_SERVICE_URL = (process.env.PDF_SERVICE_URL || 'https://gbps-ahmd-production.up.railway.app').replace(/\/$/, '');
+import { generatePDF } from "@/lib/pdf-service";
 
 export async function GET(req: NextRequest) {
   try {
     console.log('=== GR PDF Generation Started ===');
-    console.log('PDF Service URL:', PDF_SERVICE_URL);
 
     // Check if studentId is provided in query params
     const { searchParams } = new URL(req.url);
@@ -63,44 +61,19 @@ export async function GET(req: NextRequest) {
     const school = schoolResponse.ok ? await schoolResponse.json() : { school_name: 'اسڪول', semis_code: '' };
 
     console.log('Data fetched successfully. Students:', students.length, 'Classes:', classes.length);
-    console.log('Calling PDF service on Railway...');
-
-    // Call Railway PDF service
-    const pdfResponse = await fetch(`${PDF_SERVICE_URL}/pdf/gr`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        students,
-        classes,
-        school
-      })
-    });
-
-    console.log('PDF service response status:', pdfResponse.status);
-
-    if (!pdfResponse.ok) {
-      const errorText = await pdfResponse.text();
-      console.error('PDF service error:', errorText);
-      throw new Error(`PDF generation failed: ${pdfResponse.status} - ${errorText}`);
-    }
-
-    const pdfBuffer = await pdfResponse.arrayBuffer();
 
     // Generate appropriate filename
     const filename = studentId
       ? `gr-${students[0]?.gr_number || studentId}.pdf`
       : 'gr-register.pdf';
 
-    console.log('PDF generated successfully, size:', pdfBuffer.byteLength, 'bytes, filename:', filename);
+    // Call PDF service using reusable function
+    return await generatePDF(
+      '/pdf/gr',
+      { students, classes, school },
+      filename
+    );
 
-    return new NextResponse(pdfBuffer, {
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename=${filename}`,
-      },
-    });
   } catch (error: any) {
     console.error('=== GR PDF Generation Error ===');
     console.error('Error name:', error.name);
