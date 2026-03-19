@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PDF_SERVICE_URL = process.env.PDF_SERVICE_URL || 'https://gbps-ahmd-production.up.railway.app';
+const PDF_SERVICE_URL = (process.env.PDF_SERVICE_URL || 'https://gbps-ahmd-production.up.railway.app').replace(/\/$/, '');
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
