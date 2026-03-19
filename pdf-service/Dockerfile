@@ -26,13 +26,11 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install Sindhi and Urdu fonts from Google Fonts
+# Download and install Sindhi fonts from Abdul Majid Bhurgri's website
 RUN mkdir -p /usr/share/fonts/truetype/sindhi && \
     cd /usr/share/fonts/truetype/sindhi && \
-    wget https://github.com/google/fonts/raw/main/ofl/notosanssindhi/NotoSansSindhi-Regular.ttf || echo "Failed to download NotoSansSindhi-Regular" && \
-    wget https://github.com/google/fonts/raw/main/ofl/notosanssindhi/NotoSansSindhi-Bold.ttf || echo "Failed to download NotoSansSindhi-Bold" && \
-    wget https://github.com/google/fonts/raw/main/ofl/notonastaliqurdu/NotoNastaliqUrdu-Regular.ttf || echo "Failed to download NotoNastaliqUrdu-Regular" && \
-    wget https://github.com/google/fonts/raw/main/ofl/notonastaliqurdu/NotoNastaliqUrdu-Bold.ttf || echo "Failed to download NotoNastaliqUrdu-Bold" && \
+    wget https://bhurgri.com/bhurgri/amar/wp-content/uploads/et-fonts/MBNargisNew3.2-4.ttf -O MBNargisNew.ttf && \
+    wget https://bhurgri.com/bhurgri/amar/wp-content/uploads/et-fonts/MB-Khursheed-SK-2.0.ttf -O MBKhursheed.ttf && \
     fc-cache -f
 
 # Set Puppeteer to use installed Chromium
