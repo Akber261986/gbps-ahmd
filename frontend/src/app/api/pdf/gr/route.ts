@@ -10,11 +10,21 @@ export async function GET(req: NextRequest) {
     const studentId = searchParams.get('studentId');
     console.log('Student ID:', studentId || 'All students');
 
-    // Fetch students, classes, and school data from backend API
-    const authHeader = req.headers.get('authorization') || '';
+    // Try multiple ways to get the authorization header
+    const authHeader =
+      req.headers.get('authorization') ||
+      req.headers.get('Authorization') ||
+      '';
+
     console.log('Auth header present:', !!authHeader);
     console.log('Auth header value:', authHeader ? authHeader.substring(0, 20) + '...' : 'NONE');
-    console.log('All headers:', Object.fromEntries(req.headers.entries()));
+
+    // Log all headers for debugging
+    const allHeaders: Record<string, string> = {};
+    req.headers.forEach((value, key) => {
+      allHeaders[key] = value;
+    });
+    console.log('All headers:', allHeaders);
     console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
 
     if (!authHeader) {
