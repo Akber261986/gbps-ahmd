@@ -20,19 +20,8 @@ const LeavingCertificatesPage = () => {
   useEffect(() => {
     const fetchCertificates = async () => {
       try {
-        // Fetch all leaving certificates
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/school-leaving-certificates/`, {
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch certificates");
-        }
-
-        const data = await response.json();
-        setCertificates(data);
+        const response = await leavingCertificateApi.getAll();
+        setCertificates(response.data);
       } catch (err) {
         setError("Failed to load leaving certificates");
         console.error(err);

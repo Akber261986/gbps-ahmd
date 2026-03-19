@@ -187,10 +187,12 @@ export const classApi = {
 
 // School Leaving Certificate API functions
 export const leavingCertificateApi = {
-  getByStudentId: (studentId: number) => 
+  getAll: () => api.get<SchoolLeavingCertificate[]>('/school-leaving-certificates'),
+
+  getByStudentId: (studentId: number) =>
     api.get<SchoolLeavingCertificate>(`/school-leaving-certificates/${studentId}`),
 
-  create: (data: any) => api.post('/school-leaving-certificates/', data),
+  create: (data: any) => api.post('/school-leaving-certificates', data),
 
   update: (id: number, data: any) => api.put(`/school-leaving-certificates/${id}`, data),
 };
