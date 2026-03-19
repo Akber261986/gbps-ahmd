@@ -1,12 +1,10 @@
 FROM node:18-slim
 
-# Install Chromium dependencies, wget for downloading fonts
+# Install Chromium dependencies and tools for downloading fonts
 RUN apt-get update && apt-get install -y \
     chromium \
     fonts-liberation \
-    fonts-noto-nastaliq-urdu \
     wget \
-    unzip \
     fontconfig \
     libasound2 \
     libatk-bridge2.0-0 \
@@ -28,11 +26,13 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install Mehr Nastaliq font (popular Sindhi/Urdu font)
+# Download and install Sindhi and Urdu fonts from Google Fonts
 RUN mkdir -p /usr/share/fonts/truetype/sindhi && \
     cd /usr/share/fonts/truetype/sindhi && \
     wget -q https://github.com/google/fonts/raw/main/ofl/notosanssindhi/NotoSansSindhi-Regular.ttf && \
     wget -q https://github.com/google/fonts/raw/main/ofl/notosanssindhi/NotoSansSindhi-Bold.ttf && \
+    wget -q https://github.com/google/fonts/raw/main/ofl/notonastaliqurdu/NotoNastaliqUrdu-Regular.ttf && \
+    wget -q https://github.com/google/fonts/raw/main/ofl/notonastaliqurdu/NotoNastaliqUrdu-Bold.ttf && \
     fc-cache -f -v
 
 # Set Puppeteer to use installed Chromium
