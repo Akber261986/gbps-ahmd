@@ -16,7 +16,22 @@ export async function GET(req: NextRequest) {
     console.log('=== Leaving Certificate PDF Generation Started ===');
     console.log('Student ID:', studentId);
 
-    const authHeader = req.headers.get("authorization") || "";
+    // Get authorization header - Vercel may move it to x-vercel-sc-headers
+    let authHeader = req.headers.get("authorization") || "";
+
+    // If not found, check Vercel's special header
+    if (!authHeader) {
+      const vercelHeaders = req.headers.get('x-vercel-sc-headers');
+      if (vercelHeaders) {
+        try {
+          const parsed = JSON.parse(vercelHeaders);
+          authHeader = parsed.Authorization || '';
+        } catch (e) {
+          console.error('Failed to parse x-vercel-sc-headers:', e);
+        }
+      }
+    }
+
     console.log('Auth header present:', !!authHeader);
     console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
 
