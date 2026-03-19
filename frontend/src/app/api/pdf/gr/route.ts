@@ -42,24 +42,28 @@ export async function GET(req: NextRequest) {
     }
 
     console.log('Fetching data from backend...');
+
+    // Remove trailing slash from API URL to prevent double slashes
+    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
+
     let studentsResponse;
     if (studentId) {
       // Fetch single student
-      studentsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/students/${studentId}`, {
+      studentsResponse = await fetch(`${apiUrl}/students/${studentId}`, {
         headers: { 'Authorization': authHeader }
       });
     } else {
       // Fetch all students
-      studentsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/students`, {
+      studentsResponse = await fetch(`${apiUrl}/students`, {
         headers: { 'Authorization': authHeader }
       });
     }
 
     const [classesResponse, schoolResponse] = await Promise.all([
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/classes`, {
+      fetch(`${apiUrl}/classes`, {
         headers: { 'Authorization': authHeader }
       }),
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/schools/my-school`, {
+      fetch(`${apiUrl}/schools/my-school`, {
         headers: { 'Authorization': authHeader }
       })
     ]);
