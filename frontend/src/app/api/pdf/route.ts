@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const PDF_SERVICE_URL = process.env.PDF_SERVICE_URL || 'https://gbps-ahmd-production.up.railway.app';
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const url = searchParams.get("url");
@@ -11,73 +13,38 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  let browser;
   try {
     console.log('=== Generic PDF Generation Started ===');
-    console.log('Environment:', process.env.NODE_ENV);
-    console.log('Is Vercel:', !!process.env.VERCEL);
     console.log('Target URL:', url);
+    console.log('PDF Service URL:', PDF_SERVICE_URL);
     console.log('APP_URL:', process.env.APP_URL);
 
     const fullUrl = `${process.env.APP_URL}${url}`;
     console.log('Full URL:', fullUrl);
 
-    console.log('Launching Puppeteer with Chromium...');
+    console.log('Calling PDF service on Railway...');
 
-    // Use different approach based on environment
-    const isProduction = process.env.VERCEL || process.env.NODE_ENV === 'production';
+    // Call Railway PDF service
+    const pdfResponse = await fetch(`${PDF_SERVICE_URL}/pdf/generic`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        url: fullUrl
+      })
+    });
 
-    if (isProduction) {
-      // Production: Use puppeteer-core + chromium (full package with bundled libraries)
-      const puppeteerCore = await import('puppeteer-core');
-      const chromium = await import('@sparticuz/chromium');
+    console.log('PDF service response status:', pdfResponse.status);
 
-      const execPath = await chromium.default.executablePath();
-      console.log('Production - Chromium executable path:', execPath);
-
-      browser = await puppeteerCore.default.launch({
-        args: chromium.default.args,
-        defaultViewport: chromium.default.defaultViewport,
-        executablePath: execPath,
-        headless: chromium.default.headless,
-      });
-    } else {
-      // Development: Use full puppeteer package
-      const puppeteer = await import('puppeteer');
-      console.log('Development - Using bundled Chromium');
-
-      browser = await puppeteer.default.launch({
-        headless: true,
-      });
+    if (!pdfResponse.ok) {
+      const errorText = await pdfResponse.text();
+      console.error('PDF service error:', errorText);
+      throw new Error(`PDF generation failed: ${pdfResponse.status} - ${errorText}`);
     }
 
-    console.log('Browser launched successfully');
-    const page = await browser.newPage();
-    console.log('New page created');
-
-    console.log('Navigating to URL...');
-    await page.goto(fullUrl, {
-      waitUntil: "networkidle0",
-      timeout: 30000,
-    });
-
-    console.log('Page loaded, waiting for body selector...');
-    await page.waitForSelector('body', { timeout: 5000 });
-    console.log('Body selector found');
-
-    console.log('Generating PDF...');
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-      printBackground: true,
-      margin: {
-        top: "20mm",
-        bottom: "20mm",
-        left: "15mm",
-        right: "15mm",
-      },
-    });
-
-    console.log('PDF generated successfully, size:', pdfBuffer.length, 'bytes');
+    const pdfBuffer = await pdfResponse.arrayBuffer();
+    console.log('PDF generated successfully, size:', pdfBuffer.byteLength, 'bytes');
 
     return new NextResponse(Buffer.from(pdfBuffer), {
       headers: {
@@ -86,7 +53,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error('=== PDF Generation Error ===');
+    console.error('=== Generic PDF Generation Error ===');
     console.error('Error name:', error.name);
     console.error('Error message:', error.message);
     console.error('Error stack:', error.stack);
@@ -99,10 +66,5 @@ export async function GET(req: NextRequest) {
       },
       { status: 500 }
     );
-  } finally {
-    if (browser) {
-      console.log('Closing browser...');
-      await browser.close();
-    }
   }
 }
