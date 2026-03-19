@@ -29,6 +29,11 @@ router.post('/', async (req, res) => {
       <head>
         <meta charset="UTF-8">
         <style>
+          @page {
+            size: A4;
+            margin: 10mm;
+          }
+
           body {
             font-family: 'MB Nargis New', 'MB Khursheed', sans-serif;
             direction: rtl;
@@ -39,44 +44,46 @@ router.post('/', async (req, res) => {
           .paper {
             background: #f5f0c9;
             border: 6px solid #2c7a4b;
-            padding: 40px;
+            padding: 30px;
+            page-break-inside: avoid;
+            page-break-after: avoid;
           }
 
           .form-number {
             text-align: right;
-            font-size: 12px;
-            margin-bottom: 10px;
+            font-size: 11px;
+            margin-bottom: 8px;
           }
 
           .title {
             text-align: center;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
           }
 
           .school-info {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 15px;
-            font-size: 18px;
+            margin-bottom: 12px;
+            font-size: 16px;
           }
 
           .school-info div {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
           }
 
           .row {
             display: flex;
             align-items: flex-end;
-            margin: 10px 8px;
-            font-size: 14px;
-            min-height: 24px;
+            margin: 7px 8px;
+            font-size: 13px;
+            min-height: 20px;
           }
 
           .number {
-            width: 30px;
+            width: 28px;
           }
 
           .label {
@@ -86,19 +93,19 @@ router.post('/', async (req, res) => {
           .line {
             flex: 1;
             border-bottom: 1px solid #000;
-            margin: 8px 16px;
+            margin: 6px 14px;
             text-align: center;
-            font-size: 16px;
+            font-size: 14px;
           }
 
           .declaration {
-            margin-top: 30px;
+            margin-top: 20px;
             margin-right: 8px;
-            font-size: 12px;
+            font-size: 11px;
           }
 
           .signatures {
-            margin-top: 40px;
+            margin-top: 25px;
             display: flex;
             justify-content: space-between;
           }
@@ -106,7 +113,7 @@ router.post('/', async (req, res) => {
           .sign {
             text-align: center;
             width: 40%;
-            font-size: 14px;
+            font-size: 13px;
           }
 
           .sign-line {
