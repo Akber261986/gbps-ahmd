@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
         }
 
         body {
-            font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', Arial, sans-serif;
+            font-family: 'Noto Sans Sindhi', 'Noto Nastaliq Urdu', sans-serif;
             direction: rtl;
         }
 
