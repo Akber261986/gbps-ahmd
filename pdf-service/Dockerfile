@@ -1,9 +1,13 @@
 FROM node:18-slim
 
-# Install Chromium dependencies
+# Install Chromium dependencies and Urdu/Arabic fonts
 RUN apt-get update && apt-get install -y \
     chromium \
     fonts-liberation \
+    fonts-noto-nastaliq-urdu \
+    fonts-noto-naskh-arabic \
+    fonts-arabeyes \
+    fonts-farsiweb \
     libasound2 \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
