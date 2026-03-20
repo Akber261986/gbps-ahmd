@@ -7,7 +7,7 @@ const path = require('path');
  * @returns {string} Base64 encoded font data
  */
 function loadFontAsBase64(fontFileName) {
-  const fontPath = path.join(__dirname, '..', 'fonts', fontFileName);
+  const fontPath = path.join(__dirname, '..', '..', 'fonts', fontFileName);
   const fontBuffer = fs.readFileSync(fontPath);
   return fontBuffer.toString('base64');
 }
