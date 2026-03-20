@@ -1,5 +1,6 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
+const { getSindhiFontCSS } = require('../utils/fontLoader');
 const router = express.Router();
 
 // Helper function to calculate student age
@@ -60,6 +61,8 @@ router.post('/', async (req, res) => {
 <head>
     <meta charset="UTF-8">
     <style>
+        ${getSindhiFontCSS()}
+
         body {
             font-family: 'MB Sindhi Web SK 2.0';
             direction: rtl;

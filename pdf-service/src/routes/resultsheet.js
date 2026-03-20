@@ -1,5 +1,6 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
+const { getSindhiFontCSS } = require('../utils/fontLoader');
 const router = express.Router();
 
 // POST /pdf/resultsheet
@@ -28,6 +29,8 @@ router.post('/', async (req, res) => {
   <title>Result Sheet</title>
 
   <style>
+    ${getSindhiFontCSS()}
+
     @page {
       size: legal landscape;
       margin: 10mm 8mm;

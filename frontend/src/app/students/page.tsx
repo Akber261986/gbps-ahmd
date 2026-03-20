@@ -81,12 +81,11 @@ const StudentsPage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setLoadingPdf(false);
-
+      
       if (!response.ok) {
         throw new Error("Failed to generate PDF");
       }
-
+      
       // Create a blob from the response
       const blob = await response.blob();
 
@@ -97,7 +96,7 @@ const StudentsPage = () => {
       a.download = `admission-form-${selectedStudent.gr_number}.pdf`;
       document.body.appendChild(a);
       a.click();
-
+      
       // Cleanup
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
@@ -105,6 +104,7 @@ const StudentsPage = () => {
       console.error("Error downloading PDF:", error);
       alert("PDF ڊائونلوڊ ڪرڻ ۾ مسئلو آيو");
     }
+    setLoadingPdf(false);
   };
 
   const handleViewGR = async (student: Student) => {

@@ -1,5 +1,6 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
+const { getSindhiFontCSS } = require('../utils/fontLoader');
 const router = express.Router();
 
 // POST /pdf/font-test
