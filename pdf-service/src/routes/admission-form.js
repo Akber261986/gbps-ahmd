@@ -121,10 +121,10 @@ router.post('/', async (req, res) => {
         .line {
             flex: 1;
             border-bottom: 1px solid #000;
-            margin: 6px 16px;
+            margin: 2px 16px;
             text-align: center;
             font-size: 20px;
-            line-height: 1.5;
+            line-height: 2.0;
         }
 
         .two-col-row {
