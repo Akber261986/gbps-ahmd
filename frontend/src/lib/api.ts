@@ -89,6 +89,7 @@ export interface Student {
   remarks : string | null;
   gr_of_previos_school: string | null;
   admit_in_class: string | "ڪلاس پھريون";
+  profile_picture_url: string | null;
 }
 
 export interface Class {
