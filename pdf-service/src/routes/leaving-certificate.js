@@ -1,6 +1,7 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
 const { getSindhiFontCSS, mbLeekaShabir } = require('../utils/fontLoader');
+
 const router = express.Router();
 
 // POST /pdf/leaving-certificate
@@ -8,328 +9,331 @@ router.post('/', async (req, res) => {
   let browser;
 
   try {
-    console.log('=== Leaving Certificate PDF Generation Started ===');
-
     const { data, school } = req.body;
 
     if (!data) {
       return res.status(400).json({ error: 'Certificate data is required' });
     }
 
-    // Format dates
     const formatDate = (dateStr) => {
       if (!dateStr) return '';
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('en-GB');
+      return new Date(dateStr).toLocaleDateString('en-GB');
     };
 
-    // Generate HTML content
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html lang="ar" dir="rtl">
-      <head>
-        <meta charset="UTF-8">
-        <style>
-          ${getSindhiFontCSS()}
-          ${mbLeekaShabir('MB-Leeka-Shabir-Kumbhar-2.0', 'MB-Leeka-Shabir-Kumbhar-2.0.ttf')}
+    const html = `
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
 
-          @page {
-            size: A4;
-            margin: 10mm;
-          }
+<style>
+${getSindhiFontCSS()}
+${mbLeekaShabir('MB-Leeka-Shabir-Kumbhar-2.0', 'MB-Leeka-Shabir-Kumbhar-2.0.ttf')}
 
-          body {
-            font-family: 'MB Sindhi Web SK 2.0';
-            direction: rtl;
-            padding: 0;
-            margin: 0;
-            line-height: 1.6;
-          }
+/* ✅ A4 Setup */
+@page {
+  size: A4 portrait;
+  margin: 10mm;
+}
 
-          .paper {
-            background: #f5f0c9;
-            border: 6px solid #2c7a4b;
-            padding: 30px;
-            page-break-inside: avoid;
-            page-break-after: avoid;
-          }
+html, body {
+  width: 210mm;
+  height: 297mm;
+  margin: 0;
+  padding: 0;
+}
 
-          .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-          }
+body {
+  font-family: 'MB Sindhi Web SK 2.0';
+  direction: rtl;
+  font-size: 14px;
+}
 
-          .logo-container {
-            width: 70px;
-            height: 70px;
-          }
+/* ✅ Paper */
+.paper {
+  width: 190mm;
+  min-height: 277mm;
+  margin: auto;
+  background: #f5f0c9;
+  border: 4px solid #2c7a4b;
+  padding: 10mm;
+  box-sizing: border-box;
+}
 
-          .logo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-          }
+/* ✅ Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6mm;
+}
 
-          .student-photo-container {
-            width: 90px;
-            height: 110px;
-            border: 2px solid #2c7a4b;
-          }
+.logo {
+  width: 20mm;
+  height: 20mm;
+}
 
-          .student-photo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
-          .form-number {
-            text-align: right;
-            font-size: 11px;
-            margin-bottom: 8px;
-          }
+.photo {
+  width: 25mm;
+  height: 30mm;
+  border: 1px solid #000;
+}
 
-          .title {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 16px;
-            line-height: 1.4;
-          }
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-          .school-info {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 16px;
-            font-size: 16px;
-            line-height: 1.5;
-          }
+.center-header {
+  flex: 1;
+  text-align: center;
+}
 
-          .school-info div {
-            margin-bottom: 8px;
-          }
+.title {
+  font-size: 24px;
+  font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';
+  margin-bottom: 2mm;
+}
 
-          .row {
-            display: block;
-            margin: 10px 8px;
-            font-size: 18px;
-            min-height: 30px;
-            line-height: 1.5;
-            position: relative;
-          }
+.school-name {
+  font-size: 16px;
+  font-weight: bold;
+}
 
-          .number {
-            display: inline-block;
-            width: 28px;
-            vertical-align: bottom;
-          }
+.sem-code {
+  font-size: 14px;
+}
 
-          .label {
-            display: inline-block;
-            white-space: nowrap;
-            line-height: 1.5;
-            vertical-align: bottom;
-          }
+/* ✅ Rows */
+.row {
+  display: flex;
+  align-items: flex-end;
+  margin: 5mm 0;
+  font-size: 16px;
+}
 
-          .line {
-            display: inline-block;
-            width: calc(100% - 250px);
-            border-bottom: 1px solid #000;
-            margin: 0 14px 4px 14px;
-            text-align: center;
-            font-size: 20px;
-            line-height: 1.8;
-            vertical-align: bottom;
-          }
+.number {
+  width: 8mm;
+}
 
-          .row.two-fields .line {
-            width: calc(50% - 150px);
-          }
+.label {
+  margin: 0 4mm;
+  white-space: nowrap;
+}
 
-          .declaration {
-            margin-top: 20px;
-            margin-right: 8px;
-            font-size: 11px;
-          }
+.line {
+  flex: 1;
+  border-bottom: 1px solid #000;
+  min-height: 6mm;
+  text-align: center;
+}
 
-          .signatures {
-            margin-top: 25px;
-            display: flex;
-            justify-content: space-between;
-          }
+/* ✅ Two Column Row */
+.two-col {
+  display: flex;
+  gap: 8mm;
+}
 
-          .sign {
-            text-align: center;
-            width: 40%;
-            font-size: 13px;
-          }
+.col {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+}
 
-          .sign-line {
-            border-top: 1px solid #000;
-            margin-bottom: 5px;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="paper">
-          <div class="form-number">فارم نمبر 16</div>
+/* ✅ Declaration */
+.declaration {
+  margin-top: 10mm;
+  font-size: 13px;
+}
 
-          <div class="header-section">
-            <div class="logo-container">
-              ${school?.logo_url ? `<img src="${school.logo_url}" alt="School Logo" />` : ''}
-            </div>
+/* ✅ Signatures */
+.signatures {
+  margin-top: 20mm;
+  display: flex;
+  justify-content: space-between;
+}
 
-            <div style="flex:1; text-align:center;">
-              <div class="title" style="font-family: 'MB-Leeka-Shabir-Kumbhar-2.0'">اسڪول ڇڏڻ جو سرٽيفڪيٽ</div>
-              <div style="font-size:16px; margin-bottom:6px;">
-                <strong>${school?.school_name || '—'}</strong>
-              </div>
-              <div style="font-size:14px;">
-                <span>سيمس ڪوڊ: </span>
-                <strong>${school?.semis_code || '—'}</strong>
-              </div>
-            </div>
+.sign {
+  width: 45%;
+  text-align: center;
+}
 
-            <div class="student-photo-container">
-              ${data?.student_photo_url ? `<img src="${data.student_photo_url}" alt="Student Photo" />` : ''}
-            </div>
-          </div>
+.sign-line {
+  border-top: 1px solid #000;
+  margin-bottom: 3mm;
+}
+</style>
 
-          <div class="row">
-            <span class="number">1.</span>
-            <span class="label">جنرل رجسٽر نمبر</span>
-            <span class="line">${data.gr_number || ''}</span>
-          </div>
+</head>
 
-          <div class="row">
-            <span class="number">2.</span>
-            <span class="label">شاگرد جو نالو</span>
-            <span class="line">${data.student_name || ''}</span>
-          </div>
+<body>
 
-          <div class="row">
-            <span class="number">3.</span>
-            <span class="label">والد جو نالو</span>
-            <span class="line">${data.father_name || ''}</span>
-          </div>
+<div class="paper">
 
-          <div class="row two-fields">
-            <span class="number">4.</span>
-            <span class="label">قوم</span>
-            <span class="line">${data.qom || ''}</span>
+  <div style="text-align:left; font-size:12px;">فارم نمبر 16</div>
 
-            <span class="number">5.</span>
-            <span class="label">ذات</span>
-            <span class="line">${data.caste || ''}</span>
-          </div>
+  <div class="header">
 
-          <div class="row">
-            <span class="number">6.</span>
-            <span class="label">پيدائش جي جاءِ</span>
-            <span class="line">${data.place_of_birth || ''}</span>
-          </div>
+    <div class="logo">
+      ${school?.logo_url ? `<img src="${school.logo_url}" />` : ''}
+    </div>
 
-          <div class="row">
-            <span class="number">7.</span>
-            <span class="label">ڄمڻ جي تاريخ</span>
-            <span class="line">${formatDate(data.date_of_birth)}</span>
-          </div>
+    <div class="center-header">
+      <div class="title">اسڪول ڇڏڻ جو سرٽيفڪيٽ</div>
+      <div class="school-name">${school?.school_name || '—'}</div>
+      <div class="sem-code">سيمس ڪوڊ: ${school?.semis_code || '—'}</div>
+    </div>
 
-          <div class="row">
-            <span class="number">8.</span>
-            <span class="label">ڄمڻ جي تاريخ (لفظن ۾)</span>
-            <span class="line">${data.date_of_birth_in_letter || ''}</span>
-          </div>
+    <div class="photo">
+      ${data?.student_photo_url ? `<img src="${data.student_photo_url}" />` : ''}
+    </div>
 
-          <div class="row">
-            <span class="number">9.</span>
-            <span class="label">داخلا جي تاريخ</span>
-            <span class="line">${formatDate(data.admission_date)}</span>
-          </div>
+  </div>
 
-          <div class="row">
-            <span class="number">10.</span>
-            <span class="label">پويون اسڪول</span>
-            <span class="line">${data.previous_school || ''}</span>
-          </div>
+  <div class="row">
+    <div class="number">1.</div>
+    <div class="label">جنرل رجسٽر نمبر</div>
+    <div class="line">${data.gr_number || ''}</div>
+  </div>
 
-          <div class="row">
-            <span class="number">11.</span>
-            <span class="label">اسڪول ڇڏڻ جو سرٽيفڪيٽ آڻڻ جي صورت ۾ جنرل رجسٽر نمبر</span>
-            <span class="line">${data.gr_of_previous_school || ''}</span>
-          </div>
+  <div class="row">
+    <div class="number">2.</div>
+    <div class="label">شاگرد جو نالو</div>
+    <div class="line">${data.student_name || ''}</div>
+  </div>
 
-          <div class="row">
-            <span class="number">12.</span>
-            <span class="label">اسڪول ڇڏڻ جي تاريخ</span>
-            <span class="line">${formatDate(data.leaving_date)}</span>
-          </div>
+  <div class="row">
+    <div class="number">3.</div>
+    <div class="label">والد جو نالو</div>
+    <div class="line">${data.father_name || ''}</div>
+  </div>
 
-          <div class="row">
-            <span class="number">13.</span>
-            <span class="label">اسڪول ڇڏڻ وقت ڪلاس</span>
-            <span class="line">${data.class_on_leaving || ''}</span>
-          </div>
+  <div class="two-col">
+    <div class="col">
+      <div class="number">4.</div>
+      <div class="label">قوم</div>
+      <div class="line">${data.qom || ''}</div>
+    </div>
+    <div class="col">
+      <div class="number">5.</div>
+      <div class="label">ذات</div>
+      <div class="line">${data.caste || ''}</div>
+    </div>
+  </div>
 
-          <div class="row">
-            <span class="number">14.</span>
-            <span class="label">اسڪول ڇڏڻ جو سبب</span>
-            <span class="line">${data.reason_for_leaving || ''}</span>
-          </div>
+  <div class="row">
+    <div class="number">6.</div>
+    <div class="label">پيدائش جي جاءِ</div>
+    <div class="line">${data.place_of_birth || ''}</div>
+  </div>
 
-          <div class="row">
-            <span class="number">15.</span>
-            <span class="label">تعليمي قابليت</span>
-            <span class="line">${data.educational_ability || ''}</span>
-          </div>
+  <div class="row">
+    <div class="number">7.</div>
+    <div class="label">ڄمڻ جي تاريخ</div>
+    <div class="line">${formatDate(data.date_of_birth)}</div>
+  </div>
 
-          <div class="row">
-            <span class="number">16.</span>
-            <span class="label">چال چلت</span>
-            <span class="line">${data.character || ''}</span>
-          </div>
+  <div class="row">
+    <div class="number">8.</div>
+    <div class="label">ڄمڻ جي تاريخ (لفظن ۾)</div>
+    <div class="line">${data.date_of_birth_in_letter || ''}</div>
+  </div>
 
-          <div class="row">
-            <span class="number">17.</span>
-            <span class="label">ريمارڪس</span>
-            <span class="line">${data.remarks || ''}</span>
-          </div>
+  <div class="row">
+    <div class="number">9.</div>
+    <div class="label">داخلا جي تاريخ</div>
+    <div class="line">${formatDate(data.admission_date)}</div>
+  </div>
 
-          <div class="declaration">
-            سرٽيفڪيٽ ڏجي ٿو ته مهي ڄاڻايل تفصيل اسڪول جي جنرل رجسٽر مطابق صحيح آهن.
-          </div>
+  <div class="row">
+    <div class="number">10.</div>
+    <div class="label">پويون اسڪول</div>
+    <div class="line">${data.previous_school || ''}</div>
+  </div>
 
-          <div class="signatures">
-            <div class="sign">
-              <div class="sign-line"></div>
-              <p>صحيح هيڊ ماسٽر / هيڊ مسٽريس</p>
-            </div>
+  <div class="row">
+    <div class="number">11.</div>
+    <div class="label">پوئين اسڪول جو رجسٽر نمبر</div>
+    <div class="line">${data.gr_of_previous_school || ''}</div>
+  </div>
 
-            <div class="sign">
-              <div class="sign-line"></div>
-              <p>صحيح ڪلاس ماسٽر / ماسترياڻي</p>
-            </div>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
+  <div class="row">
+    <div class="number">12.</div>
+    <div class="label">اسڪول ڇڏڻ جي تاريخ</div>
+    <div class="line">${formatDate(data.leaving_date)}</div>
+  </div>
 
-    console.log('Launching Puppeteer...');
+  <div class="row">
+    <div class="number">13.</div>
+    <div class="label">ڇڏڻ وقت ڪلاس</div>
+    <div class="line">${data.class_on_leaving || ''}</div>
+  </div>
+
+  <div class="row">
+    <div class="number">14.</div>
+    <div class="label">ڇڏڻ جو سبب</div>
+    <div class="line">${data.reason_for_leaving || ''}</div>
+  </div>
+
+  <div class="row">
+    <div class="number">15.</div>
+    <div class="label">تعليمي قابليت</div>
+    <div class="line">${data.educational_ability || ''}</div>
+  </div>
+
+  <div class="row">
+    <div class="number">16.</div>
+    <div class="label">چال چلت</div>
+    <div class="line">${data.character || ''}</div>
+  </div>
+
+  <div class="row">
+    <div class="number">17.</div>
+    <div class="label">ريمارڪس</div>
+    <div class="line">${data.remarks || ''}</div>
+  </div>
+
+  <div class="declaration">
+    سرٽيفڪيٽ ڏجي ٿو ته مهي ڄاڻايل تفصيل اسڪول جي جنرل رجسٽر مطابق صحيح آهن۔
+  </div>
+
+  <div class="signatures">
+    <div class="sign">
+      <div class="sign-line"></div>
+      صحيح هيڊ ماسٽر / هيڊ مسٽريس
+    </div>
+
+    <div class="sign">
+      <div class="sign-line"></div>
+      صحيح ڪلاس ماسٽر / ماسترياڻي
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
+`;
+
     browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ['--no-sandbox']
     });
 
     const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+    await page.setContent(html, { waitUntil: 'networkidle0' });
 
-    console.log('Generating PDF...');
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
+      preferCSSPageSize: true, // ⭐ critical
       margin: {
         top: '10mm',
         bottom: '10mm',
@@ -338,23 +342,19 @@ router.post('/', async (req, res) => {
       }
     });
 
-    console.log('PDF generated successfully, size:', pdfBuffer.length, 'bytes');
-
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=leaving-certificate-${data.gr_number}.pdf`);
-    res.end(pdfBuffer, 'binary');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=leaving-certificate-${data.gr_number}.pdf`
+    );
 
-  } catch (error) {
-    console.error('=== Leaving Certificate PDF Generation Error ===');
-    console.error('Error:', error);
-    res.status(500).json({
-      error: 'PDF generation failed',
-      message: error.message
-    });
+    res.end(pdfBuffer);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'PDF generation failed' });
   } finally {
-    if (browser) {
-      await browser.close();
-    }
+    if (browser) await browser.close();
   }
 });
 

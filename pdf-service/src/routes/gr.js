@@ -1,268 +1,231 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
 const { getSindhiFontCSS } = require('../utils/fontLoader');
+
 const router = express.Router();
 
-// POST /pdf/gr
 router.post('/', async (req, res) => {
   let browser;
 
   try {
-    console.log('=== GR PDF Generation Started ===');
-
     const { students, classes, school } = req.body;
 
     if (!students || !Array.isArray(students)) {
       return res.status(400).json({ error: 'Students array is required' });
     }
 
-    // Helper function to get class name
-    const getClassName = (classId) => {
-      return classes?.find(c => c.id === classId)?.name || '';
-    };
+    const getClassName = (id) =>
+      classes?.find(c => c.id === id)?.name || '';
 
-    // Generate HTML content
-    const htmlContent = `
-      <!DOCTYPE html>
-<html lang="ur" dir="rtl">
-
+    const html = `
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <title>GR Register</title>
+<meta charset="UTF-8">
 
-    <style>
-        ${getSindhiFontCSS()}
+<style>
+${getSindhiFontCSS()}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+/* ✅ LEGAL LANDSCAPE SETUP */
+@page {
+  size: legal landscape;
+  margin: 8mm;
+}
 
-        body {
-            font-family: 'MB Sindhi Web SK 2.0', sans-serif;
-            direction: rtl;
-            line-height: 1.5;
-        }
+html, body {
+  width: 356mm;
+  height: 216mm;
+  margin: 0;
+  padding: 0;
+}
 
-        .container {
-            background: #fff;
-            padding: 6mm;
-        }
+body {
+  font-family: 'MB Sindhi Web SK 2.0';
+  direction: rtl;
+  font-size: 11px;
+}
 
-        .header {
-            display: flex;
-            flex-direction: row;
-            justify-content:space-evenly;
-            align-items: center;
-            text-align: center;
-            padding-bottom: 6mm;
-            margin-bottom: 6mm;
-        }
+/* ✅ Container */
+.container {
+  width: 100%;
+  padding: 4mm;
+  box-sizing: border-box;
+}
 
-        .header h1 {
-            font-size: 26px;
-            font-weight: bold;
-            line-height: 1.4;
-        }
+/* ✅ Header */
+.header {
+  text-align: center;
+  margin-bottom: 4mm;
+}
 
-        .header p {
-            font-size: 18px;
-            margin-top: 3mm;
-            line-height: 1.5;
-        }
+.header h1 {
+  font-size: 18px;
+  margin-bottom: 2mm;
+}
 
-        .header h2 {
-            margin-top: 4mm;
-            font-size: 18px;
-            text-decoration: underline;
-            text-underline-offset: 4px;
-            line-height: 1.4;
-        }
+.header p {
+  font-size: 14px;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
+.school-info {
+  margin-top: 2mm;
+  font-size: 13px;
+}
 
-        th,
-        td {
-            border: 1px solid #000;
-            padding: 3mm;
-            text-align: center;
-            vertical-align: middle;
-            height: 12mm;
-            line-height: 1.4;
-        }
+/* ✅ Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* ⭐ important */
+}
 
-        th {
-            background: #e5e7eb;
-            font-weight: 600;
-            font-size: 18px;
-            line-height: 1.4;
-        }
+/* repeat header on new pages */
+thead {
+  display: table-header-group;
+}
 
-        td {
-            font-size: 20px;
-            line-height: 1.4;
-        }
+th, td {
+  border: 1px solid #000;
+  padding: 2mm;
+  text-align: center;
+  vertical-align: middle;
+  word-wrap: break-word;
+}
 
-        thead {
-            display: table-header-group;
-        }
+/* header */
+th {
+  background: #e5e7eb;
+  font-size: 11px;
+  font-weight: bold;
+}
 
-        @page {
-            size: legal landscape;
-            margin: 10mm;
-        }
-        .school-info {
-            display: flex;
-            flex-direction: row;
-            gap: 8px;
-            align-items: center;
-            margin-top: 3mm;
-        }
-        .school-info .semis {
-            font-size: 20px;
-            color: rgb(243, 102, 102);
-        }
-        .school-info .code {
-            text-decoration: underline;
-            text-underline-offset: 4px;
-        }
+/* data */
+td {
+  font-size: 11px;
+}
 
-    </style>
+/* prevent row break */
+tr {
+  page-break-inside: avoid;
+}
+
+</style>
 </head>
 
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <div class="header">
-            <h1>شاگردن جي حاضري جو جنرل رجسٽر</h1>
-            <p>${school?.school_name || 'اسڪول'}</p>
-            <div class="school-info">
-                <p class="semis">سيمس ڪوڊ</p>
-                <p class="code">${school?.semis_code || ''}</p>
-            </div>
-        </div>
+  <div class="header">
+    <h1>شاگردن جو جنرل رجسٽر</h1>
+    <p>${school?.school_name || 'اسڪول'}</p>
+    <div class="school-info">
+      سيمس ڪوڊ: ${school?.semis_code || ''}
+    </div>
+  </div>
 
-        <table>
+  <table>
 
-            <!-- EXPLICIT COLUMN WIDTHS -->
-            <colgroup>
-                <col style="width:14mm">
-                <col style="width:35mm">
-                <col style="width:35mm">
-                <col style="width:28mm">
-                <col style="width:22mm">
-                <col style="width:22mm">
-                <col style="width:14mm">
-                <col style="width:10mm">
-                <col style="width:22mm">
-                <col style="width:18mm">
-                <col style="width:22mm">
-                <col style="width:14mm">
-                <col style="width:22mm">
-                <col style="width:20mm">
-                <col style="width:20mm">
-                <col style="width:16mm">
-                <col style="width:16mm">
-                <col style="width:20mm">
-            </colgroup>
+    <!-- Adjusted widths for LEGAL page -->
+    <colgroup>
+      <col style="width:18mm">
+      <col style="width:35mm">
+      <col style="width:35mm">
+      <col style="width:30mm">
+      <col style="width:25mm">
+      <col style="width:30mm">
+      <col style="width:20mm">
+      <col style="width:18mm">
+      <col style="width:30mm">
+      <col style="width:25mm">
+      <col style="width:25mm">
+      <col style="width:20mm">
+      <col style="width:25mm">
+      <col style="width:25mm">
+      <col style="width:30mm">
+      <col style="width:20mm">
+      <col style="width:20mm">
+      <col style="width:25mm">
+    </colgroup>
 
-            <thead>
-                <tr>
-                    <th>جنرل رجسٽر نمبر</th>
-                    <th>شاگرد جو نالو</th>
-                    <th>پيءُ جو نالو</th>
-                    <th>پيدائش جي جاءِ</th>
-                    <th>پيدائش جي تاريخ (انگن ۾)</th>
-                    <th>پيدائش جي تاريخ (لفظن ۾)</th>
-                    <th>مذهب</th>
-                    <th>ذات</th>
-                    <th>ڪھڙي اسڪول مان آيو</th>
-                    <th>ڪھڙي درجي ۾ داخل ٿيو</th>
-                    <th>داخلا جي تاريخ</th>
-                    <th>اسڪول ڇڏڻ جو سرٽيفڪيٽ</th>
-                    <th>اسڪول ڇڏڻ جي تاريخ</th>
-                    <th>اسڪول ڇڏڻ وقت درجو</th>
-                    <th>اسڪول ڇڏڻ جو سبب</th>
-                    <th>تعليمي لياقت</th>
-                    <th>چال چلت</th>
-                    <th>ريمارڪس</th>
-                </tr>
-            </thead>
-            <tbody>
-              ${students.map((student) => `
-                <tr>
-                  <td>${student.gr_number || ''}</td>
-                  <td>${student.name || ''}</td>
-                  <td>${student.father_name || ''}</td>
-                  <td>${student.place_of_birth || ''}</td>
-                  <td>${student.date_of_birth || ''}</td>
-                  <td>${student.date_of_birth_words || ''}</td>
-                  <td>${student.religion || ''}</td>
-                  <td>${student.caste || ''}</td>
-                  <td>${student.previous_school || ''}</td>
-                  <td>${getClassName(student.admission_class_id)}</td>
-                  <td>${student.admission_date || ''}</td>
-                  <td>${student.leaving_certificate_number || ''}</td>
-                  <td>${student.leaving_date || ''}</td>
-                  <td>${student.leaving_class_id ? getClassName(student.leaving_class_id) : ''}</td>
-                  <td>${student.reason_for_leaving || ''}</td>
-                  <td>${student.educational_qualification || ''}</td>
-                  <td>${student.conduct || ''}</td>
-                  <td>${student.remarks || ''}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </body>
-      </html>
-    `;
+    <thead>
+      <tr>
+        <th>GR نمبر</th>
+        <th>شاگرد جو نالو</th>
+        <th>پيءُ جو نالو</th>
+        <th>پيدائش جي جاءِ</th>
+        <th>تاريخ (انگن ۾)</th>
+        <th>تاريخ (لفظن ۾)</th>
+        <th>مذهب</th>
+        <th>ذات</th>
+        <th>پويون اسڪول</th>
+        <th>داخلا ڪلاس</th>
+        <th>داخلا تاريخ</th>
+        <th>سرٽيفڪيٽ نمبر</th>
+        <th>ڇڏڻ تاريخ</th>
+        <th>ڇڏڻ ڪلاس</th>
+        <th>سبب</th>
+        <th>تعليم</th>
+        <th>چال چلت</th>
+        <th>ريمارڪس</th>
+      </tr>
+    </thead>
 
-    console.log('Launching Puppeteer...');
+    <tbody>
+      ${students.map(s => `
+        <tr>
+          <td>${s.gr_number || ''}</td>
+          <td>${s.name || ''}</td>
+          <td>${s.father_name || ''}</td>
+          <td>${s.place_of_birth || ''}</td>
+          <td>${s.date_of_birth || ''}</td>
+          <td>${s.date_of_birth_words || ''}</td>
+          <td>${s.religion || ''}</td>
+          <td>${s.caste || ''}</td>
+          <td>${s.previous_school || ''}</td>
+          <td>${getClassName(s.admission_class_id)}</td>
+          <td>${s.admission_date || ''}</td>
+          <td>${s.leaving_certificate_number || ''}</td>
+          <td>${s.leaving_date || ''}</td>
+          <td>${getClassName(s.leaving_class_id)}</td>
+          <td>${s.reason_for_leaving || ''}</td>
+          <td>${s.educational_qualification || ''}</td>
+          <td>${s.conduct || ''}</td>
+          <td>${s.remarks || ''}</td>
+        </tr>
+      `).join('')}
+    </tbody>
+
+  </table>
+
+</div>
+
+</body>
+</html>
+`;
+
     browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ['--no-sandbox']
     });
 
     const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+    await page.setContent(html, { waitUntil: 'networkidle0' });
 
-    console.log('Generating PDF...');
     const pdfBuffer = await page.pdf({
-      format: 'A4',
       printBackground: true,
-      landscape: true,
-      margin: {
-        top: '10mm',
-        bottom: '10mm',
-        left: '10mm',
-        right: '10mm'
-      }
+      preferCSSPageSize: true // ⭐ CRITICAL FIX
     });
-
-    console.log('PDF generated successfully, size:', pdfBuffer.length, 'bytes');
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=gr-register.pdf');
-    res.end(pdfBuffer, 'binary');
+    res.end(pdfBuffer);
 
-  } catch (error) {
-    console.error('=== GR PDF Generation Error ===');
-    console.error('Error:', error);
-    res.status(500).json({
-      error: 'PDF generation failed',
-      message: error.message
-    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'PDF generation failed' });
   } finally {
-    if (browser) {
-      await browser.close();
-    }
+    if (browser) await browser.close();
   }
 });
 
