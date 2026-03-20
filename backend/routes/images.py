@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from database import get_db
-from models import School, Student
+from models import School, Student, User
 from auth import get_current_user
 from cloudinary_config import upload_image, delete_image
 import re
@@ -35,13 +35,13 @@ def validate_image(file: UploadFile):
 @router.post("/upload/school-logo")
 async def upload_school_logo(
     file: UploadFile = File(...),
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Upload school logo"""
 
     # Get user's school
-    school = db.query(School).filter(School.id == current_user["school_id"]).first()
+    school = db.query(School).filter(School.id == current_user.school_id).first()
     if not school:
         raise HTTPException(status_code=404, detail="School not found")
 
@@ -81,7 +81,7 @@ async def upload_school_logo(
 async def upload_student_photo(
     student_id: int,
     file: UploadFile = File(...),
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Upload student profile picture"""
@@ -89,7 +89,7 @@ async def upload_student_photo(
     # Get student
     student = db.query(Student).filter(
         Student.id == student_id,
-        Student.school_id == current_user["school_id"]
+        Student.school_id == current_user.school_id
     ).first()
 
     if not student:
@@ -128,12 +128,12 @@ async def upload_student_photo(
 
 @router.delete("/delete/school-logo")
 async def delete_school_logo(
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Delete school logo"""
 
-    school = db.query(School).filter(School.id == current_user["school_id"]).first()
+    school = db.query(School).filter(School.id == current_user.school_id).first()
     if not school:
         raise HTTPException(status_code=404, detail="School not found")
 
@@ -159,14 +159,14 @@ async def delete_school_logo(
 @router.delete("/delete/student-photo/{student_id}")
 async def delete_student_photo(
     student_id: int,
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Delete student profile picture"""
 
     student = db.query(Student).filter(
         Student.id == student_id,
-        Student.school_id == current_user["school_id"]
+        Student.school_id == current_user.school_id
     ).first()
 
     if not student:
