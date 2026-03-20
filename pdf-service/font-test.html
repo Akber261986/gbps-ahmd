@@ -1,191 +1,233 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+<html lang="ar" dir="rtl">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Font Test - ${testFont}</title>
-
+    <meta charset="UTF-8">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: '';
+            font-family: 'MB Sindhi Web SK 2.0';
             direction: rtl;
-            padding: 20mm;
+            padding: 0;
+            margin: 0;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 10mm;
-            padding-bottom: 5mm;
-            border-bottom: 2px solid #000;
+        .paper {
+            background: #f5f0c9;
+            border: 6px solid #2c7a4b;
+            padding: 40px;
         }
 
-        .header h1 {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 5mm;
-        }
-
-        .font-info {
-            font-size: 14px;
-            color: #666;
-            margin-top: 3mm;
-        }
-
-        .section {
-            margin-bottom: 8mm;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 3mm;
-            color: #333;
-        }
-
-        .sample-text {
-            font-size: 16px;
-            line-height: 1.8;
-            margin-bottom: 2mm;
-        }
-
-        .size-samples {
+        .header-section {
             display: flex;
-            flex-direction: column;
-            gap: 3mm;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
         }
 
-        .size-sample {
-            padding: 3mm;
-            background: #f5f5f5;
-            border-radius: 2mm;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 3mm;
-        }
-
-        th, td {
-            border: 1px solid #000;
-            padding: 3mm;
+        .title {
             text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px;
         }
 
-        th {
-            background: #e5e7eb;
-            font-weight: 600;
+        .top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 15px;
         }
 
-        @page {
-            size: A4;
-            margin: 15mm;
+        .row {
+            display: flex;
+            align-items: flex-end;
+            margin: 10px 8px;
+            font-size: 18px;
+            min-height: 24px;
+        }
+
+        .number {
+            width: 30px;
+        }
+
+        .label {
+            white-space: nowrap;
+        }
+
+        .line {
+            flex: 1;
+            border-bottom: 1px solid #000;
+            margin: 4px 16px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .two-col-row {
+            display: flex;
+            gap: 16px;
+            margin: 10px 8px;
+            min-height: 24px;
+        }
+
+        .col {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            font-size: 18px;
+        }
+
+        .signatures {
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .sign {
+            text-align: center;
+            width: 40%;
+            font-size: 14px;
+        }
+
+        .sign-line {
+            border-top: 1px solid #000;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="header">
-        <h1 style="font-family: 'MB Leeka Shabir Kumbhar 2.0';">فونٽ ٽيسٽ - Sindhi Font Test</h1>
-        <p class="font-info">Font Family: ${testFont}</p>
-        ${school?.school_name ? `<p class="font-info">${school.school_name}</p>` : ''}
-    </div>
+    <div class="paper">
 
-    <!-- Sample 1: School Headers -->
-    <div class="section">
-        <div class="section-title">اسڪول جا عنوان (School Headers)</div>
-        <div class="sample-text">شاگردن جي حاضري جو جنرل رجسٽر</div>
-        <div class="sample-text">داخلا فارم - Admission Form</div>
-        <div class="sample-text">اسڪول ڇڏڻ جو سرٽيفڪيٽ - School Leaving Certificate</div>
-        <div class="sample-text">نتيجن جي شيٽ - Result Sheet</div>
-    </div>
-
-    <!-- Sample 2: Common Fields -->
-    <div class="section">
-        <div class="section-title">عام فيلڊ (Common Fields)</div>
-        <div class="sample-text">شاگرد جو نالو: محمد احمد علي</div>
-        <div class="sample-text">پيءُ جو نالو: عبدالرحمن محمد</div>
-        <div class="sample-text">پيدائش جي جاءِ: حيدرآباد، سنڌ</div>
-        <div class="sample-text">پيدائش جي تاريخ: پندرهن جنوري ٻه هزار ڏهه</div>
-        <div class="sample-text">موجودہ پتہ: گلي نمبر 5، بلاڪ A، لطيف آباد</div>
-    </div>
-
-    <!-- Sample 3: Numbers and Dates -->
-    <div class="section">
-        <div class="section-title">نمبر ۽ تاريخون (Numbers & Dates)</div>
-        <div class="sample-text">جنرل رجسٽر نمبر: 451</div>
-        <div class="sample-text">رول نمبر: 25</div>
-        <div class="sample-text">داخلا جي تاريخ: 15-01-2020</div>
-        <div class="sample-text">سيمس ڪوڊ: 123456789</div>
-    </div>
-
-    <!-- Sample 4: Different Font Sizes -->
-    <div class="section">
-        <div class="section-title">مختلف سائيز (Different Sizes)</div>
-        <div class="size-samples">
-            <div class="size-sample" style="font-size: 12px;">12px: شاگرد جو نالو - محمد احمد علي</div>
-            <div class="size-sample" style="font-size: 14px;">14px: شاگرد جو نالو - محمد احمد علي</div>
-            <div class="size-sample" style="font-size: 16px;">16px: شاگرد جو نالو - محمد احمد علي</div>
-            <div class="size-sample" style="font-size: 18px;">18px: شاگرد جو نالو - محمد احمد علي</div>
-            <div class="size-sample" style="font-size: 20px;">20px: شاگرد جو نالو - محمد احمد علي</div>
+        <div class="header-section">
+            <div style="flex:1; text-align:center;">
+                <div class="title" style="font-family: 'MB Leeka Shabir Kumbhar 2.0'">داخلہ فارم</div>
+                <div style="font-size:18px; margin-bottom:8px;">
+                    <strong>${school?.school_name || '—'}</strong>
+                </div>
+                <div style="font-size:16px;">
+                    <span>سيمس ڪوڊ: </span>
+                    <strong>${school?.semis_code || '—'}</strong>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <!-- Sample 5: Table Format -->
-    <div class="section">
-        <div class="section-title">ٽيبل فارميٽ (Table Format)</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>جنرل رجسٽر نمبر</th>
-                    <th>شاگرد جو نالو</th>
-                    <th>پيءُ جو نالو</th>
-                    <th>ڪلاس</th>
-                    <th>داخلا جي تاريخ</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>451</td>
-                    <td>محمد احمد علي</td>
-                    <td>عبدالرحمن محمد</td>
-                    <td>ڪلاس پنجون</td>
-                    <td>15-01-2020</td>
-                </tr>
-                <tr>
-                    <td>452</td>
-                    <td>فاطمه زهرا</td>
-                    <td>علي حسن</td>
-                    <td>ڪلاس ڇهون</td>
-                    <td>20-02-2020</td>
-                </tr>
-                <tr>
-                    <td>453</td>
-                    <td>عائشه بي بي</td>
-                    <td>محمد يوسف</td>
-                    <td>ڪلاس ستون</td>
-                    <td>10-03-2020</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Sample 6: Long Paragraph -->
-    <div class="section">
-        <div class="section-title">ڊگهو پيراگراف (Long Paragraph)</div>
-        <div class="sample-text">
-            هي شاگرد اسان جي اسڪول ۾ ڪلاس پهرين ۾ داخل ٿيو هو. هن جو رويو تمام سٺو آهي ۽ پڙهائي ۾ به تمام هوشيار آهي.
-            هن پنهنجي استادن جو احترام ڪندو آهي ۽ ٻين شاگردن سان به سٺو سلوڪ ڪندو آهي. اسان کي اميد آهي ته هي شاگرد
-            مستقبل ۾ تمام ڪامياب ٿيندو ۽ پنهنجي خاندان ۽ اسڪول جو نالو روشن ڪندو.
+        <div class="row">
+            <span class="number">1.</span>
+            <span class="label">جنرل رجسٽر نمبر</span>
+            <span class="line">${student.gr_number || ''}</span>
         </div>
+
+        <div class="row">
+            <span class="number">2.</span>
+            <span class="label">داخلہ جي تاريخ</span>
+            <span class="line">${formatDate(student.admission_date)}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">3.</span>
+            <span class="label">شاگرد جو نالو</span>
+            <span class="line">${student.name || ''}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">4.</span>
+            <span class="label">والد جو نالو</span>
+            <span class="line">${student.father_name || ''}</span>
+        </div>
+
+        <div class="two-col-row">
+            <div class="col">
+                <span class="number">5.</span>
+                <span class="label">قوم</span>
+                <span class="line">${student.qom || ''}</span>
+            </div>
+            <div class="col">
+                <span class="number">6.</span>
+                <span class="label">ذات</span>
+                <span class="line">${student.caste || ''}</span>
+            </div>
+        </div>
+
+        <div class="two-col-row">
+            <div class="col">
+                <span class="number">7.</span>
+                <span class="label"> سرپرست جو نالو</span>
+                <span class="line">${student.guardian_name || ''}</span>
+            </div>
+            <div class="col">
+                <span class="number">8.</span>
+                <span class="label"> بمعہ مائيٽي</span>
+                <span class="line">${student.relation_with_guardian || ''}</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <span class="number">9.</span>
+            <span class="label">سرپرست جو ڌنڌو</span>
+            <span class="line">${student.guardian_occupation || ''}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">10.</span>
+            <span class="label">پيدائش جي جاءِ</span>
+            <span class="line">${student.place_of_birth || ''}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">11.</span>
+            <span class="label">پيدائش جي تاريخ</span>
+            <span class="line">${formatDate(student.date_of_birth)}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">12.</span>
+            <span class="label">پيدائش جي تاريخ لفظن ۾</span>
+            <span class="line">${student.date_of_birth_in_letter || ''}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">13.</span>
+            <span class="label">ڪھڙي اسڪول مان آيو</span>
+            <span class="line">${student.previous_school || ''}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">14.</span>
+            <span class="label"> ڪهڙي ڪلاس ۾ داخل ٿيو / ٿي</span>
+            <span class="line">${className}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">15.</span>
+            <span class="label">سرپرست جي صحيح</span>
+            <span class="line"></span>
+        </div>
+
+        <div class="row">
+            <span class="number">16.</span>
+            <span class="label">داخلہ وقت عمر</span>
+            <span class="line">${age ? age.y : ''} سال</span>
+            <span class="line">${age ? age.m : ''} مھينا </span>
+            <span class="line">${age ? age.d : ''} ڏينھن</span>
+        </div>
+
+        <div class="signatures">
+
+            <div class="sign">
+                <div class="sign-line"></div>
+                <p>صحيح ڪلاس ماسٽر / ماسترياڻي</p>
+            </div>
+
+            <div class="sign">
+                <div class="sign-line"></div>
+                <p>صحيح هيڊ ماسٽر / هيڊ مسٽريس</p>
+            </div>
+
+        </div>
+
     </div>
 
 </body>
+
 </html>

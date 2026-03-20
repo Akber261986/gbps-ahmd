@@ -56,267 +56,236 @@ router.post('/', async (req, res) => {
     const html = `
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-<meta charset="UTF-8">
-<style>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'MB Sindhi Web SK 2.0';
+            direction: rtl;
+            padding: 0;
+            margin: 0;
+        }
 
-body{
-  font-family: 'MB Sindhi Web SK 2.0', sans-serif;
-  direction: rtl;
-  padding:0;
-  margin:0;
-}
+        .paper {
+            background: #f5f0c9;
+            border: 6px solid #2c7a4b;
+            padding: 40px;
+        }
 
-.paper{
-    background:#f5f0c9;
-    border:6px solid #2c7a4b;
-    padding:40px;
-  }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
 
-  .header-section{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    margin-bottom:20px;
-  }
+        .title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
 
-  .logo-container{
-    width:80px;
-    height:80px;
-  }
+        .top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
 
-  .logo-container img{
-    width:100%;
-    height:100%;
-    object-fit:contain;
-  }
+        .row {
+            display: flex;
+            align-items: flex-end;
+            margin: 10px 8px;
+            font-size: 18px;
+            min-height: 24px;
+        }
 
-  .student-photo-container{
-    width:100px;
-    height:120px;
-    border:2px solid #2c7a4b;
-  }
+        .number {
+            width: 30px;
+        }
 
-  .student-photo-container img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-  }
+        .label {
+            white-space: nowrap;
+        }
 
-  .title{
-    text-align:center;
-    font-size:28px;
-    font-weight:bold;
-    margin-bottom:15px;
-  }
+        .line {
+            flex: 1;
+            border-bottom: 1px solid #000;
+            margin: 4px 16px;
+            text-align: center;
+            font-size: 18px;
+        }
 
-  .top{
-    display:flex;
-    justify-content:space-between;
-    font-size:14px;
-    margin-bottom:15px;
-  }
+        .two-col-row {
+            display: flex;
+            gap: 16px;
+            margin: 10px 8px;
+            min-height: 24px;
+        }
 
-  .row{
-    display:flex;
-    align-items:flex-end;
-    margin:10px 8px;
-    font-size:18px;
-    min-height:24px;
-  }
+        .col {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            font-size: 18px;
+        }
 
-  .number{
-    width:30px;
-  }
+        .signatures {
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+        }
 
-  .label{
-    white-space:nowrap;
-  }
+        .sign {
+            text-align: center;
+            width: 40%;
+            font-size: 14px;
+        }
 
-  .line{
-    flex:1;
-    border-bottom:1px solid #000;
-    margin:8px 16px;
-    text-align:center;
-    font-size:20px;
-  }
-
-  .two-col-row{
-    display:flex;
-    gap:16px;
-    margin:10px 8px;
-    min-height:24px;
-  }
-
-  .col{
-    flex:1;
-    display:flex;
-    align-items:flex-end;
-    font-size:18px;
-  }
-
-.signatures{
-  margin-top:40px;
-  display:flex;
-  justify-content:space-between;
-}
-
-.sign{
-  text-align:center;
-  width:40%;
-  font-size:14px;
-}
-
-.sign-line{
-  border-top:1px solid #000;
-  margin-bottom:5px;
-}
-
-</style>
+        .sign-line {
+            border-top: 1px solid #000;
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="paper">
+    <div class="paper">
 
-<div class="header-section">
-  <div class="logo-container">
-    ${school?.logo_url ? `<img src="${school.logo_url}" alt="School Logo" />` : ''}
-  </div>
+        <div class="header-section">
+            <div style="flex:1; text-align:center;">
+                <div class="title" style="font-family: 'MB Leeka Shabir Kumbhar 2.0'">داخلہ فارم</div>
+                <div style="font-size:18px; margin-bottom:8px;">
+                    <strong>${school?.school_name || '—'}</strong>
+                </div>
+                <div style="font-size:16px;">
+                    <span>سيمس ڪوڊ: </span>
+                    <strong>${school?.semis_code || '—'}</strong>
+                </div>
+            </div>
+        </div>
 
-  <div style="flex:1; text-align:center;">
-    <div class="title" style="font-family: 'MB Leeka Shabir Kumbhar 2.0';>داخلہ فارم</div>
-    <div style="font-size:18px; margin-bottom:8px;">
-      <strong>${school?.school_name || '—'}</strong>
+        <div class="row">
+            <span class="number">1.</span>
+            <span class="label">جنرل رجسٽر نمبر</span>
+            <span class="line">${student.gr_number || ''}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">2.</span>
+            <span class="label">داخلہ جي تاريخ</span>
+            <span class="line">${formatDate(student.admission_date)}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">3.</span>
+            <span class="label">شاگرد جو نالو</span>
+            <span class="line">${student.name || ''}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">4.</span>
+            <span class="label">والد جو نالو</span>
+            <span class="line">${student.father_name || ''}</span>
+        </div>
+
+        <div class="two-col-row">
+            <div class="col">
+                <span class="number">5.</span>
+                <span class="label">قوم</span>
+                <span class="line">${student.qom || ''}</span>
+            </div>
+            <div class="col">
+                <span class="number">6.</span>
+                <span class="label">ذات</span>
+                <span class="line">${student.caste || ''}</span>
+            </div>
+        </div>
+
+        <div class="two-col-row">
+            <div class="col">
+                <span class="number">7.</span>
+                <span class="label"> سرپرست جو نالو</span>
+                <span class="line">${student.guardian_name || ''}</span>
+            </div>
+            <div class="col">
+                <span class="number">8.</span>
+                <span class="label"> بمعہ مائيٽي</span>
+                <span class="line">${student.relation_with_guardian || ''}</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <span class="number">9.</span>
+            <span class="label">سرپرست جو ڌنڌو</span>
+            <span class="line">${student.guardian_occupation || ''}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">10.</span>
+            <span class="label">پيدائش جي جاءِ</span>
+            <span class="line">${student.place_of_birth || ''}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">11.</span>
+            <span class="label">پيدائش جي تاريخ</span>
+            <span class="line">${formatDate(student.date_of_birth)}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">12.</span>
+            <span class="label">پيدائش جي تاريخ لفظن ۾</span>
+            <span class="line">${student.date_of_birth_in_letter || ''}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">13.</span>
+            <span class="label">ڪھڙي اسڪول مان آيو</span>
+            <span class="line">${student.previous_school || ''}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">14.</span>
+            <span class="label"> ڪهڙي ڪلاس ۾ داخل ٿيو / ٿي</span>
+            <span class="line">${className}</span>
+        </div>
+
+        <div class="row">
+            <span class="number">15.</span>
+            <span class="label">سرپرست جي صحيح</span>
+            <span class="line"></span>
+        </div>
+
+        <div class="row">
+            <span class="number">16.</span>
+            <span class="label">داخلہ وقت عمر</span>
+            <span class="line">${age ? age.y : ''} سال</span>
+            <span class="line">${age ? age.m : ''} مھينا </span>
+            <span class="line">${age ? age.d : ''} ڏينھن</span>
+        </div>
+
+        <div class="signatures">
+
+            <div class="sign">
+                <div class="sign-line"></div>
+                <p>صحيح ڪلاس ماسٽر / ماسترياڻي</p>
+            </div>
+
+            <div class="sign">
+                <div class="sign-line"></div>
+                <p>صحيح هيڊ ماسٽر / هيڊ مسٽريس</p>
+            </div>
+
+        </div>
+
     </div>
-    <div style="font-size:16px;">
-      <span>سيمس ڪوڊ: </span>
-      <strong>${school?.semis_code || '—'}</strong>
-    </div>
-  </div>
-
-  <div class="student-photo-container">
-    ${student?.profile_picture_url ? `<img src="${student.profile_picture_url}" alt="Student Photo" />` : ''}
-  </div>
-</div>
-
-<div class="row">
-<span class="number">1.</span>
-<span class="label">جنرل رجسٽر نمبر</span>
-<span class="line">${student.gr_number || ''}</span>
-</div>
-
-<div class="row">
-<span class="number">2.</span>
-<span class="label">داخلہ جي تاريخ</span>
-<span class="line">${formatDate(student.admission_date)}</span>
-</div>
-
-<div class="row">
-<span class="number">3.</span>
-<span class="label">شاگرد جو نالو</span>
-<span class="line">${student.name || ''}</span>
-</div>
-
-<div class="row">
-<span class="number">4.</span>
-<span class="label">والد جو نالو</span>
-<span class="line">${student.father_name || ''}</span>
-</div>
-
-<div class="two-col-row">
-  <div class="col">
-    <span class="number">5.</span>
-    <span class="label">قوم</span>
-    <span class="line">${student.qom || ''}</span>
-  </div>
-  <div class="col">
-    <span class="number">6.</span>
-    <span class="label">ذات</span>
-    <span class="line">${student.caste || ''}</span>
-  </div>
-</div>
-
-<div class="two-col-row">
-  <div class="col">
-    <span class="number">7.</span>
-    <span class="label"> سرپرست جو نالو</span>
-    <span class="line">${student.guardian_name || ''}</span>
-  </div>
-  <div class="col">
-    <span class="number">8.</span>
-    <span class="label"> بمعہ مائيٽي</span>
-    <span class="line">${student.relation_with_guardian || ''}</span>
-  </div>
-</div>
-
-<div class="row">
-<span class="number">9.</span>
-<span class="label">سرپرست جو ڌنڌو</span>
-<span class="line">${student.guardian_occupation || ''}</span>
-</div>
-
-<div class="row">
-<span class="number">10.</span>
-<span class="label">پيدائش جي جاءِ</span>
-<span class="line">${student.place_of_birth || ''}</span>
-</div>
-
-<div class="row">
-<span class="number">11.</span>
-<span class="label">پيدائش جي تاريخ</span>
-<span class="line">${formatDate(student.date_of_birth)}</span>
-</div>
-
-<div class="row">
-<span class="number">12.</span>
-<span class="label">پيدائش جي تاريخ لفظن ۾</span>
-<span class="line">${student.date_of_birth_in_letter || ''}</span>
-</div>
-
-<div class="row">
-<span class="number">13.</span>
-<span class="label">ڪھڙي اسڪول مان آيو</span>
-<span class="line">${student.previous_school || ''}</span>
-</div>
-
-<div class="row">
-<span class="number">14.</span>
-<span class="label"> ڪهڙي ڪلاس ۾ داخل ٿيو / ٿي</span>
-<span class="line">${className}</span>
-</div>
-
-<div class="row">
-<span class="number">15.</span>
-<span class="label">سرپرست جي صحيح</span>
-<span class="line"></span>
-</div>
-
-<div class="row">
-<span class="number">16.</span>
-<span class="label">داخلہ وقت عمر</span>
-<span class="line">${age ? age.y : ''} سال</span>
-<span class="line">${age ? age.m : ''} مھينا </span>
-<span class="line">${age ? age.d : ''} ڏينھن</span>
-</div>
-
-<div class="signatures">
-
-<div class="sign">
-<div class="sign-line"></div>
-<p>صحيح ڪلاس ماسٽر / ماسترياڻي</p>
-</div>
-
-<div class="sign">
-<div class="sign-line"></div>
-<p>صحيح هيڊ ماسٽر / هيڊ مسٽريس</p>
-</div>
-
-</div>
-
-</div>
 
 </body>
+
 </html>
 `;
 
