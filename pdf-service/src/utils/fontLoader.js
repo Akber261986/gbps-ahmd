@@ -42,8 +42,19 @@ function getSindhiFontCSS() {
   return getFontFaceCSS('MB Sindhi Web SK 2.0', 'MB-Sindhi-Web-SK-2.0.ttf');
 }
 
+/**
+ * Get MB Leeka Shabir Kumbhar font CSS
+ * @param {string} fontFamily - Font family name
+ * @param {string} fontFileName - Font file name
+ * @returns {string} CSS @font-face declaration for MB Leeka Shabir Kumbhar
+ */
+function mbLeekaShabir(fontFamily, fontFileName) {
+  return getFontFaceCSS(fontFamily, fontFileName);
+}
+
 module.exports = {
   loadFontAsBase64,
   getFontFaceCSS,
-  getSindhiFontCSS
+  getSindhiFontCSS,
+  mbLeekaShabir
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
-const { getSindhiFontCSS } = require('../utils/fontLoader');
+const { getSindhiFontCSS, mbLeekaShabir } = require('../utils/fontLoader');
 const router = express.Router();
 
 // Helper function to calculate student age
@@ -62,6 +62,7 @@ router.post('/', async (req, res) => {
     <meta charset="UTF-8">
     <style>
         ${getSindhiFontCSS()}
+        ${mbLeekaShabir('MB-Leeka-Shabir-Kumbhar-2.0', 'MB-Leeka-Shabir-Kumbhar-2.0.ttf')}
 
         body {
             font-family: 'MB Sindhi Web SK 2.0';
@@ -165,7 +166,7 @@ router.post('/', async (req, res) => {
 
         <div class="header-section">
             <div style="flex:1; text-align:center;">
-                <div class="title" style="font-family: 'MB Leeka Shabir Kumbhar 2.0'">داخلہ فارم</div>
+                <div class="title" style="font-family: 'MB-Leeka-Shabir-Kumbhar-2.0'">داخلہ فارم</div>
                 <div style="font-size:18px; margin-bottom:8px;">
                     <strong>${school?.school_name || '—'}</strong>
                 </div>
