@@ -115,6 +115,29 @@ const AddResultPage = () => {
     setSuccessMessage('');
     setError(null);
 
+    // Validate marks
+    if (formData.marks_obtained !== null && formData.marks_obtained < 0) {
+      setError('حاصل ڪيل نمبر منفي نٿا ٿي سگهن');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.total_marks !== null && formData.total_marks < 0) {
+      setError('ڪل نمبر منفي نٿا ٿي سگهن');
+      setLoading(false);
+      return;
+    }
+
+    if (
+      formData.marks_obtained !== null &&
+      formData.total_marks !== null &&
+      formData.marks_obtained > formData.total_marks
+    ) {
+      setError('حاصل ڪيل نمبر ڪل نمبرن کان وڌيڪ نٿا ٿي سگهن');
+      setLoading(false);
+      return;
+    }
+
     try {
       await gradeApi.create(formData);
       setSuccessMessage('نتيجه ڪاميابيءَ سان شامل ڪيو ويو!');
