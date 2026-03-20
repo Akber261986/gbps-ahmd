@@ -1,6 +1,6 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
-const { getSindhiFontCSS } = require('../utils/fontLoader');
+const { getSindhiFontCSS, mbLeekaShabir } = require('../utils/fontLoader');
 const router = express.Router();
 
 // POST /pdf/leaving-certificate
@@ -31,6 +31,7 @@ router.post('/', async (req, res) => {
         <meta charset="UTF-8">
         <style>
           ${getSindhiFontCSS()}
+          ${mbLeekaShabir('MB-Leeka-Shabir-Kumbhar-2.0', 'MB-Leeka-Shabir-Kumbhar-2.0.ttf')}
 
           @page {
             size: A4;
@@ -38,10 +39,11 @@ router.post('/', async (req, res) => {
           }
 
           body {
-            font-family: 'MB Sindhi Web SK 2.0', sans-serif;
+            font-family: 'MB Sindhi Web SK 2.0';
             direction: rtl;
             padding: 0;
             margin: 0;
+            line-height: 1.6;
           }
 
           .paper {
@@ -56,7 +58,7 @@ router.post('/', async (req, res) => {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
           }
 
           .logo-container {
@@ -92,27 +94,30 @@ router.post('/', async (req, res) => {
             text-align: center;
             font-size: 24px;
             font-weight: bold;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            line-height: 1.4;
           }
 
           .school-info {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             font-size: 16px;
+            line-height: 1.5;
           }
 
           .school-info div {
-            margin-bottom: 6px;
+            margin-bottom: 8px;
           }
 
           .row {
             display: flex;
             align-items: flex-end;
-            margin: 7px 8px;
+            margin: 10px 8px;
             font-size: 18px;
-            min-height: 20px;
+            min-height: 26px;
+            line-height: 1.5;
           }
 
           .number {
@@ -121,6 +126,7 @@ router.post('/', async (req, res) => {
 
           .label {
             white-space: nowrap;
+            line-height: 1.5;
           }
 
           .line {
@@ -129,6 +135,7 @@ router.post('/', async (req, res) => {
             margin: 6px 14px;
             text-align: center;
             font-size: 20px;
+            line-height: 1.5;
           }
 
           .declaration {
@@ -165,7 +172,7 @@ router.post('/', async (req, res) => {
             </div>
 
             <div style="flex:1; text-align:center;">
-              <div class="title">اسڪول ڇڏڻ جو سرٽيفڪيٽ</div>
+              <div class="title" style="font-family: 'MB-Leeka-Shabir-Kumbhar-2.0'">اسڪول ڇڏڻ جو سرٽيفڪيٽ</div>
               <div style="font-size:16px; margin-bottom:6px;">
                 <strong>${school?.school_name || '—'}</strong>
               </div>

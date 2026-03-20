@@ -42,6 +42,7 @@ router.post('/', async (req, res) => {
         body {
             font-family: 'MB Sindhi Web SK 2.0', sans-serif;
             direction: rtl;
+            line-height: 1.5;
         }
 
         .container {
@@ -55,25 +56,28 @@ router.post('/', async (req, res) => {
             justify-content:space-evenly;
             align-items: center;
             text-align: center;
-            padding-bottom: 5mm;
-            margin-bottom: 5mm;
+            padding-bottom: 6mm;
+            margin-bottom: 6mm;
         }
 
         .header h1 {
             font-size: 26px;
             font-weight: bold;
+            line-height: 1.4;
         }
 
         .header p {
             font-size: 18px;
-            margin-top: 2mm;
+            margin-top: 3mm;
+            line-height: 1.5;
         }
 
         .header h2 {
-            margin-top: 3mm;
+            margin-top: 4mm;
             font-size: 18px;
             text-decoration: underline;
             text-underline-offset: 4px;
+            line-height: 1.4;
         }
 
         table {
@@ -85,20 +89,23 @@ router.post('/', async (req, res) => {
         th,
         td {
             border: 1px solid #000;
-            padding: 2mm;
+            padding: 3mm;
             text-align: center;
             vertical-align: middle;
-            height: 10mm;
+            height: 12mm;
+            line-height: 1.4;
         }
 
         th {
             background: #e5e7eb;
             font-weight: 600;
             font-size: 18px;
+            line-height: 1.4;
         }
 
         td {
             font-size: 20px;
+            line-height: 1.4;
         }
 
         thead {

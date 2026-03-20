@@ -39,6 +39,7 @@ router.post('/', async (req, res) => {
     body {
       margin: 0;
       font-family: 'MB Sindhi Web SK 2.0', sans-serif;
+      line-height: 1.5;
     }
 
     table {
@@ -55,14 +56,18 @@ router.post('/', async (req, res) => {
       border: 1px solid #000;
       text-align: center;
       vertical-align: middle;
+      padding: 2mm;
+      line-height: 1.4;
     }
 
     th {
       font-size: 18px;
+      line-height: 1.4;
     }
 
     td {
       font-size: 20px;
+      line-height: 1.4;
     }
 
     .sindhi {
@@ -72,7 +77,8 @@ router.post('/', async (req, res) => {
     .sindhi .header-title {
       font-size: 26pt;
       font-weight: bold;
-
+      line-height: 1.4;
+      margin-bottom: 3mm;
     }
 
     .s-name {
@@ -80,6 +86,7 @@ router.post('/', async (req, res) => {
       font-size: 16pt;
       text-decoration: underline;
       text-underline-offset: 6px;
+      line-height: 1.4;
     }
 
     .header-sub {
@@ -88,7 +95,8 @@ router.post('/', async (req, res) => {
       align-items: center;
       justify-content: center;
       gap: 10mm;
-      padding: 1mm;
+      padding: 2mm;
+      line-height: 1.5;
     }
 
     .class-header {

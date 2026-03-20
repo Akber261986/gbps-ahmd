@@ -68,6 +68,7 @@ router.post('/', async (req, res) => {
             direction: rtl;
             padding: 0;
             margin: 0;
+            line-height: 1.6;
         }
 
         .paper {
@@ -80,14 +81,15 @@ router.post('/', async (req, res) => {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .title {
             text-align: center;
             font-size: 28px;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            line-height: 1.4;
         }
 
         .top {
@@ -100,9 +102,10 @@ router.post('/', async (req, res) => {
         .row {
             display: flex;
             align-items: flex-end;
-            margin: 10px 8px;
+            margin: 12px 8px;
             font-size: 18px;
-            min-height: 24px;
+            min-height: 28px;
+            line-height: 1.5;
         }
 
         .number {
@@ -111,21 +114,23 @@ router.post('/', async (req, res) => {
 
         .label {
             white-space: nowrap;
+            line-height: 1.5;
         }
 
         .line {
             flex: 1;
             border-bottom: 1px solid #000;
-            margin: 4px 16px;
+            margin: 6px 16px;
             text-align: center;
-            font-size: 18px;
+            font-size: 20px;
+            line-height: 1.5;
         }
 
         .two-col-row {
             display: flex;
             gap: 16px;
-            margin: 10px 8px;
-            min-height: 24px;
+            margin: 12px 8px;
+            min-height: 28px;
         }
 
         .col {
