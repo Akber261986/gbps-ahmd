@@ -197,7 +197,6 @@ class SchoolLeavingCertificate(Base):
     gr_number = Column(String(50), nullable=False)  # Copy from student record
     student_name = Column(String(100), nullable=False)  # Copy from student record
     father_name = Column(String(100), nullable=False)  # Copy from student record
-    student_photo_url = Column(String(500), nullable=True)  # Copy from student record
     qom = Column(String(50), nullable=True)  # Copy from student record
     caste = Column(String(100), nullable=True)  # Copy from student record
     place_of_birth = Column(String(150), nullable=True)  # Copy from student record
