@@ -58,6 +58,7 @@ const ViewAdmission = ({ formData, classes }: ViewAdmissionProps) => {
       className="
       w-full
       max-w-[800px]
+      mx-auto
       bg-[#f5f0c9]
       border-[6px]
       border-green-700
