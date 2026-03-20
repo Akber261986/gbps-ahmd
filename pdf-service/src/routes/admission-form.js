@@ -101,44 +101,72 @@ router.post('/', async (req, res) => {
         }
 
         .row {
-            display: flex;
-            align-items: flex-end;
+            display: block;
             margin: 12px 8px;
             font-size: 18px;
-            min-height: 28px;
+            min-height: 32px;
             line-height: 1.5;
+            position: relative;
         }
 
         .number {
+            display: inline-block;
             width: 30px;
+            vertical-align: bottom;
         }
 
         .label {
+            display: inline-block;
             white-space: nowrap;
             line-height: 1.5;
+            vertical-align: bottom;
         }
 
         .line {
-            flex: 1;
+            display: inline-block;
+            width: calc(100% - 200px);
             border-bottom: 1px solid #000;
-            margin: 2px 16px;
+            margin: 0 16px 4px 16px;
             text-align: center;
             font-size: 20px;
             line-height: 2.0;
+            vertical-align: bottom;
         }
 
         .two-col-row {
-            display: flex;
-            gap: 16px;
+            display: block;
             margin: 12px 8px;
-            min-height: 28px;
+            min-height: 32px;
         }
 
         .col {
-            flex: 1;
-            display: flex;
-            align-items: flex-end;
+            display: inline-block;
+            width: 48%;
             font-size: 18px;
+            vertical-align: bottom;
+        }
+
+        .col .number {
+            display: inline-block;
+            width: 30px;
+            vertical-align: bottom;
+        }
+
+        .col .label {
+            display: inline-block;
+            white-space: nowrap;
+            vertical-align: bottom;
+        }
+
+        .col .line {
+            display: inline-block;
+            width: calc(100% - 150px);
+            border-bottom: 1px solid #000;
+            margin: 0 10px 4px 10px;
+            text-align: center;
+            font-size: 20px;
+            line-height: 2.0;
+            vertical-align: bottom;
         }
 
         .signatures {

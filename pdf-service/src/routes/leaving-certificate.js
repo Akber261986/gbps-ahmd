@@ -112,30 +112,40 @@ router.post('/', async (req, res) => {
           }
 
           .row {
-            display: flex;
-            align-items: flex-end;
+            display: block;
             margin: 10px 8px;
             font-size: 18px;
-            min-height: 26px;
+            min-height: 30px;
             line-height: 1.5;
+            position: relative;
           }
 
           .number {
+            display: inline-block;
             width: 28px;
+            vertical-align: bottom;
           }
 
           .label {
+            display: inline-block;
             white-space: nowrap;
             line-height: 1.5;
+            vertical-align: bottom;
           }
 
           .line {
-            flex: 1;
+            display: inline-block;
+            width: calc(100% - 250px);
             border-bottom: 1px solid #000;
-            margin: 6px 14px;
+            margin: 0 14px 4px 14px;
             text-align: center;
             font-size: 20px;
-            line-height: 1.5;
+            line-height: 1.8;
+            vertical-align: bottom;
+          }
+
+          .row.two-fields .line {
+            width: calc(50% - 150px);
           }
 
           .declaration {
@@ -205,7 +215,7 @@ router.post('/', async (req, res) => {
             <span class="line">${data.father_name || ''}</span>
           </div>
 
-          <div class="row">
+          <div class="row two-fields">
             <span class="number">4.</span>
             <span class="label">قوم</span>
             <span class="line">${data.qom || ''}</span>
