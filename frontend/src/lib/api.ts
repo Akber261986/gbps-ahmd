@@ -89,7 +89,6 @@ export interface Student {
   remarks : string | null;
   gr_of_previos_school: string | null;
   admit_in_class: string | "ڪلاس پھريون";
-  profile_picture_url: string | null;
 }
 
 export interface Class {
@@ -103,7 +102,6 @@ export interface SchoolLeavingCertificate {
   gr_number: string;
   student_name: string;
   father_name: string;
-  student_photo_url: string | null;
   qom: string ;
   caste: string;
   place_of_birth: string;

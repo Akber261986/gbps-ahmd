@@ -83,7 +83,6 @@ class Student(Base):
     gr_number = Column(String(50), nullable=False, index=True)  # Manual entry, unique per school
     name = Column(String(100), nullable=False)                    # شاگIRD جو نالو
     father_name = Column(String(100), nullable=False)             # والد جو نالو
-    profile_picture_url = Column(String(500), nullable=True)      # Student photo URL
     place_of_birth = Column(String(150), nullable=True)           # جائے پیدائش
     date_of_birth = Column(Date, nullable=False)
     date_of_birth_in_letter = Column(String(100), nullable=True)  # تحرير ۾ ڄمڻ جي تاريخ

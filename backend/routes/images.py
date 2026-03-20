@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from database import get_db
-from models import School, Student, User
+from models import School, User
 from auth import get_current_user
 from cloudinary_config import upload_image, delete_image
 import re
@@ -77,55 +77,6 @@ async def upload_school_logo(
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/upload/student-photo/{student_id}")
-async def upload_student_photo(
-    student_id: int,
-    file: UploadFile = File(...),
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """Upload student profile picture"""
-
-    # Get student
-    student = db.query(Student).filter(
-        Student.id == student_id,
-        Student.school_id == current_user.school_id
-    ).first()
-
-    if not student:
-        raise HTTPException(status_code=404, detail="Student not found")
-
-    # Validate image
-    file_content = validate_image(file)
-
-    try:
-        # Delete old photo if exists
-        if student.profile_picture_url:
-            old_public_id = extract_public_id(student.profile_picture_url)
-            if old_public_id:
-                delete_image(old_public_id)
-
-        # Upload new photo
-        result = upload_image(
-            file_content=file_content,
-            folder="student_photos",
-            public_id=f"student_{student.id}_photo"
-        )
-
-        # Update student record
-        student.profile_picture_url = result["url"]
-        db.commit()
-        db.refresh(student)
-
-        return {
-            "message": "Student photo uploaded successfully",
-            "profile_picture_url": student.profile_picture_url
-        }
-
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
-
 @router.delete("/delete/school-logo")
 async def delete_school_logo(
     current_user: User = Depends(get_current_user),
@@ -151,41 +102,6 @@ async def delete_school_logo(
         db.commit()
 
         return {"message": "School logo deleted successfully"}
-
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.delete("/delete/student-photo/{student_id}")
-async def delete_student_photo(
-    student_id: int,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """Delete student profile picture"""
-
-    student = db.query(Student).filter(
-        Student.id == student_id,
-        Student.school_id == current_user.school_id
-    ).first()
-
-    if not student:
-        raise HTTPException(status_code=404, detail="Student not found")
-
-    if not student.profile_picture_url:
-        raise HTTPException(status_code=404, detail="No photo to delete")
-
-    try:
-        # Delete from Cloudinary
-        public_id = extract_public_id(student.profile_picture_url)
-        if public_id:
-            delete_image(public_id)
-
-        # Update database
-        student.profile_picture_url = None
-        db.commit()
-
-        return {"message": "Student photo deleted successfully"}
 
     except Exception as e:
         db.rollback()

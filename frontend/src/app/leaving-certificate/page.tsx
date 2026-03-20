@@ -12,7 +12,6 @@ interface CertificateFormData {
   gr_number: string;
   student_name: string;
   father_name: string;
-  student_photo_url: string;
   qom: string;
   caste: string;
   place_of_birth: string;
@@ -34,7 +33,6 @@ const initialForm: CertificateFormData = {
   gr_number: "",
   student_name: "",
   father_name: "",
-  student_photo_url: "",
   qom: "",
   caste: "",
   place_of_birth: "",
@@ -96,7 +94,6 @@ const LeavingCertificatePage = () => {
         gr_number: student.gr_number,
         student_name: student.name,
         father_name: student.father_name,
-        student_photo_url: student.profile_picture_url || "",
         qom: student.qom || "",
         caste: student.caste || "",
         place_of_birth: student.place_of_birth || "",
@@ -128,7 +125,6 @@ const LeavingCertificatePage = () => {
         gr_number: response.data.gr_number,
         student_name: response.data.student_name,
         father_name: response.data.father_name,
-        student_photo_url: response.data.student_photo_url || "",
         qom: response.data.qom || "",
         caste: response.data.caste || "",
         place_of_birth: response.data.place_of_birth || "",
