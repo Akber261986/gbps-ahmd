@@ -7,6 +7,8 @@ import Star from '@/components/star';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { convertToSindhiDate } from "@/lib/sindhi-date";
 import ConfirmDialog from '@/components/ConfirmDialog';
+import ImageUpload from '@/components/ImageUpload';
+import axios from 'axios';
 
 interface StudentFormData {
   gr_number: string;
@@ -62,6 +64,7 @@ function AdminStudentUpdate() {
   const [searchGr, setSearchGr] = useState("");
   const [editingStudentId, setEditingStudentId] = useState<number | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
 
   // Load classes on mount
   useEffect(() => {
@@ -94,6 +97,7 @@ function AdminStudentUpdate() {
       );
       if (student) {
         setEditingStudentId(student.id);
+        setProfilePictureUrl(student.profile_picture_url || null);
         setFormData({
           gr_number: student.gr_number,
           admission_date: student.admission_date,
@@ -119,6 +123,7 @@ function AdminStudentUpdate() {
       } else {
         setMessage("GR نمبر نه مليو");
         setEditingStudentId(null);
+        setProfilePictureUrl(null);
         setFormData(initialForm);
       }
     } catch (err) {
@@ -192,6 +197,49 @@ function AdminStudentUpdate() {
     setEditingStudentId(null);
     setSearchGr("");
     setMessage("");
+    setProfilePictureUrl(null);
+  };
+
+  const handlePhotoUpload = async (file: File) => {
+    if (!editingStudentId) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const token = localStorage.getItem('token');
+
+    const response = await axios.post(
+      `${apiUrl}/images/upload/student-photo/${editingStudentId}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setProfilePictureUrl(response.data.profile_picture_url);
+    setMessage('شاگرد جي تصوير ڪاميابي سان اپلوڊ ٿي وئي');
+  };
+
+  const handlePhotoDelete = async () => {
+    if (!editingStudentId) return;
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const token = localStorage.getItem('token');
+
+    await axios.delete(
+      `${apiUrl}/images/delete/student-photo/${editingStudentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setProfilePictureUrl(null);
+    setMessage('شاگرد جي تصوير ڪاميابي سان ڊليٽ ٿي وئي');
   };
 
   return (
@@ -274,6 +322,19 @@ function AdminStudentUpdate() {
           {/* Update Form - Only show when student is loaded */}
           {editingStudentId != null && (
             <form onSubmit={handleSubmit} className="space-y-8 mt-8 pt-8 border-t-2 border-gray-200">
+              {/* Student Photo Upload Section */}
+              <div className="bg-blue-50 p-6 rounded-xl">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">شاگرد جي تصوير</h3>
+                <ImageUpload
+                  currentImageUrl={profilePictureUrl}
+                  onUpload={handlePhotoUpload}
+                  onDelete={handlePhotoDelete}
+                  label="شاگرد جي تصوير اپلوڊ ڪريو"
+                  maxSizeMB={5}
+                  aspectRatio="square"
+                />
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-green-50 p-4 rounded-xl">
                   <label className="flex items-center gap-2 text-lg md:text-xl font-medium text-gray-700 mb-2">

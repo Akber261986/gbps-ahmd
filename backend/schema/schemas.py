@@ -143,6 +143,7 @@ class SchoolLeavingCertificateCreate(BaseModel):
     gr_number: str
     student_name: str
     father_name: str
+    student_photo_url: Optional[str] = None
     qom: Optional[str] = None
     caste: Optional[str] = None
     place_of_birth: Optional[str] = None
@@ -164,6 +165,7 @@ class SchoolLeavingCertificateOut(BaseModel):
     gr_number: str
     student_name: str
     father_name: str
+    student_photo_url: Optional[str] = None
     qom: Optional[str] = None
     caste: Optional[str] = None
     place_of_birth: Optional[str] = None

@@ -49,6 +49,36 @@ router.post('/', async (req, res) => {
             page-break-after: avoid;
           }
 
+          .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+          }
+
+          .logo-container {
+            width: 70px;
+            height: 70px;
+          }
+
+          .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+
+          .student-photo-container {
+            width: 90px;
+            height: 110px;
+            border: 2px solid #2c7a4b;
+          }
+
+          .student-photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
           .form-number {
             text-align: right;
             font-size: 11px;
@@ -126,15 +156,24 @@ router.post('/', async (req, res) => {
         <div class="paper">
           <div class="form-number">فارم نمبر 16</div>
 
-          <div class="title">اسڪول ڇڏڻ جو سرٽيفڪيٽ</div>
-
-          <div class="school-info">
-            <div>
-              <strong>${school?.school_name || '—'}</strong>
+          <div class="header-section">
+            <div class="logo-container">
+              ${school?.logo_url ? `<img src="${school.logo_url}" alt="School Logo" />` : ''}
             </div>
-            <div>
-              <span>سيمس ڪوڊ: </span>
-              <strong>${school?.semis_code || '—'}</strong>
+
+            <div style="flex:1; text-align:center;">
+              <div class="title">اسڪول ڇڏڻ جو سرٽيفڪيٽ</div>
+              <div style="font-size:16px; margin-bottom:6px;">
+                <strong>${school?.school_name || '—'}</strong>
+              </div>
+              <div style="font-size:14px;">
+                <span>سيمس ڪوڊ: </span>
+                <strong>${school?.semis_code || '—'}</strong>
+              </div>
+            </div>
+
+            <div class="student-photo-container">
+              ${data?.student_photo_url ? `<img src="${data.student_photo_url}" alt="Student Photo" />` : ''}
             </div>
           </div>
 

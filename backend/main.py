@@ -41,6 +41,7 @@ except ImportError:
     GENAI_NEW = False
 import os
 from datetime import timedelta
+from routes import images as images_router
 
 
 Base.metadata.create_all(bind=engine)
@@ -76,6 +77,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include routers
+app.include_router(images_router.router, prefix="/images", tags=["images"])
 
 # Create uploads directory only if not in serverless environment
 if not IS_SERVERLESS:
@@ -250,21 +254,59 @@ def update_user_profile(
 
 
 @app.post("/auth/upload-profile-image")
-def upload_profile_image(
+async def upload_profile_image(
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
-    """Upload profile image for current user."""
-    # Save the uploaded file
-    file_path = save_upload_file(file, "profiles")
+    """Upload profile image for current user using Cloudinary."""
+    from cloudinary_config import upload_image, delete_image
+    import re
 
-    # Update user's profile_image_url
-    user = db.query(User).filter(User.id == current_user.id).first()
-    user.profile_image_url = file_path
-    db.commit()
+    # Validate image file type
+    ALLOWED_IMAGE_TYPES = {'image/jpeg', 'image/jpg', 'image/png', 'image/webp'}
+    if file.content_type not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid file type. Only JPEG, PNG, and WebP images are allowed."
+        )
 
-    return {"profile_image_url": file_path}
+    # Validate file size (max 5MB)
+    file_content = await file.read()
+    MAX_FILE_SIZE = 5 * 1024 * 1024
+    if len(file_content) > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=400,
+            detail="File size exceeds 5MB limit."
+        )
+
+    try:
+        # Delete old profile image if exists
+        user = db.query(User).filter(User.id == current_user.id).first()
+        if user.profile_image_url:
+            # Extract public_id from URL
+            match = re.search(r'/upload/(?:v\d+/)?(.+)\.\w+$', user.profile_image_url)
+            if match:
+                old_public_id = match.group(1)
+                delete_image(old_public_id)
+
+        # Upload new profile image
+        result = upload_image(
+            file_content=file_content,
+            folder="user_profiles",
+            public_id=f"user_{user.id}_profile"
+        )
+
+        # Update user's profile_image_url
+        user.profile_image_url = result["url"]
+        db.commit()
+        db.refresh(user)
+
+        return {"profile_image_url": user.profile_image_url}
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ============ Password Reset Endpoints ============

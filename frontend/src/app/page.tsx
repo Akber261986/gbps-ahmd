@@ -29,7 +29,10 @@ export default function Home() {
                 <span className="text-green-700">{school?.school_name || 'School Management System'}</span>
               </h1>
               <p className="text-lg md:text-xl text-gray-700 mb-7 max-w-2xl mx-auto md:mx-0">
-                {school?.school_name || 'Our school'} is dedicated to providing quality education and fostering academic excellence for our students.
+                <span>
+                  
+                </span>
+                Our school is dedicated to providing quality education and fostering academic excellence for our students. With a rich history and a commitment to nurturing young minds, we strive to create a supportive and engaging learning environment where every student can thrive and reach their full potential.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-2 justify-center md:justify-start">

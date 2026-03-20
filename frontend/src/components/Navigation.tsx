@@ -131,11 +131,12 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href={isAuthenticated && hasSchool ? "/dashboard" : "/"} className="shrink-0 flex items-center">
+            {/* <Link href={isAuthenticated && hasSchool ? "/dashboard" : "/"} className="shrink-0 flex items-center">
               <span className="text-xl font-bold">
                 {isAuthenticated && school?.school_name ? school.school_name : 'اسڪول مئنيجمينٽ سسٽم'}
               </span>
-            </Link>
+            </Link> */}
+            
           </div>
 
           {/* Desktop Menu */}

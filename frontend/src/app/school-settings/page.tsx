@@ -87,7 +87,7 @@ export default function SchoolSettingsPage() {
       formData.append('file', file);
 
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      const response = await axios.post(`${apiUrl}/schools/upload-logo`, formData, {
+      const response = await axios.post(`${apiUrl}/images/upload/school-logo`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

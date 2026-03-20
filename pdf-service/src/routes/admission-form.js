@@ -73,6 +73,36 @@ body{
     padding:40px;
   }
 
+  .header-section{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:20px;
+  }
+
+  .logo-container{
+    width:80px;
+    height:80px;
+  }
+
+  .logo-container img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+  }
+
+  .student-photo-container{
+    width:100px;
+    height:120px;
+    border:2px solid #2c7a4b;
+  }
+
+  .student-photo-container img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+
   .title{
     text-align:center;
     font-size:28px;
@@ -149,15 +179,24 @@ body{
 
 <div class="paper">
 
-<div class="title">داخلہ فارم</div>
-
-<div style="display:flex; flex-direction:column; align-items:center; margin-bottom:15px; font-size:18px;">
-  <div style="margin-bottom:8px;">
-    <strong>${school?.school_name || '—'}</strong>
+<div class="header-section">
+  <div class="logo-container">
+    ${school?.logo_url ? `<img src="${school.logo_url}" alt="School Logo" />` : ''}
   </div>
-  <div>
-    <span>سيمس ڪوڊ: </span>
-    <strong>${school?.semis_code || '—'}</strong>
+
+  <div style="flex:1; text-align:center;">
+    <div class="title">داخلہ فارم</div>
+    <div style="font-size:18px; margin-bottom:8px;">
+      <strong>${school?.school_name || '—'}</strong>
+    </div>
+    <div style="font-size:16px;">
+      <span>سيمس ڪوڊ: </span>
+      <strong>${school?.semis_code || '—'}</strong>
+    </div>
+  </div>
+
+  <div class="student-photo-container">
+    ${student?.profile_picture_url ? `<img src="${student.profile_picture_url}" alt="Student Photo" />` : ''}
   </div>
 </div>
 
