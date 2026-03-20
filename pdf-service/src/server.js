@@ -5,6 +5,7 @@ const grRoute = require('./routes/gr');
 const leavingCertificateRoute = require('./routes/leaving-certificate');
 const resultsheetRoute = require('./routes/resultsheet');
 const genericPdfRoute = require('./routes/generic');
+const fontTestRoute = require('./routes/font-test');
 
 const app = express();
 const PORT = process.env.PORT || 7860;
@@ -24,7 +25,8 @@ app.get('/', (req, res) => {
       'POST /pdf/gr',
       'POST /pdf/leaving-certificate',
       'POST /pdf/resultsheet',
-      'POST /pdf/generic'
+      'POST /pdf/generic',
+      'POST /pdf/font-test'
     ]
   });
 });
@@ -35,6 +37,7 @@ app.use('/pdf/gr', grRoute);
 app.use('/pdf/leaving-certificate', leavingCertificateRoute);
 app.use('/pdf/resultsheet', resultsheetRoute);
 app.use('/pdf/generic', genericPdfRoute);
+app.use('/pdf/font-test', fontTestRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

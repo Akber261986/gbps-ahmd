@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
         }
 
         body {
-            font-family: 'MB Nargis New', 'MB Khursheed', sans-serif;
+            font-family: 'MB Sindhi Web SK 2.0', sans-serif;
             direction: rtl;
         }
 
@@ -76,7 +76,7 @@ router.post('/', async (req, res) => {
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 11px;
+            font-size: 14px;
         }
 
         th,
@@ -91,6 +91,11 @@ router.post('/', async (req, res) => {
         th {
             background: #e5e7eb;
             font-weight: 600;
+            font-size: 18px;
+        }
+
+        td {
+            font-size: 20px;
         }
 
         thead {

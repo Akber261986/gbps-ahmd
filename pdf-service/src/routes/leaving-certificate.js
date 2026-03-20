@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
           }
 
           body {
-            font-family: 'MB Nargis New', 'MB Khursheed', sans-serif;
+            font-family: 'MB Sindhi Web SK 2.0', sans-serif;
             direction: rtl;
             padding: 0;
             margin: 0;
@@ -108,7 +108,7 @@ router.post('/', async (req, res) => {
             display: flex;
             align-items: flex-end;
             margin: 7px 8px;
-            font-size: 13px;
+            font-size: 18px;
             min-height: 20px;
           }
 
@@ -125,7 +125,7 @@ router.post('/', async (req, res) => {
             border-bottom: 1px solid #000;
             margin: 6px 14px;
             text-align: center;
-            font-size: 14px;
+            font-size: 20px;
           }
 
           .declaration {

@@ -61,7 +61,7 @@ router.post('/', async (req, res) => {
 <style>
 
 body{
-  font-family: 'sans-serif', 'MB Khursheed', 'MB Nargis New';
+  font-family: 'MB Sindhi Web SK 2.0', sans-serif;
   direction: rtl;
   padding:0;
   margin:0;
@@ -121,7 +121,7 @@ body{
     display:flex;
     align-items:flex-end;
     margin:10px 8px;
-    font-size:14px;
+    font-size:18px;
     min-height:24px;
   }
 
@@ -138,7 +138,7 @@ body{
     border-bottom:1px solid #000;
     margin:8px 16px;
     text-align:center;
-    font-size:16px;
+    font-size:20px;
   }
 
   .two-col-row{
@@ -152,7 +152,7 @@ body{
     flex:1;
     display:flex;
     align-items:flex-end;
-    font-size:14px;
+    font-size:18px;
   }
 
 .signatures{
@@ -185,7 +185,7 @@ body{
   </div>
 
   <div style="flex:1; text-align:center;">
-    <div class="title">داخلہ فارم</div>
+    <div class="title" style="font-family: 'MB Leeka Shabir Kumbhar 2.0';>داخلہ فارم</div>
     <div style="font-size:18px; margin-bottom:8px;">
       <strong>${school?.school_name || '—'}</strong>
     </div>
