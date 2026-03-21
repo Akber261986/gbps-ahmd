@@ -58,7 +58,7 @@ body {
     border: 6px solid #2c7a4b;
     padding: 30px;
     width: 200mm;
-    min-height: 290mm;
+    min-height: 240mm;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     page-break-inside: avoid;
     page-break-after: avoid;
@@ -182,7 +182,7 @@ body {
 }
 
 .signatures {
-    margin-top: 60px;
+    margin-top: 80px;
     display: flex;
     justify-content: space-evenly;
 }

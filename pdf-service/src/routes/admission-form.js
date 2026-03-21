@@ -27,18 +27,29 @@ router.post('/', async (req, res) => {
 ${getSindhiFontCSS(mbLeekaShabir)}
 ${getSindhiFontCSS()}
 
-body{
-  font-family: 'MB Sindhi Web SK 2.0';
-  direction: rtl;
-  padding:0;
-  margin:0;
+body {
+    font-family: 'MB Sindhi Web SK 2.0';
+    direction: rtl;
+    padding: 0;
+    margin: 0;
+    line-height: 1.6;
+    background: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
 }
 
-.paper{
-    background:#f5f0c9;
-    border:6px solid #2c7a4b;
-    padding:40px;
-  }
+.paper {
+    background: #f5f0c9;
+    border: 6px solid #2c7a4b;
+    padding: 30px;
+    width: 200mm;
+    min-height: 240mm;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    page-break-inside: avoid;
+    page-break-after: avoid;
+}
+
   
   .title{
     text-align:center;
@@ -116,7 +127,7 @@ body{
 
 <div class="paper">
 
-<div class="title" style= "font-family: 'MB l'">داخلہ فارم</div>
+<div class="title" style= "font-family: 'mbLeekaShabir'">داخلا فارم</div>
 
 <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:15px; font-size:18px;">
   <div style="margin-bottom:8px;">
@@ -246,6 +257,7 @@ body{
 
 </body>
 </html>
+
 `;
 
     browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
