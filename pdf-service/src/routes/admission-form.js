@@ -10,6 +10,9 @@ router.post('/', async (req, res) => {
 
   try {
     const { student, school, classes } = req.body;
+    if (!student || typeof student !== 'object') {
+      return res.status(400).json({ error: 'Student data is required' });
+    }
 
     const admissionClass = classes?.find(c => c.id === student.admission_class_id);
     const className = admissionClass?.name || '';
@@ -17,15 +20,14 @@ router.post('/', async (req, res) => {
     const formatDate = (d) => d ? new Date(d).toLocaleDateString('en-GB') : '';
     const age = student_age(student.date_of_birth, student.admission_date);
 
-
     const html = `
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <style>
-${getSindhiFontCSS(mbLeekaShabir)}
 ${getSindhiFontCSS()}
+${mbLeekaShabir('MB-Leeka-Shabir-Kumbhar-2.0', 'MB-Leeka-Shabir-Kumbhar-2.0.ttf')}
 
 body {
     font-family: 'MB Sindhi Web SK 2.0';
@@ -127,15 +129,15 @@ body {
 
 <div class="paper">
 
-<div class="title" style= "font-family: 'mbLeekaShabir'">داخلا فارم</div>
+<div class="title" style="font-family: 'MB-Leeka-Shabir-Kumbhar-2.0'">داخلا فارم</div>
 
 <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:15px; font-size:18px;">
   <div style="margin-bottom:8px;">
-    <strong>${school.school_name || "—"}</strong>
+    <strong>${school?.school_name || "—"}</strong>
   </div>
   <div>
     <span>سيمس ڪوڊ: </span>
-    <strong>${school.semis_code || "—"}</strong>
+    <strong>${school?.semis_code || "—"}</strong>
   </div>
 </div>
 
@@ -273,6 +275,13 @@ body {
     res.setHeader('Content-Type', 'application/pdf');
     res.end(pdf);
 
+  } catch (error) {
+    console.error('=== Admission Form PDF Generation Error ===');
+    console.error(error);
+    res.status(500).json({
+      error: 'PDF generation failed',
+      message: error.message
+    });
   } finally {
     if (browser) await browser.close();
   }
