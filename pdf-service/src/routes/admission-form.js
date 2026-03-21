@@ -46,78 +46,81 @@ body {
 }
 
 .paper {
-    background: #f5f0c9;
-    border: 6px solid #2c7a4b;
-    padding: 30px;
-    width: 200mm;
-    min-height: 240mm;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    page-break-inside: avoid;
-    page-break-after: avoid;
+  background: #f5f0c9;
+  border: 6px solid #2c7a4b;
+  padding: 30px;
+  width: 150mm;
+  height: 210mm;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  page-break-inside: avoid;
+  page-break-after: avoid;
 }
 
-  
-  .title{
-    text-align:center;
-    font-size:28px;
-    font-weight:bold;
-    margin-bottom:15px;
-  }
-  
-  .top{
-    display:flex;
-    justify-content:space-between;
-    font-size:14px;
-    margin-bottom:15px;
-  }
-  
-  .row{
-    display:flex;
-    align-items:flex-end;
-    margin:10px 8px;
-    font-size:14px;
-    min-height:18px;
-  }
-  
-  .number{
-    width:30px;
-    font-family: 'Times New Roman', Times, serif;
-  }
-  
-  .label{
-    white-space:nowrap;
-  }
-  
-  .line{
-    flex:1;
-    border-bottom:1px solid #000;
-    margin:4px 16px;
-    text-align:center;
-    font-size:16px;
-  }
 
-  .digit{
-    font-family: 'Times New Roman', Times, serif;
-  }
+.title{
+  text-align:center;
+  font-size:28px;
+  font-weight:bold;
+  margin-bottom:15px;
+}
 
-  .two-col-row{
-    display:flex;
-    gap:16px;
-    margin:10px 8px;
-    min-height:18px;
-  }
-
-  .col{
-    flex:1;
-    display:flex;
-    align-items:flex-end;
-    font-size:14px;
-  }
-  
-.signatures{
-  margin-top:80px;
+.top{
   display:flex;
-  justify-content:space-evenly;
+  justify-content:space-between;
+  font-size:14px;
+  margin-bottom:15px;
+}
+
+.row{
+  display:flex;
+  align-items:flex-end;
+  margin:4px 8px;
+  font-size:14px;
+  min-height:18px;
+}
+
+.number{
+  width:30px;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.label{
+  white-space:nowrap;
+  font-size: 17px;
+}
+
+.line{
+  padding-bottom: 2px;
+  flex:1;
+  border-bottom:1px solid #000;
+  margin:4px 16px;
+  text-align:center;
+  font-size:16px;
+  font-weight: bold;
+}
+
+.digit{
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.two-col-row{
+  display:flex;
+  gap:16px;
+  margin:4px 8px;
+  min-height:18px;
+}
+
+.col{
+  flex:1;
+  display:flex;
+  align-items:flex-end;
+  font-size:14px;
+}
+
+.signatures{
+margin-top:60px;
+display:flex;
+justify-content:space-evenly;
 }
 
 .sign{
