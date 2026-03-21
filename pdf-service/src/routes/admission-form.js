@@ -50,7 +50,7 @@ body {
   border: 6px solid #2c7a4b;
   padding: 30px;
   width: 150mm;
-  height: 210mm;
+  height: 220mm;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   page-break-inside: avoid;
   page-break-after: avoid;
@@ -90,7 +90,7 @@ body {
 }
 
 .line{
-  padding-bottom: 2px;
+  padding-bottom: 4px;
   flex:1;
   border-bottom:1px solid #000;
   margin:4px 16px;
