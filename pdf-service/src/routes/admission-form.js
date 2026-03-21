@@ -56,86 +56,79 @@ body {
     page-break-after: avoid;
 }
 
-.title {
-  text-align: center;
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 15px;
+  
+  .title{
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+    margin-bottom:15px;
+  }
+  
+  .top{
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    margin-bottom:15px;
+  }
+  
+  .row{
+    display:flex;
+    align-items:flex-end;
+    margin:10px 8px;
+    font-size:14px;
+    min-height:18px;
+  }
+  
+  .number{
+    width:30px;
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
+  .label{
+    white-space:nowrap;
+  }
+  
+  .line{
+    flex:1;
+    border-bottom:1px solid #000;
+    margin:4px 16px;
+    text-align:center;
+    font-size:16px;
+  }
+
+  .digit{
+    font-family: 'Times New Roman', Times, serif;
+  }
+
+  .two-col-row{
+    display:flex;
+    gap:16px;
+    margin:10px 8px;
+    min-height:18px;
+  }
+
+  .col{
+    flex:1;
+    display:flex;
+    align-items:flex-end;
+    font-size:14px;
+  }
+  
+.signatures{
+  margin-top:80px;
+  display:flex;
+  justify-content:space-evenly;
 }
 
-.row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin: 4px 8px;
-  font-size: 16px;
-  min-height: 18px;
-  gap: 8px;
+.sign{
+  text-align:center;
+  width:30%;
+  font-size:14px;
 }
 
-.number {
-  width: 30px;
-  font-family: 'Times New Roman', Times, serif;
-}
-
-.label {
-  white-space: nowrap;
-}
-
-.line {
-  flex: 1;
-  border-bottom: 1px solid #000;
-  margin: 0;
-  text-align: center;
-  font-size: 18px;
-  line-height: 1.6;
-  min-height: 18px;
-}
-
-.pair-row {
-  display: flex;
-  gap: 12px;
-  margin: 8px 8px;
-}
-
-.field-row {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.field {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 4px;
-  white-space: nowrap;
-}
-
-.numeric-value,
-.date-value {
-  font-family: 'Times New Roman', Times, serif;
-}
-
-.line.age-row {
-  flex: 0 0 30%;
-}
-
-.signatures {
-  margin-top: 80px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.sign {
-  text-align: center;
-  width: 40%;
-  font-size: 14px;
-}
-
-.sign-line {
-  border-top: 1px solid #000;
-  margin-bottom: 5px;
+.sign-line{
+  border-top:1px solid #000;
+  margin-bottom:5px;
 }
 
 </style>
@@ -145,7 +138,7 @@ body {
 
 <div class="paper">
 
-<div class="title" style="font-family: 'MB-Leeka-Shabir-Kumbhar-2.0'">داخلا فارم</div>
+<div class="title" style= "font-family: 'MB-leeka-Shabir-2.0'">داخلا فارم</div>
 
 <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:15px; font-size:18px;">
   <div style="margin-bottom:8px;">
@@ -153,69 +146,56 @@ body {
   </div>
   <div>
     <span>سيمس ڪوڊ: </span>
-    <strong class="numeric-value">${school?.semis_code || "—"}</strong>
+    <strong class="digit">${school?.semis_code || "—"}</strong>
   </div>
 </div>
 
 <div class="row">
-  <span class="number">1.</span>
-  <span class="label">جنرل رجسٽر نمبر</span>
-  <span class="line"><span class="numeric-value">${student.gr_number || ""}</span></span>
+<span class="number">1.</span>
+<span class="label">جنرل رجسٽر نمبر</span>
+<span class="line"><span class="digit">${student.gr_number || ""}</span></span>
 </div>
 
 <div class="row">
-  <span class="number">2.</span>
-  <span class="label">داخلہ جي تاريخ</span>
-  <span class="line"><span class="date-value">${formatDate(student.admission_date)}</span></span>
+<span class="number">2.</span>
+<span class="label">داخلہ جي تاريخ</span>
+<span class="line"><span class="digit">${formatDate(student.admission_date)}</span></span>
 </div>
 
-<div class="pair-row">
-  <div class="field-row">
-    <span class="field">
-      <span class="number">3.</span>
-      <span class="label">شاگرد جو نالو</span>
-    </span>
-    <span class="line">${student.name || ""}</span>
-  </div>
-  <div class="field-row">
-    <span class="field">
-      <span class="number">4.</span>
-      <span class="label">والد جو نالو</span>
-    </span>
-    <span class="line">${student.father_name || ""}</span>
-  </div>
+<div class="row">
+<span class="number">3.</span>
+<span class="label">شاگرد جو نالو</span>
+<span class="line">${student.name || ""}</span>
 </div>
 
-<div class="pair-row">
-  <div class="field-row">
-    <span class="field">
-      <span class="number">5.</span>
-      <span class="label">قوم</span>
-    </span>
+<div class="row">
+<span class="number">4.</span>
+<span class="label">والد جو نالو</span>
+<span class="line">${student.father_name || ""}</span>
+</div>
+
+<div class="two-col-row">
+  <div class="col">
+    <span class="number">5.</span>
+    <span class="label">قوم</span>
     <span class="line">${student.qom || ""}</span>
   </div>
-  <div class="field-row">
-    <span class="field">
-      <span class="number">6.</span>
-      <span class="label">ذات</span>
-    </span>
+  <div class="col">
+    <span class="number">6.</span>
+    <span class="label">ذات</span>
     <span class="line">${student.caste || ""}</span>
   </div>
 </div>
 
-<div class="pair-row">
-  <div class="field-row">
-    <span class="field">
-      <span class="number">7.</span>
-      <span class="label">سرپرست جو نالو</span>
-    </span>
+<div class="two-col-row">
+  <div class="col">
+    <span class="number">7.</span>
+    <span class="label"> سرپرست جو نالو</span>
     <span class="line">${student.guardian_name || ""}</span>
   </div>
-  <div class="field-row">
-    <span class="field">
-      <span class="number">8.</span>
-      <span class="label">بمعہ مائيٽي</span>
-    </span>
+  <div class="col">
+    <span class="number">8.</span>
+    <span class="label"> بمعہ مائيٽي</span>
     <span class="line">${student.relation_with_guardian || ""}</span>
   </div>
 </div>
@@ -235,7 +215,7 @@ body {
 <div class="row">
 <span class="number">11.</span>
 <span class="label">پيدائش جي تاريخ</span>
-<span class="line"><span class="date-value">${formatDate(student.date_of_birth)}</span></span>
+<span class="line"><span class="digit">${formatDate(student.date_of_birth)}</span></span>
 </div>
 
 <div class="row">
@@ -265,9 +245,9 @@ body {
 <div class="row">
 <span class="number">16.</span>
 <span class="label">داخلہ وقت عمر</span>
-<span class="line age-row"><span class="numeric-value">${age ? age.y : ""}</span> سال</span>
-<span class="line age-row"><span class="numeric-value">${age ? age.m : ""}</span> مھينا</span>
-<span class="line age-row"><span class="numeric-value">${age ? age.d : ""}</span> ڏينھن</span>
+<span class="line"><span class="digit">${age ? age.y : ""}</span> سال</span>
+<span class="line"><span class="digit">${age ? age.m : ""}</span> مھينا</span>
+<span class="line"><span class="digit">${age ? age.d : ""}</span> ڏينھن</span>
 </div>
 
 <div class="signatures">
