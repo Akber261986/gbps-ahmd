@@ -58,11 +58,12 @@ body {
     align-items:flex-end;
     margin:10px 8px;
     font-size:14px;
-    min-height:24px;
+    min-height:18px;
   }
   
   .number{
     width:30px;
+    font-family: 'Times New Roman', Times, serif;
   }
   
   .label{
@@ -72,16 +73,20 @@ body {
   .line{
     flex:1;
     border-bottom:1px solid #000;
-    margin:8px 16px;
+    margin:4px 16px;
     text-align:center;
     font-size:16px;
+  }
+
+  .digit{
+    font-family: 'Times New Roman', Times, serif;
   }
 
   .two-col-row{
     display:flex;
     gap:16px;
     margin:10px 8px;
-    min-height:24px;
+    min-height:18px;
   }
 
   .col{
@@ -92,7 +97,7 @@ body {
   }
   
 .signatures{
-  margin-top:40px;
+  margin-top:80px;
   display:flex;
   justify-content:space-between;
 }
@@ -119,48 +124,48 @@ body {
 
 <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:15px; font-size:18px;">
   <div style="margin-bottom:8px;">
-    <strong>${school.school_name || "—"}</strong>
+    <strong>گورنمينٽ پرائمري اسڪول ارباب حاجي محمد دل</strong>
   </div>
   <div>
     <span>سيمس ڪوڊ: </span>
-    <strong>${school.semis_code || "—"}</strong>
+    <strong class="digit">404090098</strong>
   </div>
 </div>
 
 <div class="row">
 <span class="number">1.</span>
 <span class="label">جنرل رجسٽر نمبر</span>
-<span class="line">${student.gr_number || ""}</span>
+<span class="line"><span class="digit">578</span></span>
 </div>
 
 <div class="row">
 <span class="number">2.</span>
 <span class="label">داخلہ جي تاريخ</span>
-<span class="line">${formatDate(student.admission_date)}</span>
+<span class="line"><span class="digit">15/06/2021</span></span>
 </div>
 
 <div class="row">
 <span class="number">3.</span>
 <span class="label">شاگرد جو نالو</span>
-<span class="line">${student.name || ""}</span>
+<span class="line">علي حسن</span>
 </div>
 
 <div class="row">
 <span class="number">4.</span>
 <span class="label">والد جو نالو</span>
-<span class="line">${student.father_name || ""}</span>
+<span class="line">غلام رسول</span>
 </div>
 
 <div class="two-col-row">
   <div class="col">
     <span class="number">5.</span>
     <span class="label">قوم</span>
-    <span class="line">${student.qom || ""}</span>
+    <span class="line">اسلام</span>
   </div>
   <div class="col">
     <span class="number">6.</span>
     <span class="label">ذات</span>
-    <span class="line">${student.caste || ""}</span>
+    <span class="line">سومرو</span>
   </div>
 </div>
 
@@ -168,49 +173,49 @@ body {
   <div class="col">
     <span class="number">7.</span>
     <span class="label"> سرپرست جو نالو</span>
-    <span class="line">${student.guardian_name || ""}</span>
+    <span class="line">محمد صديق</span>
   </div>
   <div class="col">
     <span class="number">8.</span>
     <span class="label"> بمعہ مائيٽي</span>
-    <span class="line">${student.relation_with_guardian || ""}</span>
+    <span class="line">چاچو</span>
   </div>
 </div>
 
 <div class="row">
 <span class="number">9.</span>
 <span class="label">سرپرست جو ڌنڌو</span>
-<span class="line">${student.guardian_occupation || ""}</span>
+<span class="line">زمينداري</span>
 </div>
 
 <div class="row">
 <span class="number">10.</span>
 <span class="label">پيدائش جي جاءِ</span>
-<span class="line">${student.place_of_birth}</span>
+<span class="line">ٽنڊو محمد خان</span>
 </div>
 
 <div class="row">
 <span class="number">11.</span>
 <span class="label">پيدائش جي تاريخ</span>
-<span class="line">${formatDate(student.date_of_birth)}</span>
+<span class="line"><span class="digit">04/03/2015</span></span>
 </div>
 
 <div class="row">
 <span class="number">12.</span>
 <span class="label">پيدائش جي تاريخ لفظن ۾</span>
-<span class="line">${student.date_of_birth_in_letter || ""}</span>
+<span class="line">چار مارچ ٻه هزار پندرهن</span>
 </div>
 
 <div class="row">
 <span class="number">13.</span>
 <span class="label">ڪھڙي اسڪول مان آيو</span>
-<span class="line">${student.previous_school || ""}</span>
+<span class="line">گورنمينٽ پرائمري اسڪول ٽنڊو غلام علي</span>
 </div>
 
 <div class="row">
 <span class="number">14.</span>
 <span class="label"> ڪهڙي ڪلاس ۾ داخل ٿيو / ٿي</span>
-<span class="line">${className}</span>
+<span class="line">ڪلاس ٽيون</span>
 </div>
 
 <div class="row">
@@ -222,9 +227,9 @@ body {
 <div class="row">
 <span class="number">16.</span>
 <span class="label">داخلہ وقت عمر</span>
-<span class="line">${age ? age.y : ""} سال</span>
-<span class="line">${age ? age.m : ""} مھينا </span>
-<span class="line">${age ? age.d : ""} ڏينھن</span>
+<span class="line"><span class="digit">6</span> سال</span>
+<span class="line"><span class="digit">3</span> مھينا</span>
+<span class="line"><span class="digit">11</span> ڏينھن</span>
 </div>
 
 <div class="signatures">
