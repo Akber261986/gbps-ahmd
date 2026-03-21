@@ -11,6 +11,23 @@ router.post('/', async (req, res) => {
     const { data, school } = req.body;
 
     const formatDate = (d) => d ? new Date(d).toLocaleDateString('en-GB') : '';
+    const valueOrEmpty = (value) => (value === null || value === undefined ? '' : value);
+
+    // Support alternate payload keys so template always receives the correct value
+    const grNumber = valueOrEmpty(data.gr_number || data.grNumber);
+    const studentName = valueOrEmpty(data.student_name || data.name);
+    const fatherName = valueOrEmpty(data.father_name);
+    const qom = valueOrEmpty(data.qom || data.religion);
+    const caste = valueOrEmpty(data.caste);
+    const placeOfBirth = valueOrEmpty(data.place_of_birth);
+    const dobInWords = valueOrEmpty(data.date_of_birth_in_letter || data.date_of_birth_words);
+    const previousSchool = valueOrEmpty(data.previos_school || data.previous_school);
+    const educationalAbility = valueOrEmpty(data.educational_ability || data.educational_qualification);
+    const character = valueOrEmpty(data.character || data.conduct);
+    const classOnLeaving = valueOrEmpty(data.class_on_leaving);
+    const leavingReason = valueOrEmpty(data.reason_for_leaving || data.leaving_reason);
+    const remarks = valueOrEmpty(data.remarks);
+    const semisCode = valueOrEmpty(school?.semis_code);
 
     const html = `
 <!DOCTYPE html>
@@ -61,11 +78,16 @@ body {
 }
 
 .title {
+    font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';
     text-align: center;
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 16px;
     line-height: 1.4;
+}
+.center {
+    display: flex; 
+    justify-content: center;
 }
 
 .school-info {
@@ -81,21 +103,24 @@ body {
     margin-bottom: 8px;
 }
 
+
 .row {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    margin: 10px 8px;
+    margin: 8px 8px;
     font-size: 18px;
     min-height: 30px;
     line-height: 1.5;
     position: relative;
+    gap: 8px;
 }
 
 .number {
     display: inline-block;
     width: 28px;
     vertical-align: bottom;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .label {
@@ -107,17 +132,47 @@ body {
 
 .line {
     display: inline-block;
-    width: calc(100% - 250px);
+    width: auto;
+    flex: 1;
     border-bottom: 1px solid #000;
-    margin: 0 14px 4px 14px;
+    margin: 0 0 2px 0;
     text-align: center;
     font-size: 20px;
     line-height: 1.8;
     vertical-align: bottom;
 }
 
-.row.two-fields .line {
-    width: calc(50% - 150px);
+.numeric-value,
+.date-value {
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.pair-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 8px 8px;
+}
+
+.field-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 30px;
+    flex: 1;
+}
+
+.field-row .line {
+    width: auto;
+    flex: 1;
+    margin: 0 0 2px 0;
+}
+
+.field {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    white-space: nowrap;
 }
 
 .declaration {
@@ -127,15 +182,15 @@ body {
 }
 
 .signatures {
-    margin-top: 25px;
+    margin-top: 60px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
 }
 
 .sign {
     text-align: center;
     width: 40%;
-    font-size: 13px;
+    font-size: 18px;
 }
 
 .sign-line {
@@ -153,101 +208,139 @@ body {
         <div class="title">اسڪول ڇڏڻ جو سرٽيفڪيٽ</div>
 
         <div class="center"><b>${school?.school_name || ''}</b></div>
-        <div class="center">سيمس ڪوڊ: ${school?.semis_code || ''}</div>
+        <div class="center" style="font-family:'Times New Roman', Times">سيمس ڪوڊ: ${semisCode}</div>
 
         <div class="row">
-            <div>
+            <div class="field">
                 <div class="number">1.</div>
-                <div class="label">GR نمبر</div>
+                <div class="label">جنرل رجسٽر نمبر</div>
             </div>
-            <div class="line">${data.gr_number}</div>
+            <div class="line"><span class="numeric-value">${grNumber}</span></div>
         </div>
-        <div class="row">
-            <div>
-                <div class="number">2.</div>
-                <div class="label">شاگرد</div>
+        <div class="pair-row">
+            <div class="field-row">
+                <div class="field">
+                    <div class="number">2.</div>
+                    <div class="label">شاگرد جو نالو</div>
+                </div>
+                <div class="line">${studentName}</div>
             </div>
-            <div class="line">${data.student_name}</div>
-        </div>
-        <div class="row">
-            <div>
-                <div class="number">3.</div>
-                <div class="label">والد</div>
+            <div class="field-row">
+                <div class="field">
+                    <div class="number">3.</div>
+                    <div class="label">پيءُ جو نالو</div>
+                </div>
+                <div class="line">${fatherName}</div>
             </div>
-            <div class="line">${data.father_name}</div>
         </div>
-        <div class="row">
-            <div>
-                <div class="number">4.</div>
-                <div class="label">قوم</div>
+
+        <div class="pair-row">
+            <div class="field-row">
+                <div class="field">
+                    <div class="number">4.</div>
+                    <div class="label">قوم</div>
+                </div>
+                <div class="line">${qom}</div>
             </div>
-            <div class="line">${data.qom}</div>
-        </div>
-        <div class="row">
-            <div>
-                <div class="number">5.</div>
-                <div class="label">ذات</div>
+            <div class="field-row">
+                <div class="field">
+                    <div class="number">5.</div>
+                    <div class="label">ذات</div>
+                </div>
+                <div class="line">${caste}</div>
             </div>
-            <div class="line">${data.caste}</div>
         </div>
+
         <div class="row">
-            <div>
+            <div class="field">
                 <div class="number">6.</div>
                 <div class="label">پيدائش جاءِ</div>
             </div>
-            <div class="line">${data.place_of_birth}</div>
+            <div class="line">${placeOfBirth}</div>
         </div>
         <div class="row">
-            <div>
+            <div class="field">
                 <div class="number">7.</div>
                 <div class="label">پيدائش تاريخ</div>
             </div>
-            <div class="line">${formatDate(data.date_of_birth)}</div>
+            <div class="line"><span class="date-value">${formatDate(data.date_of_birth)}</span></div>
         </div>
         <div class="row">
-            <div>
+            <div class="field">
                 <div class="number">8.</div>
                 <div class="label">پيدائش لفظن ۾</div>
             </div>
-            <div class="line">${data.date_of_birth_in_letter}</div>
+            <div class="line">${dobInWords}</div>
         </div>
         <div class="row">
-            <div>
+            <div class="field">
                 <div class="number">9.</div>
                 <div class="label">داخلا تاريخ</div>
             </div>
-            <div class="line">${formatDate(data.admission_date)}</div>
+            <div class="line"><span class="date-value">${formatDate(data.admission_date)}</span></div>
         </div>
         <div class="row">
-            <div>
+            <div class="field">
                 <div class="number">10.</div>
-                <div class="label">ڇڏڻ تاريخ</div>
+                <div class="label">پھرين ڪھڙي اسڪول ۾ پڙھندو ھو / ھئي</div>
             </div>
-            <div class="line">${formatDate(data.leaving_date)}</div>
+            <div class="line">${previousSchool}</div>
+        </div>
+
+        <div class="pair-row">
+            <div class="field-row">
+                <div class="field">
+                    <div class="number">11.</div>
+                    <div class="label">تعليمي لياقت</div>
+                </div>
+                <div class="line">${educationalAbility}</div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <div class="number">12.</div>
+                    <div class="label">چال چلت</div>
+                </div>
+                <div class="line">${character}</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="field">
+                <div class="number">13.</div>
+                <div class="label">ڪھڙي ڪلاس ۾ پڙھندو ھو / ھئي</div>
+            </div>
+            <div class="line">${classOnLeaving}</div>
         </div>
         <div class="row">
-            <div>
-                <div class="number">11.</div>
-                <div class="label">ڇڏڻ وقت ڪلاس</div>
+            <div class="field">
+                <div class="number">14.</div>
+                <div class="label">اسڪول ڇڏڻ جي تاريخ</div>
             </div>
-            <div class="line">${data.class_on_leaving}</div>
+            <div class="line"><span class="date-value">${formatDate(data.leaving_date)}</span></div>
         </div>
         <div class="row">
-            <div>
-                <div class="number">12.</div>
-                <div class="label">سبب</div>
+            <div class="field">
+                <div class="number">15.</div>
+                <div class="label">اسڪول ڇڏڻ جو سبب</div>
             </div>
-            <div class="line">${data.reason_for_leaving}</div>
+            <div class="line">${leavingReason}</div>
+        </div>
+        <div class="row">
+            <div class="field">
+                <div class="number">16.</div>
+                <div class="label">ريمارڪس</div>
+            </div>
+            <div class="line">${remarks}</div>
         </div>
 
         <div class="signatures">
             <div class="sign">
                 <div class="sign-line"></div>
-                ڪلاس ٽيچر
+                صحيح ڪلاس ٽيچر
             </div>
             <div class="sign">
                 <div class="sign-line"></div>
-                هيڊ ماسٽر
+                صحيح هيڊ ماسٽر
             </div>
         </div>
 
