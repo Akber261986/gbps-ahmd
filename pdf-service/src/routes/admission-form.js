@@ -1,7 +1,7 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
 const { getSindhiFontCSS, mbLeekaShabir } = require('../utils/fontLoader');
-const { student_age } = require('../utils/ageCalculator');
+const { student_age } = require('../utils/student_age');
 
 const router = express.Router();
 
