@@ -1,6 +1,7 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
 const { getSindhiFontCSS, mbLeekaShabir } = require('../utils/fontLoader');
+const { student_age } = require('../utils/ageCalculator');
 
 const router = express.Router();
 
@@ -14,97 +15,100 @@ router.post('/', async (req, res) => {
     const className = admissionClass?.name || '';
 
     const formatDate = (d) => d ? new Date(d).toLocaleDateString('en-GB') : '';
+    const age = student_age(student.date_of_birth, student.admission_date);
+
 
     const html = `
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-
 <style>
+${getSindhiFontCSS(mbLeekaShabir)}
 ${getSindhiFontCSS()}
-${mbLeekaShabir('MB-Leeka-Shabir-Kumbhar-2.0','MB-Leeka-Shabir-Kumbhar-2.0.ttf')}
 
-@page { size: A4; margin: 10mm; }
-
-body {
+body{
   font-family: 'MB Sindhi Web SK 2.0';
-  margin: 0;
-  font-size: 14px;
+  direction: rtl;
+  padding:0;
+  margin:0;
 }
 
-/* paper */
-.paper {
-  width: 190mm;
-  min-height: 277mm;
-  margin: auto;
-  border: 3px solid #2c7a4b;
-  padding: 10mm;
-  background: #f5f0c9;
+.paper{
+    background:#f5f0c9;
+    border:6px solid #2c7a4b;
+    padding:40px;
+  }
+  
+  .title{
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+    margin-bottom:15px;
+  }
+  
+  .top{
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    margin-bottom:15px;
+  }
+  
+  .row{
+    display:flex;
+    align-items:flex-end;
+    margin:10px 8px;
+    font-size:14px;
+    min-height:24px;
+  }
+  
+  .number{
+    width:30px;
+  }
+  
+  .label{
+    white-space:nowrap;
+  }
+  
+  .line{
+    flex:1;
+    border-bottom:1px solid #000;
+    margin:8px 16px;
+    text-align:center;
+    font-size:16px;
+  }
+
+  .two-col-row{
+    display:flex;
+    gap:16px;
+    margin:10px 8px;
+    min-height:24px;
+  }
+
+  .col{
+    flex:1;
+    display:flex;
+    align-items:flex-end;
+    font-size:14px;
+  }
+  
+.signatures{
+  margin-top:40px;
+  display:flex;
+  justify-content:space-between;
 }
 
-/* header */
-.title {
-  text-align: center;
-  font-size: 24px;
-  font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';
-  margin-bottom: 4mm;
+.sign{
+  text-align:center;
+  width:40%;
+  font-size:14px;
 }
 
-.center {
-  text-align: center;
-  margin-bottom: 2mm;
+.sign-line{
+  border-top:1px solid #000;
+  margin-bottom:5px;
 }
 
-/* rows */
-.row {
-  display: flex;
-  align-items: center;
-  margin: 5mm 0;
-}
-
-.number {
-  width: 10mm;
-}
-
-.label {
-  width: 70mm;
-}
-
-.line {
-  flex: 1;
-  border-bottom: 1px solid black;
-  text-align: center;
-  padding-bottom: 2mm;
-}
-
-/* two col */
-.two {
-  display: flex;
-  gap: 10mm;
-}
-
-.col {
-  flex: 1;
-  display: flex;
-}
-
-/* signatures */
-.signatures {
-  margin-top: 20mm;
-  display: flex;
-  justify-content: space-between;
-}
-
-.sign {
-  width: 45%;
-  text-align: center;
-}
-
-.sign-line {
-  border-top: 1px solid black;
-  margin-bottom: 3mm;
-}
 </style>
 </head>
 
@@ -112,108 +116,134 @@ body {
 
 <div class="paper">
 
-<div class="title">داخلہ فارم</div>
+<div class="title" style= "font-family: 'MB l'">داخلہ فارم</div>
 
-<div class="center"><b>${school?.school_name || ''}</b></div>
-<div class="center">سيمس ڪوڊ: ${school?.semis_code || ''}</div>
-
-<div class="row">
-  <div class="number">1.</div>
-  <div class="label">جنرل رجسٽر نمبر</div>
-  <div class="line">${student.gr_number || ''}</div>
-</div>
-
-<div class="row">
-  <div class="number">2.</div>
-  <div class="label">داخلہ جي تاريخ</div>
-  <div class="line">${formatDate(student.admission_date)}</div>
-</div>
-
-<div class="row">
-  <div class="number">3.</div>
-  <div class="label">شاگرد جو نالو</div>
-  <div class="line">${student.name || ''}</div>
-</div>
-
-<div class="row">
-  <div class="number">4.</div>
-  <div class="label">والد جو نالو</div>
-  <div class="line">${student.father_name || ''}</div>
-</div>
-
-<div class="two">
-  <div class="col">
-    <div class="number">5.</div>
-    <div class="label">قوم</div>
-    <div class="line">${student.qom || ''}</div>
+<div style="display:flex; flex-direction:column; align-items:center; margin-bottom:15px; font-size:18px;">
+  <div style="margin-bottom:8px;">
+    <strong>${school.school_name || "—"}</strong>
   </div>
-  <div class="col">
-    <div class="number">6.</div>
-    <div class="label">ذات</div>
-    <div class="line">${student.caste || ''}</div>
+  <div>
+    <span>سيمس ڪوڊ: </span>
+    <strong>${school.semis_code || "—"}</strong>
   </div>
 </div>
 
 <div class="row">
-  <div class="number">7.</div>
-  <div class="label">سرپرست جو نالو</div>
-  <div class="line">${student.guardian_name || ''}</div>
+<span class="number">1.</span>
+<span class="label">جنرل رجسٽر نمبر</span>
+<span class="line">${student.gr_number || ""}</span>
 </div>
 
 <div class="row">
-  <div class="number">8.</div>
-  <div class="label">سرپرست جو ڌنڌو</div>
-  <div class="line">${student.guardian_occupation || ''}</div>
+<span class="number">2.</span>
+<span class="label">داخلہ جي تاريخ</span>
+<span class="line">${formatDate(student.admission_date)}</span>
 </div>
 
 <div class="row">
-  <div class="number">9.</div>
-  <div class="label">پيدائش جي جاءِ</div>
-  <div class="line">${student.place_of_birth || ''}</div>
+<span class="number">3.</span>
+<span class="label">شاگرد جو نالو</span>
+<span class="line">${student.name || ""}</span>
 </div>
 
 <div class="row">
-  <div class="number">10.</div>
-  <div class="label">پيدائش جي تاريخ</div>
-  <div class="line">${formatDate(student.date_of_birth)}</div>
+<span class="number">4.</span>
+<span class="label">والد جو نالو</span>
+<span class="line">${student.father_name || ""}</span>
+</div>
+
+<div class="two-col-row">
+  <div class="col">
+    <span class="number">5.</span>
+    <span class="label">قوم</span>
+    <span class="line">${student.qom || ""}</span>
+  </div>
+  <div class="col">
+    <span class="number">6.</span>
+    <span class="label">ذات</span>
+    <span class="line">${student.caste || ""}</span>
+  </div>
+</div>
+
+<div class="two-col-row">
+  <div class="col">
+    <span class="number">7.</span>
+    <span class="label"> سرپرست جو نالو</span>
+    <span class="line">${student.guardian_name || ""}</span>
+  </div>
+  <div class="col">
+    <span class="number">8.</span>
+    <span class="label"> بمعہ مائيٽي</span>
+    <span class="line">${student.relation_with_guardian || ""}</span>
+  </div>
 </div>
 
 <div class="row">
-  <div class="number">11.</div>
-  <div class="label">پيدائش (لفظن ۾)</div>
-  <div class="line">${student.date_of_birth_in_letter || ''}</div>
+<span class="number">9.</span>
+<span class="label">سرپرست جو ڌنڌو</span>
+<span class="line">${student.guardian_occupation || ""}</span>
 </div>
 
 <div class="row">
-  <div class="number">12.</div>
-  <div class="label">پويون اسڪول</div>
-  <div class="line">${student.previous_school || ''}</div>
+<span class="number">10.</span>
+<span class="label">پيدائش جي جاءِ</span>
+<span class="line">${student.place_of_birth}</span>
 </div>
 
 <div class="row">
-  <div class="number">13.</div>
-  <div class="label">داخلہ ڪلاس</div>
-  <div class="line">${className}</div>
+<span class="number">11.</span>
+<span class="label">پيدائش جي تاريخ</span>
+<span class="line">${formatDate(student.date_of_birth)}</span>
 </div>
 
 <div class="row">
-  <div class="number">14.</div>
-  <div class="label">سرپرست جي صحيح</div>
-  <div class="line"></div>
+<span class="number">12.</span>
+<span class="label">پيدائش جي تاريخ لفظن ۾</span>
+<span class="line">${student.date_of_birth_in_letter || ""}</span>
+</div>
+
+<div class="row">
+<span class="number">13.</span>
+<span class="label">ڪھڙي اسڪول مان آيو</span>
+<span class="line">${student.previous_school || ""}</span>
+</div>
+
+<div class="row">
+<span class="number">14.</span>
+<span class="label"> ڪهڙي ڪلاس ۾ داخل ٿيو / ٿي</span>
+<span class="line">${className}</span>
+</div>
+
+<div class="row">
+<span class="number">15.</span>
+<span class="label">سرپرست جي صحيح</span>
+<span class="line"></span>
+</div>
+
+<div class="row">
+<span class="number">16.</span>
+<span class="label">داخلہ وقت عمر</span>
+<span class="line">${age ? age.y : ""} سال</span>
+<span class="line">${age ? age.m : ""} مھينا </span>
+<span class="line">${age ? age.d : ""} ڏينھن</span>
 </div>
 
 <div class="signatures">
-  <div class="sign">
-    <div class="sign-line"></div>
-    ڪلاس ٽيچر
-  </div>
-  <div class="sign">
-    <div class="sign-line"></div>
-    هيڊ ماسٽر
-  </div>
+
+<div class="sign">
+<div class="sign-line"></div>
+<p>صحيح ڪلاس ماسٽر / ماسترياڻي</p>
+</div>
+
+<div class="sign">
+<div class="sign-line"></div>
+<p>صحيح هيڊ ماسٽر / هيڊ مسٽريس</p>
 </div>
 
 </div>
+
+</div>
+
 </body>
 </html>
 `;

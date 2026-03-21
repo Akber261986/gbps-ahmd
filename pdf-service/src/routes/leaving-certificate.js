@@ -25,62 +25,122 @@ ${mbLeekaShabir('MB-Leeka-Shabir-Kumbhar-2.0', 'MB-Leeka-Shabir-Kumbhar-2.0.ttf'
 @page { size: A4; margin: 10mm; }
 
 body {
-  font-family: 'MB Sindhi Web SK 2.0';
-  margin: 0;
-  font-size: 14px;
+    font-family: 'MB Sindhi Web SK 2.0';
+    direction: rtl;
+    padding: 0;
+    margin: 0;
+    line-height: 1.6;
+    background: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
 }
 
 .paper {
-  width: 190mm;
-  min-height: 277mm;
-  margin: auto;
-  border: 3px solid #2c7a4b;
-  padding: 10mm;
-  background: #f5f0c9;
+    background: #f5f0c9;
+    border: 6px solid #2c7a4b;
+    padding: 30px;
+    width: 200mm;
+    min-height: 290mm;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    page-break-inside: avoid;
+    page-break-after: avoid;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.form-number {
+    text-align: right;
+    font-size: 16px;
+    margin-bottom: 8px;
 }
 
 .title {
-  text-align: center;
-  font-size: 24px;
-  margin-bottom: 4mm;
-  font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    line-height: 1.4;
 }
 
-.center {
-  text-align: center;
-  margin-bottom: 2mm;
+.school-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.school-info div {
+    margin-bottom: 8px;
 }
 
 .row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 5mm 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 8px;
+    font-size: 18px;
+    min-height: 30px;
+    line-height: 1.5;
+    position: relative;
 }
 
-.number { width: 10mm; }
-.label { width: 80mm; }
+.number {
+    display: inline-block;
+    width: 28px;
+    vertical-align: bottom;
+}
+
+.label {
+    display: inline-block;
+    white-space: nowrap;
+    line-height: 1.5;
+    vertical-align: bottom;
+}
+
 .line {
-  flex: 1;
-  border-bottom: 1px solid black;
-  text-align: center;
+    display: inline-block;
+    width: calc(100% - 250px);
+    border-bottom: 1px solid #000;
+    margin: 0 14px 4px 14px;
+    text-align: center;
+    font-size: 20px;
+    line-height: 1.8;
+    vertical-align: bottom;
 }
 
-/* signatures */
+.row.two-fields .line {
+    width: calc(50% - 150px);
+}
+
+.declaration {
+    margin-top: 20px;
+    margin-right: 8px;
+    font-size: 11px;
+}
+
 .signatures {
-  margin-top: 20mm;
-  display: flex;
-  justify-content: space-between;
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .sign {
-  width: 45%;
-  text-align: center;
+    text-align: center;
+    width: 40%;
+    font-size: 13px;
 }
 
 .sign-line {
-  border-top: 1px solid black;
-  margin-bottom: 3mm;
+    border-top: 1px solid #000;
+    margin-bottom: 5px;
 }
 </style>
 </head>
