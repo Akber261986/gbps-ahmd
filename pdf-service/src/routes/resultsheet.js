@@ -34,6 +34,7 @@ router.post('/', async (req, res) => {
 ${getSindhiFontCSS()}
 @page {
   size: Legal landscape;
+  margin: 10mm 12mm;
 }
 
 html, body {
@@ -267,8 +268,15 @@ ${classStudents.length === 0 ? `
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
     const pdfBuffer = await page.pdf({
+      format: 'Legal',
+      landscape: true,
       printBackground: true,
-      preferCSSPageSize: true // ⭐ MUST for header repeat consistency
+      margin: {
+        top: '10mm',
+        bottom: '10mm',
+        left: '12mm',
+        right: '12mm'
+      }
     });
 
     res.setHeader('Content-Type', 'application/pdf');
