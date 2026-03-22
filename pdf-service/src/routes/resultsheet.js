@@ -36,7 +36,7 @@ ${getSindhiFontCSS()}
 /* PAGE SETUP - LEGAL LANDSCAPE */
 @page {
   size: legal landscape;
-  margin: 10mm 12mm;
+  margin: 10mm 8mm;
 }
 
 html, body {
@@ -49,14 +49,28 @@ html, body {
 body {
   font-family: 'MB Sindhi Web SK 2.0';
   direction: rtl;
-  font-size: 11pt;
+  background: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+
+/* PAPER STYLING */
+.paper {
+  background: #f5f0c9;
+  border: 6px solid #2c7a4b;
+  padding: 30px;
+  width: 290mm;
+  height: 200mm;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  page-break-inside: avoid;
+  page-break-after: avoid;
 }
 
 /* TABLE STYLING */
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
 }
 
 /* HEADER REPEAT */
@@ -71,7 +85,7 @@ tbody {
 /* PREVENT ROW BREAKING */
 tr {
   page-break-inside: avoid;
-  height: 8mm;
+  height: 13mm;
 }
 
 .no-break {
@@ -81,47 +95,40 @@ tr {
 /* CELLS */
 th, td {
   border: 1px solid #000;
-  padding: 1.5mm 1mm;
+  padding: 2mm;
   text-align: center;
   vertical-align: middle;
-  font-size: 11pt;
-  overflow: hidden;
-  word-wrap: break-word;
-  line-height: 1.2;
+  font-size: 15pt;
 }
 
 /* HEADER CELLS */
 th {
   background: #e5e7eb;
-  font-size: 10pt;
-  padding: 2mm 1mm;
+  font-size: 15pt;
 }
 
 /* SINDHI TEXT */
 .sindhi {
   direction: rtl;
   text-align: center;
-  unicode-bidi: embed;
 }
 
 /* CLASS HEADER */
 .class-header {
   background-color: #e5e5e5;
   font-weight: bold;
-  font-size: 12pt;
+  font-size: 14pt;
   padding: 2mm;
   text-align: right;
   padding-right: 6mm;
-  height: auto;
 }
 
 /* GENDER HEADER */
 .gender-header {
   background-color: #ffd1dc;
   font-weight: bold;
-  font-size: 11pt;
+  font-size: 13pt;
   padding: 2mm;
-  height: auto;
 }
 
 /* PAGE BREAKS */
@@ -137,21 +144,26 @@ th {
   page-break-after: avoid;
 }
 
-/* ROW HEIGHT */
-tbody tr {
-  height: 8mm;
-}
-
 /* TITLE STYLING */
-.title-header {
-  font-size: 24pt;
+.header-title {
+  font-size: 26pt;
   font-weight: bold;
-  padding: 4mm;
 }
 
-.subtitle {
+.s-name {
+  font-weight: bold;
+  font-size: 16pt;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+.header-sub {
   font-size: 14pt;
-  padding: 2mm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10mm;
+  padding: 1mm;
 }
 
 </style>
@@ -159,66 +171,49 @@ tbody tr {
 
 <body>
 
+<div class="paper">
 <table>
-
-<colgroup>
-  <col style="width: 6%" /> <!-- GR -->
-  <col style="width: 5%" /> <!-- Roll -->
-  <col style="width: 10%" /> <!-- Student Name -->
-  <col style="width: 10%" /> <!-- Father Name -->
-  <col style="width: 6%" /> <!-- دينيات -->
-  <col style="width: 6%" /> <!-- مادري زبان -->
-  <col style="width: 6%" /> <!-- رياضي -->
-  <col style="width: 7%" /> <!-- سماجي اڀياس -->
-  <col style="width: 7%" /> <!-- جنرل سائنس -->
-  <col style="width: 5%" /> <!-- اردو -->
-  <col style="width: 6%" /> <!-- انگلش -->
-  <col style="width: 8%" /> <!-- ڊرائنگ / فنون -->
-  <col style="width: 7%" /> <!-- DOB -->
-  <col style="width: 7%" /> <!-- Admission Date -->
-  <col style="width: 4%" /> <!-- Pass/Fail -->
-</colgroup>
 
 <thead>
 
 <tr>
   <th colspan="15" class="sindhi">
-    <div class="title-header">جديد رزلٽ شيٽ - سال ـ ${displayYear}</div>
-    <div class="subtitle">
+    <div class="header-title">جديد رزلٽ شيٽ - سال ${displayYear}</div>
+    <div class="header-sub">
       <span>نقشو امتحان جي مارڪن جو</span>
-      <span style="font-weight: bold; text-decoration: underline; margin: 0 10px;">${school?.school_name || 'اسڪول'}</span>
+      <span class="s-name">${school?.school_name || 'اسڪول'}</span>
       <span>جي درجي ـــــــــــــــــــ جو ساليانو امتحان تاريخ ـــــــــــ مھينو ـــــــــــــــــــــ سال ـــــــــــــــــــــ</span>
     </div>
   </th>
 </tr>
 
-<tr class="tr">
-  <th rowspan="2" class="sindhi">جنرل رجسٽر نمبر</th>
-  <th rowspan="2" class="sindhi">ڳاڻيٽي جو نمبر</th>
-  <th rowspan="2" class="sindhi">شاگرد جو نالو</th>
-  <th rowspan="2" class="sindhi">پيءُ جو نالو</th>
-  <th class="sindhi">دينيات</th>
-  <th class="sindhi">مادري زبان</th>
-  <th class="sindhi">رياضي</th>
-  <th class="sindhi">سماجي اڀياس</th>
-  <th class="sindhi">جنرل سائنس</th>
-  <th class="sindhi">اردو</th>
-  <th class="sindhi">انگلش</th>
-  <th class="sindhi">ڊرائنگ / علم فنون</th>
-  <th rowspan="2" class="sindhi">ڄمڻ جي تاريخ</th>
-  <th rowspan="2" class="sindhi">داخلا جي تاريخ</th>
-  <th rowspan="2" class="sindhi">پاس يا ناپاس</th>
+<tr>
+  <th rowspan="2" style="width: 18mm;">جنرل رجسٽر نمبر</th>
+  <th rowspan="2" style="width: 18mm;">ڳاڻيٽي جو نمبر</th>
+  <th rowspan="2" style="width: 40mm;">شاگرد جو نالو</th>
+  <th rowspan="2" style="width: 40mm;">پيءُ جو نالو</th>
+  <th style="width: 18mm;">دينيات</th>
+  <th style="width: 18mm;">مادري زبان</th>
+  <th style="width: 18mm;">رياضي</th>
+  <th style="width: 18mm;">سماجي</th>
+  <th style="width: 18mm;">سائنس</th>
+  <th style="width: 18mm;">اردو</th>
+  <th style="width: 18mm;">انگلش</th>
+  <th style="width: 18mm;">ڊرائنگ</th>
+  <th rowspan="2" style="width: 28mm;">ڄمڻ جي تاريخ</th>
+  <th rowspan="2" style="width: 28mm;">داخلا جي تاريخ</th>
+  <th rowspan="2" style="width: 20mm;">پاس يا ناپاس</th>
 </tr>
 
 <tr>
-  <th class="sindhi">100</th>
-  <th class="sindhi">100</th>
-  <th class="sindhi">100</th>
-  <th class="sindhi">100</th>
-  <th class="sindhi">100</th>
-  <th class="sindhi">100</th>
-  <th class="sindhi">100</th>
-  <th class="sindhi">100</th>
+  <th>100</th>
+  <th>100</th>
+  <th>100</th>
+  <th>100</th>
+  <th>100</th>
+  <th>100</th>
+  <th>100</th>
+  <th>100</th>
 </tr>
 
 </thead>
@@ -270,7 +265,7 @@ ${renderStudents(girls, boys.length)}
 
 ${classStudents.length === 0 ? `
 <tr>
-  <td colspan="15" style="padding: 10mm; text-align: center; color: #666;">هن ڪلاس ۾ ڪوبه شاگرد موجود ناهي</td>
+  <td colspan="15" style="padding: 4mm; text-align: center; color: #9ca3af; font-style: italic;">هن ڪلاس ۾ ڪوبه شاگرد موجود ناهي</td>
 </tr>
 ` : ''}
   `;
@@ -279,6 +274,7 @@ ${classStudents.length === 0 ? `
 </tbody>
 
 </table>
+</div>
 
 </body>
 </html>
