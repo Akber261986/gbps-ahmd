@@ -34,7 +34,6 @@ router.post('/', async (req, res) => {
 ${getSindhiFontCSS()}
 @page {
   size: Legal landscape;
-  margin: 10mm 12mm;
 }
 
 html, body {
@@ -47,17 +46,29 @@ html, body {
 body {
   font-family: 'MB Sindhi Web SK 2';
   direction: rtl;
+  background: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+
+/* PAPER STYLING */
+.paper {
+  min-width: 215mm;
+  min-height: 355mm;
 }
 
 /* TABLE STYLING */
 table {
   width: 100%;
   border-collapse: collapse;
+  page-break-inside: auto;
 }
 
 /* HEADER REPEAT */
 thead {
   display: table-header-group;
+  break-inside: avoid;
 }
 
 tbody {
@@ -86,7 +97,7 @@ th, td {
 /* HEADER CELLS */
 th {
   background: #e5e7eb;
-  font-size: 13pt;
+  font-size: 15pt;
 }
 
 /* SINDHI TEXT */
@@ -128,30 +139,31 @@ th {
 
 /* TITLE STYLING */
 .header-title {
-  font-size: 26pt;
+  font-size: 22pt;
   font-weight: bold;
 }
 
 .s-name {
   font-weight: bold;
-  font-size: 16pt;
+  font-size: 14pt;
   text-decoration: underline;
   text-underline-offset: 6px;
 }
 
 .header-sub {
-  font-size: 14pt;
+  font-size: 12pt;
+  gap: 10mm;
+  padding: 1mm;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10mm;
-  padding: 1mm;
 }
 </style>
 </head>
 
 <body>
 
+<div class="paper">
 <table>
 
 <thead>
@@ -254,6 +266,7 @@ ${classStudents.length === 0 ? `
 </tbody>
 
 </table>
+</div>
 
 </body>
 </html>
@@ -272,10 +285,10 @@ ${classStudents.length === 0 ? `
       landscape: true,
       printBackground: true,
       margin: {
-        top: '10mm',
+        top: '4mm',
         bottom: '10mm',
-        left: '12mm',
-        right: '12mm'
+        left: '4mm',
+        right: '4mm'
       }
     });
 
