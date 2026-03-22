@@ -223,6 +223,29 @@ class SchoolLeavingCertificate(Base):
     student = relationship("Student", back_populates="leaving_certificate")
 
 
+class ResultSheet(Base):
+    __tablename__ = "result_sheets"
+    __table_args__ = (
+        UniqueConstraint('school_id', 'academic_year', name='uq_school_academic_year'),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    school_id = Column(Integer, ForeignKey("schools.id"), nullable=False, index=True)
+    academic_year = Column(String(20), nullable=False, index=True)  # e.g., "2025-2026"
+    title = Column(String(200), nullable=True)  # Optional custom title
+    status = Column(String(20), default="active")  # active/archived
+
+    # Snapshot fields to preserve historical data
+    student_snapshot = Column(Text, nullable=True)  # JSON array of students at time of creation
+    class_snapshot = Column(Text, nullable=True)    # JSON array of classes at time of creation
+
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+
+    # Relationships
+    school = relationship("School")
+
+
 class AddmissionForm(Base):
     __tablename__ = "admission_forms"
 

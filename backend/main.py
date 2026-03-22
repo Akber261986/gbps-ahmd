@@ -16,11 +16,12 @@ from schema.schemas import (
     UserRegister, UserLogin, UserOut, Token, SchoolCreate, SchoolUpdate, SchoolOut,
     PasswordResetRequest, PasswordResetConfirm, PasswordResetResponse,
     GoogleLoginRequest, GoogleLoginResponse, UserProfileUpdate,
-    ChatRequest, ChatResponse
+    ChatRequest, ChatResponse,
+    ResultSheetCreate, ResultSheetUpdate, ResultSheetOut
 )
 from database import SessionLocal, engine, get_db
 from typing import List
-from models import Base, Student, Class, SchoolLeavingCertificate, Grade, Subject, User, School
+from models import Base, Student, Class, SchoolLeavingCertificate, Grade, Subject, User, School, ResultSheet
 from auth import (
     get_password_hash, verify_password, create_access_token,
     get_current_user, get_current_active_user, require_school
@@ -971,6 +972,9 @@ def create_school_leaving_certificate(
     student.educational_ability = certificate.educational_ability
     student.character = certificate.character
     student.remarks = certificate.remarks
+    # Also update gr_of_previous_school if provided
+    if certificate.gr_of_previous_school:
+        student.gr_of_previos_school = certificate.gr_of_previous_school
     db.commit()
 
     return db_certificate
@@ -1028,6 +1032,16 @@ def update_school_leaving_certificate(
 
     for key, value in certificate.dict().items():
         setattr(db_cert, key, value)
+
+    # Also update student record with leaving information
+    student.leaving_date = certificate.leaving_date
+    student.class_on_leaving = certificate.class_on_leaving
+    student.leaving_reason = certificate.reason_for_leaving
+    student.educational_ability = certificate.educational_ability
+    student.character = certificate.character
+    student.remarks = certificate.remarks
+    if certificate.gr_of_previous_school:
+        student.gr_of_previos_school = certificate.gr_of_previous_school
 
     db.commit()
     db.refresh(db_cert)
@@ -1308,6 +1322,205 @@ Remember: You are an assistant that GUIDES users. You cannot directly perform ac
             status_code=500,
             detail=f"Chat error: {str(e)}"
         )
+
+
+# ============ Result Sheet Endpoints (Multi-tenant) ============
+
+@app.get("/result-sheets/", response_model=List[ResultSheetOut])
+@app.get("/result-sheets", response_model=List[ResultSheetOut])
+def get_all_result_sheets(
+    current_user: User = Depends(require_school),
+    db: Session = Depends(get_db)
+):
+    """Get all result sheets for the current user's school."""
+    result_sheets = db.query(ResultSheet).filter(
+        ResultSheet.school_id == current_user.school_id
+    ).order_by(ResultSheet.academic_year.desc()).all()
+
+    return result_sheets
+
+
+@app.post("/result-sheets/", response_model=ResultSheetOut)
+@app.post("/result-sheets", response_model=ResultSheetOut)
+def create_result_sheet(
+    result_sheet: ResultSheetCreate,
+    current_user: User = Depends(require_school),
+    db: Session = Depends(get_db)
+):
+    """Create a new result sheet for the current user's school with data snapshot."""
+    # Check if result sheet already exists for this academic year
+    existing = db.query(ResultSheet).filter(
+        ResultSheet.school_id == current_user.school_id,
+        ResultSheet.academic_year == result_sheet.academic_year
+    ).first()
+
+    if existing:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Result sheet for academic year {result_sheet.academic_year} already exists"
+        )
+
+    # Capture current students and classes as snapshot
+    students = db.query(Student).filter(
+        Student.school_id == current_user.school_id
+    ).all()
+
+    classes = db.query(Class).filter(
+        Class.school_id == current_user.school_id
+    ).all()
+
+    # Convert to JSON-serializable format
+    import json
+    from datetime import date, datetime
+
+    def serialize_date(obj):
+        if isinstance(obj, (date, datetime)):
+            return obj.isoformat()
+        return obj
+
+    student_data = []
+    for student in students:
+        student_dict = {
+            'id': student.id,
+            'gr_number': student.gr_number,
+            'name': student.name,
+            'father_name': student.father_name,
+            'gender': student.gender,
+            'date_of_birth': serialize_date(student.date_of_birth),
+            'date_of_birth_in_letter': student.date_of_birth_in_letter,
+            'admission_date': serialize_date(student.admission_date),
+            'current_class_id': student.current_class_id,
+            'admission_class_id': student.admission_class_id,
+            'qom': student.qom,
+            'caste': student.caste,
+            'place_of_birth': student.place_of_birth,
+            'previous_school': student.previous_school,
+            'status': student.status
+        }
+        student_data.append(student_dict)
+
+    class_data = []
+    for cls in classes:
+        class_dict = {
+            'id': cls.id,
+            'name': cls.name
+        }
+        class_data.append(class_dict)
+
+    # Create new result sheet with snapshots
+    db_result_sheet = ResultSheet(
+        school_id=current_user.school_id,
+        academic_year=result_sheet.academic_year,
+        title=result_sheet.title,
+        student_snapshot=json.dumps(student_data),
+        class_snapshot=json.dumps(class_data)
+    )
+
+    db.add(db_result_sheet)
+    db.commit()
+    db.refresh(db_result_sheet)
+
+    return db_result_sheet
+
+
+@app.get("/result-sheets/{result_sheet_id}", response_model=ResultSheetOut)
+@app.get("/result-sheets/{result_sheet_id}/", response_model=ResultSheetOut)
+def get_result_sheet(
+    result_sheet_id: int,
+    current_user: User = Depends(require_school),
+    db: Session = Depends(get_db)
+):
+    """Get a specific result sheet (must belong to current user's school)."""
+    result_sheet = db.query(ResultSheet).filter(
+        ResultSheet.id == result_sheet_id,
+        ResultSheet.school_id == current_user.school_id
+    ).first()
+
+    if not result_sheet:
+        raise HTTPException(status_code=404, detail="Result sheet not found")
+
+    return result_sheet
+
+
+@app.get("/result-sheets/{result_sheet_id}/snapshot")
+@app.get("/result-sheets/{result_sheet_id}/snapshot/")
+def get_result_sheet_snapshot(
+    result_sheet_id: int,
+    current_user: User = Depends(require_school),
+    db: Session = Depends(get_db)
+):
+    """Get the snapshot data (students and classes) for a specific result sheet."""
+    result_sheet = db.query(ResultSheet).filter(
+        ResultSheet.id == result_sheet_id,
+        ResultSheet.school_id == current_user.school_id
+    ).first()
+
+    if not result_sheet:
+        raise HTTPException(status_code=404, detail="Result sheet not found")
+
+    import json
+
+    # Parse the JSON snapshots
+    students = json.loads(result_sheet.student_snapshot) if result_sheet.student_snapshot else []
+    classes = json.loads(result_sheet.class_snapshot) if result_sheet.class_snapshot else []
+
+    return {
+        "academic_year": result_sheet.academic_year,
+        "title": result_sheet.title,
+        "students": students,
+        "classes": classes,
+        "created_at": result_sheet.created_at
+    }
+
+
+@app.put("/result-sheets/{result_sheet_id}", response_model=ResultSheetOut)
+@app.put("/result-sheets/{result_sheet_id}/", response_model=ResultSheetOut)
+def update_result_sheet(
+    result_sheet_id: int,
+    result_sheet_update: ResultSheetUpdate,
+    current_user: User = Depends(require_school),
+    db: Session = Depends(get_db)
+):
+    """Update a result sheet (must belong to current user's school)."""
+    db_result_sheet = db.query(ResultSheet).filter(
+        ResultSheet.id == result_sheet_id,
+        ResultSheet.school_id == current_user.school_id
+    ).first()
+
+    if not db_result_sheet:
+        raise HTTPException(status_code=404, detail="Result sheet not found")
+
+    # Update fields
+    update_data = result_sheet_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_result_sheet, key, value)
+
+    db.commit()
+    db.refresh(db_result_sheet)
+
+    return db_result_sheet
+
+
+@app.delete("/result-sheets/{result_sheet_id}")
+@app.delete("/result-sheets/{result_sheet_id}/")
+def delete_result_sheet(
+    result_sheet_id: int,
+    current_user: User = Depends(require_school),
+    db: Session = Depends(get_db)
+):
+    """Delete a result sheet (must belong to current user's school)."""
+    db_result_sheet = db.query(ResultSheet).filter(
+        ResultSheet.id == result_sheet_id,
+        ResultSheet.school_id == current_user.school_id
+    ).first()
+
+    if not db_result_sheet:
+        raise HTTPException(status_code=404, detail="Result sheet not found")
+
+    db.delete(db_result_sheet)
+    db.commit()
+
+    return {"message": "Result sheet deleted successfully"}
 
 
 if __name__ == "__main__":

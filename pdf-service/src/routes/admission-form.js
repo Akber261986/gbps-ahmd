@@ -141,7 +141,7 @@ justify-content:space-evenly;
 
 <div class="paper">
 
-<div class="title" style= "font-family: 'MB-leeka-Shabir-2.0'">داخلا فارم</div>
+<div class="title" style= "font-family: 'MB-Leeka-Shabir-Kumbhar-2.0'">داخلا فارم</div>
 
 <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:15px; font-size:18px;">
   <div style="margin-bottom:8px;">

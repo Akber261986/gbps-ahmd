@@ -156,6 +156,16 @@ export interface School {
   updated_at: string;
 }
 
+export interface ResultSheet {
+  id: number;
+  school_id: number;
+  academic_year: string;
+  title?: string;
+  status: string;
+  created_at: string;
+  updated_at?: string;
+}
+
 // Student API functions
 export const studentApi = {
   getAll: (classId?: number) => {
@@ -233,6 +243,23 @@ export const schoolApi = {
   getMySchool: () => api.get<School>('/schools/my-school'),
 
   onboard: (data: any) => api.post<School>('/schools/onboard', data),
+};
+
+// Result Sheet API functions
+export const resultSheetApi = {
+  getAll: () => api.get<ResultSheet[]>('/result-sheets/'),
+
+  getById: (id: number) => api.get<ResultSheet>(`/result-sheets/${id}`),
+
+  getSnapshot: (id: number) => api.get(`/result-sheets/${id}/snapshot`),
+
+  create: (data: { academic_year: string; title?: string }) =>
+    api.post<ResultSheet>('/result-sheets/', data),
+
+  update: (id: number, data: { academic_year?: string; title?: string; status?: string }) =>
+    api.put<ResultSheet>(`/result-sheets/${id}`, data),
+
+  delete: (id: number) => api.delete(`/result-sheets/${id}`),
 };
 
 export default api;

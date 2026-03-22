@@ -22,6 +22,7 @@ router.post('/', async (req, res) => {
     const placeOfBirth = valueOrEmpty(data.place_of_birth);
     const dobInWords = valueOrEmpty(data.date_of_birth_in_letter || data.date_of_birth_words);
     const previousSchool = valueOrEmpty(data.previos_school || data.previous_school);
+    const grOfPreviousSchool = valueOrEmpty(data.gr_of_previous_school || data.gr_of_previos_school);
     const educationalAbility = valueOrEmpty(data.educational_ability || data.educational_qualification);
     const character = valueOrEmpty(data.character || data.conduct);
     const classOnLeaving = valueOrEmpty(data.class_on_leaving);
@@ -128,6 +129,7 @@ body {
     white-space: nowrap;
     line-height: 1.5;
     vertical-align: bottom;
+    font-size: 17px;
 }
 
 .line {
@@ -137,7 +139,7 @@ body {
     border-bottom: 1px solid #000;
     margin: 0 0 2px 0;
     text-align: center;
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1.8;
     vertical-align: bottom;
 }
@@ -287,17 +289,25 @@ body {
             <div class="line">${previousSchool}</div>
         </div>
 
+        <div class="row">
+            <div class="field">
+                <div class="number">11.</div>
+                <div class="label">اسڪول ڇڏڻ جو سرٽيفڪيٽ آڻڻ جي صورت ۾ جنرل رجسٽر نمبر</div>
+            </div>
+            <div class="line"><span class="numeric-value">${grOfPreviousSchool}</span></div>
+        </div>
+
         <div class="pair-row">
             <div class="field-row">
                 <div class="field">
-                    <div class="number">11.</div>
+                    <div class="number">12.</div>
                     <div class="label">تعليمي لياقت</div>
                 </div>
                 <div class="line">${educationalAbility}</div>
             </div>
             <div class="field-row">
                 <div class="field">
-                    <div class="number">12.</div>
+                    <div class="number">13.</div>
                     <div class="label">چال چلت</div>
                 </div>
                 <div class="line">${character}</div>
@@ -306,28 +316,28 @@ body {
 
         <div class="row">
             <div class="field">
-                <div class="number">13.</div>
+                <div class="number">14.</div>
                 <div class="label">ڪھڙي ڪلاس ۾ پڙھندو ھو / ھئي</div>
             </div>
             <div class="line">${classOnLeaving}</div>
         </div>
         <div class="row">
             <div class="field">
-                <div class="number">14.</div>
+                <div class="number">15.</div>
                 <div class="label">اسڪول ڇڏڻ جي تاريخ</div>
             </div>
             <div class="line"><span class="date-value">${formatDate(data.leaving_date)}</span></div>
         </div>
         <div class="row">
             <div class="field">
-                <div class="number">15.</div>
+                <div class="number">16.</div>
                 <div class="label">اسڪول ڇڏڻ جو سبب</div>
             </div>
             <div class="line">${leavingReason}</div>
         </div>
         <div class="row">
             <div class="field">
-                <div class="number">16.</div>
+                <div class="number">17.</div>
                 <div class="label">ريمارڪس</div>
             </div>
             <div class="line">${remarks}</div>

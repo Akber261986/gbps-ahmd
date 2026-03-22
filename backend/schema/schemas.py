@@ -346,3 +346,25 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     response: str
+
+# Result Sheet schemas
+class ResultSheetCreate(BaseModel):
+    academic_year: str  # e.g., "2025-2026"
+    title: Optional[str] = None
+
+class ResultSheetUpdate(BaseModel):
+    academic_year: Optional[str] = None
+    title: Optional[str] = None
+    status: Optional[str] = None
+
+class ResultSheetOut(BaseModel):
+    id: int
+    school_id: int
+    academic_year: str
+    title: Optional[str] = None
+    status: str
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
