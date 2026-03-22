@@ -87,7 +87,7 @@ tr {
 
 /* CELLS */
 th, td {
-  border: 1px solid #fd3636;
+  border: 1px solid #000;
   padding: 2mm;
   text-align: center;
   vertical-align: middle;
@@ -97,7 +97,7 @@ th, td {
 /* HEADER CELLS */
 th {
   background: #e5e7eb;
-  font-size: 15pt;
+  font-size: 13pt;
 }
 
 /* SINDHI TEXT */
@@ -112,7 +112,7 @@ th {
   font-weight: bold;
   font-size: 14pt;
   padding: 2mm;
-  text-align: right;
+  text-align: center;
   /* padding-right: 6mm; */
 }
 
@@ -170,31 +170,31 @@ th {
 
 <tr>
   <th colspan="15" class="sindhi">
-    <div class="header-title">جديد رزلٽ شيٽ - سال ${displayYear}</div>
+    <div class="header-title">جديد رزلٽ شيٽ - سال - ${displayYear}</div>
     <div class="header-sub">
       <span>نقشو امتحان جي مارڪن جو</span>
       <span class="s-name">${school?.school_name || 'اسڪول'}</span>
-      <span>جي درجي ـــــــــــــــــــ جو ساليانو امتحان تاريخ ـــــــــــ مھينو ـــــــــــــــــــــ سال ـــــــــــــــــــــ</span>
+      <span>جي درجي ــــــــــــــــ جو ساليانو امتحان تاريخ ـــــــــــ مھينو ــــــــــــــــــ سال ـــــــــــــــــ</span>
     </div>
   </th>
 </tr>
 
 <tr>
-  <th rowspan="2" style="width: 18mm;">جنرل رجسٽر نمبر</th>
-  <th rowspan="2" style="width: 18mm;">ڳاڻيٽي جو نمبر</th>
-  <th rowspan="2" style="width: 40mm;">شاگرد جو نالو</th>
-  <th rowspan="2" style="width: 40mm;">پيءُ جو نالو</th>
-  <th style="width: 18mm;">دينيات</th>
-  <th style="width: 18mm;">مادري زبان</th>
-  <th style="width: 18mm;">رياضي</th>
-  <th style="width: 18mm;">سماجي</th>
-  <th style="width: 18mm;">سائنس</th>
-  <th style="width: 18mm;">اردو</th>
-  <th style="width: 18mm;">انگلش</th>
-  <th style="width: 18mm;">ڊرائنگ</th>
-  <th rowspan="2" style="width: 28mm;">ڄمڻ جي تاريخ</th>
-  <th rowspan="2" style="width: 28mm;">داخلا جي تاريخ</th>
-  <th rowspan="2" style="width: 20mm;">پاس يا ناپاس</th>
+    <th rowspan="2" style="width: 17mm;">جنرل رجسٽر نمبر</th>
+    <th rowspan="2" style="width: 12mm">ڳاڻيٽي جو نمبر</th>
+    <th rowspan="2" style="width: 35mm">شاگرد جو نالو</th>
+    <th rowspan="2" style="width: 35mm">پيءُجو نالو </th>
+    <th style="width: 14mm">دينيات</th>
+    <th style="width: 14mm">مادري زبان</th>
+    <th style="width: 14mm">رياضي</th>
+    <th style="width: 14mm">سماجي</th>
+    <th style="width: 14mm">سائنس</th>
+    <th style="width: 14mm">اردو</th>
+    <th style="width: 14mm">انگلش</th>
+    <th style="width: 14mm">ڊرائنگ</th>
+    <th rowspan="2" style="width: 25mm">ڄمڻ جي تاريخ</th>
+    <th rowspan="2" style="width: 25mm">داخلا جي تاريخ</th>
+    <th rowspan="2" style="width: 16mm">پاس يا ناپاس</th>
 </tr>
 
 <tr>
