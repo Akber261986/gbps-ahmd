@@ -46,17 +46,7 @@ html, body {
 body {
   font-family: 'MB Sindhi Web SK 2';
   direction: rtl;
-  background: #e0e0e0;
-  display: flex;
-  justify-content: center;
-  padding: 10px;
 }
-
-/* PAPER STYLING */
-.paper {
-      min-width: 215mm;
-      min-height: 355mm;
-    }
 
 /* TABLE STYLING */
 table {
@@ -161,7 +151,6 @@ th {
 
 <body>
 
-<div class="paper">
 <table>
 
 <thead>
@@ -264,7 +253,6 @@ ${classStudents.length === 0 ? `
 </tbody>
 
 </table>
-</div>
 
 </body>
 </html>
