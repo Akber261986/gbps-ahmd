@@ -79,3 +79,37 @@ export async function GET(req: NextRequest) {
     }, { status: 500 });
   }
 }
+
+export async function POST(req: NextRequest) {
+  try {
+    console.log('=== Resultsheet PDF Generation Started (POST) ===');
+
+    // Parse request body
+    const body = await req.json();
+    const { students, classes, school, academicYear } = body;
+
+    console.log('Received data - Students:', students?.length, 'Classes:', classes?.length, 'Academic Year:', academicYear);
+
+    if (!students || !classes) {
+      throw new Error('Missing required data: students and classes');
+    }
+
+    // Call PDF service with academic year
+    return await generatePDF(
+      '/pdf/resultsheet',
+      { students, classes, school, academicYear },
+      `resultsheet-${academicYear || 'current'}.pdf`
+    );
+
+  } catch (e: any) {
+    console.error('=== Resultsheet PDF Generation Error ===');
+    console.error('Error name:', e.name);
+    console.error('Error message:', e.message);
+    console.error('Error stack:', e.stack);
+    return NextResponse.json({
+      error: e.message,
+      details: e.stack,
+      name: e.name
+    }, { status: 500 });
+  }
+}
