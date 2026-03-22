@@ -1,255 +1,248 @@
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
 
-<style>
-@font-face {
-    font-family: 'MB Sindhi Web SK 2.0';
+<head>
+  <meta charset="UTF-8" />
+  <title>Result Sheet</title>
+
+  <style>
+    @font-face {
+    font-family: 'MB Sindhi Web SK 20';
     src: url(/pdf-service/fonts/MB-Sindhi-Web-SK-2.0.ttf) format('truetype');
 }
+@page {
+  size: Legal landscape;
+}
 
-@font-face {
-    font-family: "MB-leeka-Shabir-2.0";
-    src: url(/pdf-service/fonts/MB-Leeka-Shabir-Kumbhar-2.0.ttf) format('truetype');
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-    font-family: 'MB Sindhi Web SK 2.0';
-    direction: rtl;
-    padding: 0;
-    margin: 0;
-    line-height: 1.6;
-    background: #e0e0e0;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
+  font-family: 'MB Sindhi Web SK 2';
+  direction: rtl;
+  background: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
 }
 
+/* PAPER STYLING */
 .paper {
-    background: #f5f0c9;
-    border: 6px solid #2c7a4b;
-    padding: 30px;
-    width: 150mm;
-    height: 210mm;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    page-break-inside: avoid;
-    page-break-after: avoid;
+      min-width: 215mm;
+      min-height: 355mm;
+      page-break-inside: avoid;
+      page-break-after: avoid;
+    }
+
+/* TABLE STYLING */
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-  
-  .title{
-    text-align:center;
-    font-size:28px;
-    font-weight:bold;
-    margin-bottom:15px;
-  }
-  
-  .top{
-    display:flex;
-    justify-content:space-between;
-    font-size:14px;
-    margin-bottom:15px;
-  }
-  
-  .row{
-    display:flex;
-    align-items:flex-end;
-    margin:4px 8px;
-    font-size:14px;
-    min-height:18px;
-  }
-  
-  .number{
-    width:30px;
-    font-family: 'Times New Roman', Times, serif;
-  }
-  
-  .label{
-    white-space:nowrap;
-    font-size: 17px;
-  }
-  
-  .line{
-    padding-bottom: 2px;
-    flex:1;
-    border-bottom:1px solid #000;
-    margin:4px 16px;
-    text-align:center;
-    font-size:16px;
-    font-weight: bold;
-  }
-
-  .digit{
-    font-family: 'Times New Roman', Times, serif;
-  }
-
-  .two-col-row{
-    display:flex;
-    gap:16px;
-    margin:4px 8px;
-    min-height:18px;
-  }
-
-  .col{
-    flex:1;
-    display:flex;
-    align-items:flex-end;
-    font-size:14px;
-  }
-  
-.signatures{
-  margin-top:60px;
-  display:flex;
-  justify-content:space-evenly;
+/* HEADER REPEAT */
+thead {
+  display: table-header-group;
 }
 
-.sign{
-  text-align:center;
-  width:30%;
-  font-size:14px;
+tbody {
+  display: table-row-group;
 }
 
-.sign-line{
-  border-top:1px solid #000;
-  margin-bottom:5px;
+/* PREVENT ROW BREAKING */
+tr {
+  page-break-inside: avoid;
+  height: 13mm;
 }
 
-</style>
+.no-break {
+  page-break-inside: avoid;
+}
+
+/* CELLS */
+th, td {
+  border: 1px solid #fd3636;
+  padding: 2mm;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 15pt;
+}
+
+/* HEADER CELLS */
+th {
+  background: #e5e7eb;
+  font-size: 15pt;
+}
+
+/* SINDHI TEXT */
+.sindhi {
+  direction: rtl;
+  text-align: center;
+}
+
+/* CLASS HEADER */
+.class-header {
+  background-color: #e5e5e5;
+  font-weight: bold;
+  font-size: 14pt;
+  padding: 2mm;
+  text-align: right;
+  /* padding-right: 6mm; */
+}
+
+/* GENDER HEADER */
+.gender-header {
+  background-color: #ffd1dc;
+  font-weight: bold;
+  font-size: 13pt;
+  padding: 2mm;
+}
+
+/* PAGE BREAKS */
+.class-section {
+  page-break-before: always;
+}
+
+.class-section:first-child {
+  page-break-before: auto;
+}
+
+.class-name-row {
+  page-break-after: avoid;
+}
+
+/* TITLE STYLING */
+.header-title {
+  font-size: 26pt;
+  font-weight: bold;
+}
+
+.s-name {
+  font-weight: bold;
+  font-size: 16pt;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+.header-sub {
+  font-size: 14pt;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10mm;
+  padding: 1mm;
+}
+  </style>
 </head>
 
 <body>
 
-<div class="paper">
+  <div class="paper">
+    <table>
 
-<div class="title" style= "font-family: 'MB-leeka-Shabir-2.0'">داخلا فارم</div>
+      <!-- ================== REPEATING HEADER ================== -->
+      <thead>
+        <tr>
+          <th colspan="15" class="sindhi">
+            <div class="header-title">جديد رزلٽ شيٽ - سال 2026</div>
+            <div class="header-sub">
+              <span>
 
-<div style="display:flex; flex-direction:column; align-items:center; margin-bottom:15px; font-size:18px;">
-  <div style="margin-bottom:8px;">
-    <strong>گورنمينٽ پرائمري اسڪول ارباب حاجي محمد دل</strong>
+                نقشو امتحان جي مارڪن جو
+              </span>
+
+              <span class="s-name">گورنمينٽ پرائمري اسڪول ارباب حاجي محمد دل</span>
+              <span>
+
+                جي درجي ـــــــــــــــــــ جو ساليانو امتحان تاريخ ــــــــ مھينو ــــــــــــــ سال
+                ــــــــــــــ
+              </span>
+            </div>
+          </th>
+        </tr>
+
+        <tr>
+          <th rowspan="2" style="width: 17mm;">جنرل رجسٽر نمبر</th>
+          <th rowspan="2" style="width: 12mm">ڳاڻيٽي جو نمبر</th>
+          <th rowspan="2" style="width: 35mm">شاگرد جو نالو</th>
+          <th rowspan="2" style="width: 35mm">پيءُجو نالو </th>
+          <th style="width: 14mm">دينيات</th>
+          <th style="width: 14mm">مادري زبان</th>
+          <th style="width: 14mm">رياضي</th>
+          <th style="width: 14mm">سماجي</th>
+          <th style="width: 14mm">سائنس</th>
+          <th style="width: 14mm">اردو</th>
+          <th style="width: 14mm">انگلش</th>
+          <th style="width: 14mm">ڊرائنگ</th>
+          <th rowspan="2" style="width: 25mm">ڄمڻ جي تاريخ</th>
+          <th rowspan="2" style="width: 25mm">داخلا جي تاريخ</th>
+          <th rowspan="2" style="width: 16mm">پاس يا ناپاس</th>
+        </tr>
+
+        <tr>
+          <th>100</th>
+          <th>100</th>
+          <th>100</th>
+          <th>100</th>
+          <th>100</th>
+          <th>100</th>
+          <th>100</th>
+          <th>100</th>
+        </tr>
+      </thead>
+      <!-- ================== BODY ================== -->
+      <tbody>
+        <tr class="no-break">
+          <td>547</td>
+          <td>1</td>
+          <td class="sindhi">غلام اڪبر دل</td>
+          <td class="sindhi">محمد عثمان دل</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>26/10/1986</td>
+          <td>01/08/1992</td>
+          <td></td>
+        </tr>
+        <!-- Class Name Row -->
+        <tr class="class-name-row ${classIndex > 0 ? " class-section" : "" }">
+          <td colspan="15" class="class-header sindhi">
+            پھريون
+          </td>
+        </tr>
+        <!-- Girls Section -->
+        <tr class="gender-header no-break">
+          <td colspan="15" class="class-header sindhi" style="background-color: #ffd1dc; font-size: 13pt;">
+            ڇوڪريون (Girls)
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="15" style="padding: 4mm; text-align: center; color: #9ca3af; font-style: italic;">
+            هن ڪلاس ۾ ڪوبه شاگرد موجود ناهي
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="15" style="padding: 8mm; text-align: center; color: #4b5563; font-size: 14pt;">
+            ڪي به ڪلاس موجود ناهي
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
   </div>
-  <div>
-    <span>سيمس ڪوڊ: </span>
-    <strong class="digit">404090098</strong>
-  </div>
-</div>
-
-<div class="row">
-<span class="number">1.</span>
-<span class="label">جنرل رجسٽر نمبر</span>
-<span class="line"><span class="digit">578</span></span>
-</div>
-
-<div class="row">
-<span class="number">2.</span>
-<span class="label">داخلہ جي تاريخ</span>
-<span class="line"><span class="digit">15/06/2021</span></span>
-</div>
-
-<div class="row">
-<span class="number">3.</span>
-<span class="label">شاگرد جو نالو</span>
-<span class="line">علي حسن</span>
-</div>
-
-<div class="row">
-<span class="number">4.</span>
-<span class="label">والد جو نالو</span>
-<span class="line">غلام رسول</span>
-</div>
-
-<div class="two-col-row">
-  <div class="col">
-    <span class="number">5.</span>
-    <span class="label">قوم</span>
-    <span class="line">اسلام</span>
-  </div>
-  <div class="col">
-    <span class="number">6.</span>
-    <span class="label">ذات</span>
-    <span class="line">سومرو</span>
-  </div>
-</div>
-
-<div class="two-col-row">
-  <div class="col">
-    <span class="number">7.</span>
-    <span class="label"> سرپرست جو نالو</span>
-    <span class="line">محمد صديق</span>
-  </div>
-  <div class="col">
-    <span class="number">8.</span>
-    <span class="label"> بمعہ مائيٽي</span>
-    <span class="line">چاچو</span>
-  </div>
-</div>
-
-<div class="row">
-<span class="number">9.</span>
-<span class="label">سرپرست جو ڌنڌو</span>
-<span class="line">زمينداري</span>
-</div>
-
-<div class="row">
-<span class="number">10.</span>
-<span class="label">پيدائش جي جاءِ</span>
-<span class="line">ٽنڊو محمد خان</span>
-</div>
-
-<div class="row">
-<span class="number">11.</span>
-<span class="label">پيدائش جي تاريخ</span>
-<span class="line"><span class="digit">04/03/2015</span></span>
-</div>
-
-<div class="row">
-<span class="number">12.</span>
-<span class="label">پيدائش جي تاريخ لفظن ۾</span>
-<span class="line">چار مارچ ٻه هزار پندرهن</span>
-</div>
-
-<div class="row">
-<span class="number">13.</span>
-<span class="label">ڪھڙي اسڪول مان آيو</span>
-<span class="line">گورنمينٽ پرائمري اسڪول ٽنڊو غلام علي</span>
-</div>
-
-<div class="row">
-<span class="number">14.</span>
-<span class="label"> ڪهڙي ڪلاس ۾ داخل ٿيو / ٿي</span>
-<span class="line">ڪلاس ٽيون</span>
-</div>
-
-<div class="row">
-<span class="number">15.</span>
-<span class="label">سرپرست جي صحيح</span>
-<span class="line"></span>
-</div>
-
-<div class="row">
-<span class="number">16.</span>
-<span class="label">داخلہ وقت عمر</span>
-<span class="line"><span class="digit">6</span> سال</span>
-<span class="line"><span class="digit">3</span> مھينا</span>
-<span class="line"><span class="digit">11</span> ڏينھن</span>
-</div>
-
-<div class="signatures">
-
-<div class="sign">
-<div class="sign-line"></div>
-<p>صحيح ڪلاس ماسٽر / ماسترياڻي</p>
-</div>
-
-<div class="sign">
-<div class="sign-line"></div>
-<p>صحيح هيڊ ماسٽر / هيڊ مسٽريس</p>
-</div>
-
-</div>
-
-</div>
 
 </body>
+
 </html>

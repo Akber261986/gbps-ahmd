@@ -126,7 +126,7 @@ const ViewAdmission = ({ formData, classes }: ViewAdmissionProps) => {
           value1={formData.guardian_name}
           no2="8."
           label2=" بمعہ مائيٽي"
-          value2={formData.guardian_relation}
+          value2={formData.relation_with_guardian}
           />
 
         <Row

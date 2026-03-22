@@ -34,7 +34,7 @@ ${getSindhiFontCSS()}
 ${mbLeekaShabir('MB-Leeka-Shabir-Kumbhar-2.0', 'MB-Leeka-Shabir-Kumbhar-2.0.ttf')}
 
 body {
-    font-family: 'MB Sindhi Web SK 2.0';
+    font-family: 'MB Sindhi Web SK 2.';
     direction: rtl;
     padding: 0;
     margin: 0;
@@ -50,7 +50,7 @@ body {
   border: 6px solid #2c7a4b;
   padding: 30px;
   width: 150mm;
-  height: 220mm;
+  height: 240mm;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   page-break-inside: avoid;
   page-break-after: avoid;

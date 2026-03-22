@@ -32,11 +32,8 @@ router.post('/', async (req, res) => {
 
 <style>
 ${getSindhiFontCSS()}
-
-/* PAGE SETUP - LEGAL LANDSCAPE */
 @page {
-  size: legal landscape;
-  margin: 10mm 8mm;
+  size: Legal landscape;
 }
 
 html, body {
@@ -47,7 +44,7 @@ html, body {
 }
 
 body {
-  font-family: 'MB Sindhi Web SK 2.0';
+  font-family: 'MB Sindhi Web SK 2';
   direction: rtl;
   background: #e0e0e0;
   display: flex;
@@ -57,15 +54,11 @@ body {
 
 /* PAPER STYLING */
 .paper {
-  background: #f5f0c9;
-  border: 6px solid #2c7a4b;
-  padding: 30px;
-  width: 290mm;
-  height: 200mm;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  page-break-inside: avoid;
-  page-break-after: avoid;
-}
+      min-width: 215mm;
+      min-height: 355mm;
+      page-break-inside: avoid;
+      page-break-after: avoid;
+    }
 
 /* TABLE STYLING */
 table {
@@ -94,7 +87,7 @@ tr {
 
 /* CELLS */
 th, td {
-  border: 1px solid #000;
+  border: 1px solid #fd3636;
   padding: 2mm;
   text-align: center;
   vertical-align: middle;
@@ -120,7 +113,7 @@ th {
   font-size: 14pt;
   padding: 2mm;
   text-align: right;
-  padding-right: 6mm;
+  /* padding-right: 6mm; */
 }
 
 /* GENDER HEADER */
@@ -165,7 +158,6 @@ th {
   gap: 10mm;
   padding: 1mm;
 }
-
 </style>
 </head>
 
