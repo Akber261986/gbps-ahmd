@@ -56,8 +56,6 @@ body {
 .paper {
       min-width: 215mm;
       min-height: 355mm;
-      page-break-inside: avoid;
-      page-break-after: avoid;
     }
 
 /* TABLE STYLING */
