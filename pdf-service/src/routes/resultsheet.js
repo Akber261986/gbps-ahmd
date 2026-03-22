@@ -36,7 +36,7 @@ ${getSindhiFontCSS()}
 /* PAGE SETUP - LEGAL LANDSCAPE */
 @page {
   size: legal landscape;
-  margin: 10mm 8mm;
+  margin: 10mm 12mm;
 }
 
 html, body {
@@ -49,7 +49,7 @@ html, body {
 body {
   font-family: 'MB Sindhi Web SK 2.0';
   direction: rtl;
-  font-size: 16pt;
+  font-size: 11pt;
 }
 
 /* TABLE STYLING */
@@ -71,6 +71,7 @@ tbody {
 /* PREVENT ROW BREAKING */
 tr {
   page-break-inside: avoid;
+  height: 8mm;
 }
 
 .no-break {
@@ -80,39 +81,47 @@ tr {
 /* CELLS */
 th, td {
   border: 1px solid #000;
-  padding: 2mm;
+  padding: 1.5mm 1mm;
   text-align: center;
   vertical-align: middle;
-  font-size: 16pt;
+  font-size: 11pt;
+  overflow: hidden;
+  word-wrap: break-word;
+  line-height: 1.2;
 }
 
 /* HEADER CELLS */
 th {
   background: #e5e7eb;
+  font-size: 10pt;
+  padding: 2mm 1mm;
 }
 
 /* SINDHI TEXT */
 .sindhi {
   direction: rtl;
   text-align: center;
+  unicode-bidi: embed;
 }
 
 /* CLASS HEADER */
 .class-header {
   background-color: #e5e5e5;
   font-weight: bold;
-  font-size: 14pt;
+  font-size: 12pt;
   padding: 2mm;
   text-align: right;
   padding-right: 6mm;
+  height: auto;
 }
 
 /* GENDER HEADER */
 .gender-header {
   background-color: #ffd1dc;
   font-weight: bold;
-  font-size: 13pt;
+  font-size: 11pt;
   padding: 2mm;
+  height: auto;
 }
 
 /* PAGE BREAKS */
@@ -129,8 +138,8 @@ th {
 }
 
 /* ROW HEIGHT */
-.tr {
-  height: 20mm;
+tbody tr {
+  height: 8mm;
 }
 
 /* TITLE STYLING */
@@ -153,21 +162,21 @@ th {
 <table>
 
 <colgroup>
-  <col style="width: 20mm" /> <!-- GR -->
-  <col style="width: 18mm" /> <!-- Roll -->
-  <col style="width: 42mm" /> <!-- Student Name -->
-  <col style="width: 42mm" /> <!-- Father Name -->
-  <col style="width: 18mm" /> <!-- دينيات -->
-  <col style="width: 18mm" /> <!-- مادري زبان -->
-  <col style="width: 18mm" /> <!-- رياضي -->
-  <col style="width: 18mm" /> <!-- سماجي اڀياس -->
-  <col style="width: 20mm" /> <!-- جنرل سائنس -->
-  <col style="width: 18mm" /> <!-- اردو -->
-  <col style="width: 18mm" /> <!-- انگلش -->
-  <col style="width: 22mm" /> <!-- ڊرائنگ / فنون -->
-  <col style="width: 24mm" /> <!-- DOB -->
-  <col style="width: 24mm" /> <!-- Admission Date -->
-  <col style="width: 22mm" /> <!-- Pass/Fail -->
+  <col style="width: 6%" /> <!-- GR -->
+  <col style="width: 5%" /> <!-- Roll -->
+  <col style="width: 10%" /> <!-- Student Name -->
+  <col style="width: 10%" /> <!-- Father Name -->
+  <col style="width: 6%" /> <!-- دينيات -->
+  <col style="width: 6%" /> <!-- مادري زبان -->
+  <col style="width: 6%" /> <!-- رياضي -->
+  <col style="width: 7%" /> <!-- سماجي اڀياس -->
+  <col style="width: 7%" /> <!-- جنرل سائنس -->
+  <col style="width: 5%" /> <!-- اردو -->
+  <col style="width: 6%" /> <!-- انگلش -->
+  <col style="width: 8%" /> <!-- ڊرائنگ / فنون -->
+  <col style="width: 7%" /> <!-- DOB -->
+  <col style="width: 7%" /> <!-- Admission Date -->
+  <col style="width: 4%" /> <!-- Pass/Fail -->
 </colgroup>
 
 <thead>
