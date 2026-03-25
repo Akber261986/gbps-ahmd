@@ -1,7 +1,19 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
-const { getSindhiFontCSS } = require('../utils/fontLoader');
+const fs = require('fs');
+const path = require('path');
+const { getFontFaceCSS } = require('../utils/fontLoader');
 const router = express.Router();
+
+// Load all fonts at module initialization
+const fontsDir = path.join(__dirname, '..', '..', 'fonts');
+const fontFiles = fs.readdirSync(fontsDir).filter(file => file.endsWith('.ttf'));
+
+// Generate font family names from filenames
+const fonts = fontFiles.map(file => {
+  const fontFamily = file.replace('.ttf', '').replace(/\s+/g, '-');
+  return { fontFamily, fileName: file };
+});
 
 // POST /pdf/font-test
 router.post('/', async (req, res) => {
@@ -10,21 +22,25 @@ router.post('/', async (req, res) => {
   try {
     console.log('=== Font Test PDF Generation Started ===');
 
-    const { fontFamily, school } = req.body;
+    // Generate @font-face CSS for all fonts
+    const allFontCSS = fonts.map(font =>
+      getFontFaceCSS(font.fontFamily, font.fileName)
+    ).join('\n');
 
-    // Default font if not provided
-    const testFont = fontFamily || "'MB Nargis New', 'MB Khursheed', sans-serif";
+    // Sample text to display in each font
+    const sampleText = 'شاگرد جو نالو - محمد احمد علي - سالياني امتحان جي رزلٽ شيٽ';
 
-    // Generate HTML content with sample Sindhi text
+    // Generate HTML content with all fonts
     const htmlContent = `
       <!DOCTYPE html>
 <html lang="ur" dir="rtl">
 
 <head>
     <meta charset="UTF-8" />
-    <title>Font Test - ${testFont}</title>
+    <title>Font Test - All Fonts</title>
 
     <style>
+    ${allFontCSS}
         * {
             margin: 0;
             padding: 0;
@@ -32,179 +48,57 @@ router.post('/', async (req, res) => {
         }
 
         body {
-            font-family: ${testFont};
             direction: rtl;
-            padding: 20mm;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 10mm;
-            padding-bottom: 5mm;
-            border-bottom: 2px solid #000;
-        }
-
-        .header h1 {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 5mm;
-        }
-
-        .font-info {
-            font-size: 14px;
-            color: #666;
-            margin-top: 3mm;
+            padding: 10mm;
         }
 
         .section {
-            margin-bottom: 8mm;
+            margin-bottom: 5mm;
+            page-break-inside: avoid;
         }
 
         .section-title {
-            font-size: 20px;
+            font-size: 12px;
             font-weight: bold;
-            margin-bottom: 3mm;
-            color: #333;
+            margin-bottom: 2mm;
+            color: #666;
+            font-family: Arial, sans-serif;
         }
 
         .sample-text {
-            font-size: 16px;
-            line-height: 1.8;
-            margin-bottom: 2mm;
-        }
-
-        .size-samples {
-            display: flex;
-            flex-direction: column;
-            gap: 3mm;
-        }
-
-        .size-sample {
+            font-size: 18px;
+            line-height: 1.6;
             padding: 3mm;
-            background: #f5f5f5;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
             border-radius: 2mm;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 3mm;
-        }
-
-        th, td {
-            border: 1px solid #000;
-            padding: 3mm;
-            text-align: center;
-        }
-
-        th {
-            background: #e5e7eb;
-            font-weight: 600;
         }
 
         @page {
             size: A4;
-            margin: 15mm;
+            margin: 10mm;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 10mm;
+            font-family: Arial, sans-serif;
         }
     </style>
 </head>
 
 <body>
+    <h1>Sindhi Fonts Comparison - سنڌي فونٽس جو مقابلو</h1>
 
-    <div class="header">
-        <h1>فونٽ ٽيسٽ - Sindhi Font Test</h1>
-        <p class="font-info">Font Family: ${testFont}</p>
-        ${school?.school_name ? `<p class="font-info">${school.school_name}</p>` : ''}
-    </div>
-
-    <!-- Sample 1: School Headers -->
+    ${fonts.map(font => `
     <div class="section">
-        <div class="section-title">اسڪول جا عنوان (School Headers)</div>
-        <div class="sample-text">شاگردن جي حاضري جو جنرل رجسٽر</div>
-        <div class="sample-text">داخلا فارم - Admission Form</div>
-        <div class="sample-text">اسڪول ڇڏڻ جو سرٽيفڪيٽ - School Leaving Certificate</div>
-        <div class="sample-text">نتيجن جي شيٽ - Result Sheet</div>
-    </div>
-
-    <!-- Sample 2: Common Fields -->
-    <div class="section">
-        <div class="section-title">عام فيلڊ (Common Fields)</div>
-        <div class="sample-text">شاگرد جو نالو: محمد احمد علي</div>
-        <div class="sample-text">پيءُ جو نالو: عبدالرحمن محمد</div>
-        <div class="sample-text">پيدائش جي جاءِ: حيدرآباد، سنڌ</div>
-        <div class="sample-text">پيدائش جي تاريخ: پندرهن جنوري ٻه هزار ڏهه</div>
-        <div class="sample-text">موجودہ پتہ: گلي نمبر 5، بلاڪ A، لطيف آباد</div>
-    </div>
-
-    <!-- Sample 3: Numbers and Dates -->
-    <div class="section">
-        <div class="section-title">نمبر ۽ تاريخون (Numbers & Dates)</div>
-        <div class="sample-text">جنرل رجسٽر نمبر: 451</div>
-        <div class="sample-text">رول نمبر: 25</div>
-        <div class="sample-text">داخلا جي تاريخ: 15-01-2020</div>
-        <div class="sample-text">سيمس ڪوڊ: 123456789</div>
-    </div>
-
-    <!-- Sample 4: Different Font Sizes -->
-    <div class="section">
-        <div class="section-title">مختلف سائيز (Different Sizes)</div>
-        <div class="size-samples">
-            <div class="size-sample" style="font-size: 12px;">12px: شاگرد جو نالو - محمد احمد علي</div>
-            <div class="size-sample" style="font-size: 14px;">14px: شاگرد جو نالو - محمد احمد علي</div>
-            <div class="size-sample" style="font-size: 16px;">16px: شاگرد جو نالو - محمد احمد علي</div>
-            <div class="size-sample" style="font-size: 18px;">18px: شاگرد جو نالو - محمد احمد علي</div>
-            <div class="size-sample" style="font-size: 20px;">20px: شاگرد جو نالو - محمد احمد علي</div>
+        <div class="section-title">${font.fontFamily}</div>
+        <div class="sample-text" style="font-family: '${font.fontFamily}';">
+            ${sampleText}
         </div>
     </div>
-
-    <!-- Sample 5: Table Format -->
-    <div class="section">
-        <div class="section-title">ٽيبل فارميٽ (Table Format)</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>جنرل رجسٽر نمبر</th>
-                    <th>شاگرد جو نالو</th>
-                    <th>پيءُ جو نالو</th>
-                    <th>ڪلاس</th>
-                    <th>داخلا جي تاريخ</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>451</td>
-                    <td>محمد احمد علي</td>
-                    <td>عبدالرحمن محمد</td>
-                    <td>ڪلاس پنجون</td>
-                    <td>15-01-2020</td>
-                </tr>
-                <tr>
-                    <td>452</td>
-                    <td>فاطمه زهرا</td>
-                    <td>علي حسن</td>
-                    <td>ڪلاس ڇهون</td>
-                    <td>20-02-2020</td>
-                </tr>
-                <tr>
-                    <td>453</td>
-                    <td>عائشه بي بي</td>
-                    <td>محمد يوسف</td>
-                    <td>ڪلاس ستون</td>
-                    <td>10-03-2020</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Sample 6: Long Paragraph -->
-    <div class="section">
-        <div class="section-title">ڊگهو پيراگراف (Long Paragraph)</div>
-        <div class="sample-text">
-            هي شاگرد اسان جي اسڪول ۾ ڪلاس پهرين ۾ داخل ٿيو هو. هن جو رويو تمام سٺو آهي ۽ پڙهائي ۾ به تمام هوشيار آهي.
-            هن پنهنجي استادن جو احترام ڪندو آهي ۽ ٻين شاگردن سان به سٺو سلوڪ ڪندو آهي. اسان کي اميد آهي ته هي شاگرد
-            مستقبل ۾ تمام ڪامياب ٿيندو ۽ پنهنجي خاندان ۽ اسڪول جو نالو روشن ڪندو.
-        </div>
-    </div>
+    `).join('\n')}
 
 </body>
 </html>
