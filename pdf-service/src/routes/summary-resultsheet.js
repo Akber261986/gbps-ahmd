@@ -1,8 +1,26 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
+const fs = require('fs');
+const path = require('path');
 const { getSindhiFontCSS } = require('../utils/fontLoader');
 
 const router = express.Router();
+
+// Load and convert images to Base64 once at module initialization
+const loadImageAsBase64 = (imagePath) => {
+  try {
+    const absolutePath = path.join(__dirname, '..', '..', imagePath);
+    const imageBuffer = fs.readFileSync(absolutePath);
+    const base64Image = imageBuffer.toString('base64');
+    return `data:image/png;base64,${base64Image}`;
+  } catch (error) {
+    console.error(`Failed to load image: ${imagePath}`, error);
+    return '';
+  }
+};
+
+const frameImageBase64 = loadImageAsBase64('public/images/frame.png');
+const frame2ImageBase64 = loadImageAsBase64('public/images/frame2.png');
 
 router.post('/', async (req, res) => {
   let browser;
@@ -36,9 +54,6 @@ router.post('/', async (req, res) => {
       return nameOnly
   }
 
-    // Get base URL for images
-    const baseUrl = process.env.BASE_URL || 'http://localhost:7860';
-
     const html = `
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -71,7 +86,7 @@ body {
   flex-direction: column;
   align-items: center;
   border: 20px solid transparent;
-  border-image: url('${baseUrl}/public/images/frame2.png') 90 round;
+  border-image: url('${frame2ImageBase64}') 90 round;
 }
 
 .head_logo {
@@ -242,7 +257,7 @@ tr {
 
 <div class="container">
   <div class="head_logo">
-    <img src="${baseUrl}/public/images/frame.png" alt="Frame" style="width: 100%; height: 100%; object-fit: contain;">
+    <img src="${frameImageBase64}" alt="Frame" style="width: 100%; height: 100%; object-fit: contain;">
     <h1>سالياني امتحان جي رزلٽ شيٽ</h1>
     <p>براءِ سال ${escapeHtml(displayYear)}</p>
   </div>
