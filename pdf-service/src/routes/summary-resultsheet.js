@@ -139,6 +139,7 @@ body {
   width: 7%;
   text-wrap: nowrap;
   text-align: center;
+  height: 20px;
 }
 
 .sub_content p ._data1 {
@@ -146,11 +147,13 @@ body {
   width: 25%;
   text-wrap: nowrap;
   text-align: center;
+  height: 20px;
 }
 
 .sub_content p ._data2 {
   border-bottom: solid 2px black;
   width: 14%;
+  height: 20px;
   text-wrap: nowrap;
   text-align: center;
 }
@@ -299,7 +302,7 @@ tr {
   </div>
 </div>
 
-<div class="container">
+<div class="container" style="margin-top: 20px;">
   <div class="heading">اختصار رزلٽ شيٽ</div>
   <table>
     <thead>
