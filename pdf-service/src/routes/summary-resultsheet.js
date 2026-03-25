@@ -60,7 +60,7 @@ router.post('/', async (req, res) => {
 <head>
 <meta charset="UTF-8">
 <style>
-${getSindhiFontCSS()}
+${getSindhiFontCSS('MB-Sindhi-Web-SK-2.0', 'fonts/MB-Sindhi-Web-SK-2.0.ttf')}
 
 @page {
   size: A4 landscape;
@@ -68,6 +68,7 @@ ${getSindhiFontCSS()}
 }
 
 body {
+  font-family: 'MB-Sindhi-Web-SK-2.0';
   margin: 0;
   padding: 2px;
   direction: rtl;
