@@ -70,18 +70,18 @@ ${getFontFaceCSS('MB-Bhitai-Sattar-SK-2.0', 'MB-Bhitai-Sattar-SK-2.0.ttf')}
 body {
   font-family: 'MB-Bhitai-Sattar-SK-2.0';
   margin: 0;
-  padding: 2px;
+  padding: 0;
   direction: rtl;
   font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
 }
 
 .container {
   width: 270mm;
-  min-height: 200mm;
+  min-height: 175mm;
+  margin-top: 8mm;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -89,6 +89,12 @@ body {
   justify-content: center;
   border: 20px solid transparent;
   border-image: url('${frame2ImageBase64}') 90 round;
+  page-break-inside: avoid;
+}
+
+.container:not(:last-child) {
+  page-break-after: always;
+  margin-bottom: 8mm;
 }
 
 .head_logo {
