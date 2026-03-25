@@ -64,7 +64,7 @@ ${getFontFaceCSS('MB-Bhitai-Sattar-SK-2.0', 'MB-Bhitai-Sattar-SK-2.0.ttf')}
 
 @page {
   size: A4 landscape;
-  margin: 8mm 4mm 4mm 4mm;
+  margin: 4mm;
 }
 
 body {
