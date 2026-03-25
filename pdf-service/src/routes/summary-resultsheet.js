@@ -86,6 +86,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   border: 20px solid transparent;
   border-image: url('${frame2ImageBase64}') 90 round;
 }
@@ -302,7 +303,7 @@ tr {
   </div>
 </div>
 
-<div class="container" style="margin-top: 20px;">
+<div class="container">
   <div class="heading">اختصار رزلٽ شيٽ</div>
   <table>
     <thead>
