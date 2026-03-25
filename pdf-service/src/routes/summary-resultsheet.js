@@ -2,7 +2,7 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
-const { getSindhiFontCSS } = require('../utils/fontLoader');
+const { getFontFaceCSS } = require('../utils/fontLoader');
 
 const router = express.Router();
 
@@ -60,7 +60,7 @@ router.post('/', async (req, res) => {
 <head>
 <meta charset="UTF-8">
 <style>
-${getSindhiFontCSS('MB-Lateefi-SKv2.0', 'fonts/MB-Lateefi-SKv2.0.ttf')}
+${getFontFaceCSS('MB-Lateefi-SKv2.0', 'MB-Lateefi-SKv2.0.ttf')}
 
 @page {
   size: A4 landscape;
