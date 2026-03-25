@@ -60,7 +60,7 @@ router.post('/', async (req, res) => {
 <head>
 <meta charset="UTF-8">
 <style>
-${getFontFaceCSS('MB-Lateefi-SKv2.0', 'MB-Lateefi-SKv2.0.ttf')}
+${getFontFaceCSS('MB-Bhitai-Sattar-SK-2.0', 'MB-Bhitai-Sattar-SK-2.0.ttf')}
 
 @page {
   size: A4 landscape;
@@ -68,7 +68,7 @@ ${getFontFaceCSS('MB-Lateefi-SKv2.0', 'MB-Lateefi-SKv2.0.ttf')}
 }
 
 body {
-  font-family: 'MB-Lateefi-SKv2.0';
+  font-family: 'MB-Bhitai-Sattar-SK-2.0';
   margin: 0;
   padding: 2px;
   direction: rtl;
