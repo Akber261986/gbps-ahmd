@@ -72,10 +72,10 @@ const CertificateDocument = forwardRef<HTMLElement, Props>(({ data }, ref) => {
             label="12. اسڪول ڇڏڻ جي تاريخ"
             value={formatDate(data.leaving_date)}
           />
-          <Field label="13. اسڪول ڇڏڻ وقت ڪلاس" value={data.class_on_leaving} />
-          <Field label="14. اسڪول ڇڏڻ جو سبب" value={data.reason_for_leaving} />
-          <Field label="15. تعليمي قابليت" value={data.educational_ability} />
-          <Field label="16. چال چلت" value={data.character} />
+          <Field label="13. اسڪول ڇڏڻ وقت ڪلاس" value={data.class_on_leaving || ''} />
+          <Field label="14. اسڪول ڇڏڻ جو سبب" value={data.reason_for_leaving || ''} />
+          <Field label="15. تعليمي قابليت" value={data.educational_ability || ''} />
+          <Field label="16. چال چلت" value={data.character || ''} />
           <Field label="17. ريمارڪس" value={data.remarks || ""} />
         </div>
 
