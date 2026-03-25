@@ -21,6 +21,7 @@ interface CertificateFormData {
   previous_school: string;
   gr_of_previous_school: string;
   leaving_date: string;
+  leaving_class_id: number;
   class_on_leaving: string;
   reason_for_leaving: string;
   educational_ability: string;
@@ -42,6 +43,7 @@ const initialForm: CertificateFormData = {
   previous_school: "",
   gr_of_previous_school: "",
   leaving_date: "",
+  leaving_class_id: 0,
   class_on_leaving: "",
   reason_for_leaving: "",
   educational_ability: "",
@@ -88,6 +90,7 @@ const LeavingCertificatePage = () => {
     const student = students.find((s) => s.id === studentId);
 
     if (student) {
+      const currentClass = classes.find((c) => c.id === student.class_id);
       setFormData({
         ...initialForm,
         student_id: student.id,
@@ -102,8 +105,8 @@ const LeavingCertificatePage = () => {
         admission_date: student.admission_date,
         previous_school: student.previous_school || "",
         gr_of_previous_school: student.gr_of_previos_school || "",
-        class_on_leaving:
-          classes.find((c) => c.id === student.class_id)?.name || "",
+        leaving_class_id: student.class_id || 0,
+        class_on_leaving: currentClass?.name || "",
       });
 
       // Check if certificate already exists for this student
@@ -134,7 +137,8 @@ const LeavingCertificatePage = () => {
         previous_school: response.data.previous_school || "",
         gr_of_previous_school: response.data.gr_of_previos_school || "",
         leaving_date: response.data.leaving_date,
-        class_on_leaving: response.data.class_on_leaving,
+        leaving_class_id: response.data.leaving_class_id || 0,
+        class_on_leaving: response.data.class_on_leaving || "",
         reason_for_leaving: response.data.reason_for_leaving || "",
         educational_ability: response.data.educational_ability || "",
         character: response.data.character || "",
@@ -152,7 +156,19 @@ const LeavingCertificatePage = () => {
     >,
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Special handling for leaving_class_id to auto-populate class_on_leaving
+    if (name === "leaving_class_id") {
+      const classId = parseInt(value);
+      const selectedClass = classes.find((c) => c.id === classId);
+      setFormData((prev) => ({
+        ...prev,
+        leaving_class_id: classId,
+        class_on_leaving: selectedClass?.name || "",
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   // Handle form submission
@@ -445,6 +461,7 @@ const LeavingCertificatePage = () => {
                     name="previous_school"
                     value={formData.previous_school}
                     onChange={handleChange}
+                    readOnly
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm text-base"
                     disabled={!!existingCertificate}
                   />
@@ -459,6 +476,7 @@ const LeavingCertificatePage = () => {
                     name="gr_of_previous_school"
                     value={formData.gr_of_previous_school}
                     onChange={handleChange}
+                    readOnly
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm text-base"
                     disabled={!!existingCertificate}
                   />
@@ -485,15 +503,15 @@ const LeavingCertificatePage = () => {
                     اسڪول ڇڏڻ جو ڪلاس
                   </label>
                   <select
-                    name="class_on_leaving"
-                    value={formData.class_on_leaving}
+                    name="leaving_class_id"
+                    value={formData.leaving_class_id}
                     onChange={handleChange}
                     required
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm text-base"
                   >
                     <option value="">ڇونڊيو</option>
                     {classes.map((cls) => (
-                      <option key={cls.id} value={cls.name}>
+                      <option key={cls.id} value={cls.id}>
                         {cls.name}
                       </option>
                     ))}

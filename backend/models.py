@@ -210,7 +210,8 @@ class SchoolLeavingCertificate(Base):
     character = Column(String(100), nullable=True)  # Satisfactory/Good/Excellent
     # Leaving information
     leaving_date = Column(Date, nullable=False)
-    class_on_leaving = Column(String(50), nullable=False)
+    leaving_class_id = Column(Integer, ForeignKey("classes.id"), nullable=True)  # Foreign key to classes
+    class_on_leaving = Column(String(50), nullable=True)  # DEPRECATED: Use leaving_class_id instead
     reason_for_leaving = Column(Text, nullable=True)
 
     # Academic performance
@@ -221,6 +222,7 @@ class SchoolLeavingCertificate(Base):
 
     # Relationships
     student = relationship("Student", back_populates="leaving_certificate")
+    leaving_class = relationship("Class", foreign_keys=[leaving_class_id])
 
 
 class ResultSheet(Base):

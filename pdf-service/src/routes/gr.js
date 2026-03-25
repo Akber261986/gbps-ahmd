@@ -14,8 +14,54 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Students array is required' });
     }
 
-    const getClassName = (id) =>
-      classes?.find(c => c.id === id)?.name || '';
+    // Helper to escape HTML special characters
+    const escapeHtml = (text) => {
+      if (!text) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    };
+
+    // Helper to get class name
+    const getClassName = (id) => {
+      if (!id) return '';
+      const className = classes?.find(c => c.id === id)?.name;
+      return className || '';
+    };
+
+    // Helper to validate and format date to DD-MM-YYYY
+    const formatDate = (dateStr) => {
+      if (!dateStr) return '';
+
+      // If already in DD-MM-YYYY or DD/MM/YYYY format, normalize to DD-MM-YYYY
+      const ddmmyyyySlash = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+      const ddmmyyyyDash = /^(\d{2})-(\d{2})-(\d{4})$/;
+
+      if (ddmmyyyySlash.test(dateStr)) {
+        return dateStr.replace(/\//g, '-');
+      }
+      if (ddmmyyyyDash.test(dateStr)) {
+        return dateStr;
+      }
+
+      // Try parsing ISO format (YYYY-MM-DD) or other formats
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) {
+        // Invalid date, return original
+        console.warn(`Invalid date format: ${dateStr}`);
+        return dateStr;
+      }
+
+      // Convert to DD-MM-YYYY
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+
+      return `${day}-${month}-${year}`;
+    };
 
     const html = `
 <!DOCTYPE html>
@@ -29,18 +75,15 @@ ${getSindhiFontCSS()}
 /* ✅ LEGAL LANDSCAPE SETUP */
 @page {
   size: legal landscape;
-  margin: 8mm;
+  margin: 4mm;
 }
 
 html, body {
-  width: 356mm;
-  height: 216mm;
   margin: 0;
   padding: 0;
 }
 
 body {
-  font-family: 'MB Sindhi Web SK 2.0';
   direction: rtl;
   font-size: 11px;
 }
@@ -48,28 +91,31 @@ body {
 /* ✅ Container */
 .container {
   width: 100%;
-  padding: 4mm;
+  padding: 1px;
   box-sizing: border-box;
 }
 
 /* ✅ Header */
 .header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
   text-align: center;
-  margin-bottom: 4mm;
 }
 
 .header h1 {
-  font-size: 18px;
-  margin-bottom: 2mm;
+  font-size: 28px;
 }
 
 .header p {
-  font-size: 14px;
+  font-size: 18px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .school-info {
-  margin-top: 2mm;
-  font-size: 13px;
+  font-size: 18px;
 }
 
 /* ✅ Table */
@@ -86,7 +132,7 @@ thead {
 
 th, td {
   border: 1px solid #000;
-  padding: 2mm;
+  padding: 2mm 1mm;
   text-align: center;
   vertical-align: middle;
   word-wrap: break-word;
@@ -95,77 +141,81 @@ th, td {
 /* header */
 th {
   background: #e5e7eb;
-  font-size: 11px;
+  font-size: 15px;
   font-weight: bold;
 }
 
 /* data */
 td {
-  font-size: 11px;
+  font-size: 15px;
 }
 
 /* prevent row break */
 tr {
   page-break-inside: avoid;
 }
-
+.scode {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    color: red;
+}
 </style>
 </head>
 
 <body>
 
 <div class="container">
-
-  <div class="header">
-    <h1>شاگردن جو جنرل رجسٽر</h1>
-    <p>${school?.school_name || 'اسڪول'}</p>
-    <div class="school-info">
-      سيمس ڪوڊ: ${school?.semis_code || ''}
-    </div>
-  </div>
-
   <table>
-
     <!-- Adjusted widths for LEGAL page -->
     <colgroup>
-      <col style="width:18mm">
-      <col style="width:35mm">
-      <col style="width:35mm">
-      <col style="width:30mm">
+      <col style="width:15mm"> 
       <col style="width:25mm">
-      <col style="width:30mm">
+      <col style="width:25mm">
+      <col style="width:20mm">
+      <col style="width:23mm">
+      <col style="width:20mm">
+      <col style="width:15mm">
+      <col style="width:13mm">
       <col style="width:20mm">
       <col style="width:18mm">
-      <col style="width:30mm">
-      <col style="width:25mm">
-      <col style="width:25mm">
+      <col style="width:23mm">
       <col style="width:20mm">
-      <col style="width:25mm">
-      <col style="width:25mm">
-      <col style="width:30mm">
+      <col style="width:23mm">
+      <col style="width:16mm">
+      <col style="width:18mm">
+      <col style="width:14mm">
+      <col style="width:12mm">
       <col style="width:20mm">
-      <col style="width:20mm">
-      <col style="width:25mm">
     </colgroup>
-
     <thead>
       <tr>
-        <th>GR نمبر</th>
+        <th colspan="18">
+          <div class="header">
+            <h1>شاگردن جو جنرل رجسٽر</h1>
+            <p>${escapeHtml(school?.school_name)}</p>
+            <div class="school-info">
+              سيمس ڪوڊ: <b class="scode">${escapeHtml(school?.semis_code)}</b>
+            </div>
+          </div>
+        </th>
+      </tr>
+      <tr>
+        <th>جنرل رجسٽر نمبر</th>
         <th>شاگرد جو نالو</th>
         <th>پيءُ جو نالو</th>
         <th>پيدائش جي جاءِ</th>
-        <th>تاريخ (انگن ۾)</th>
+        <th> پيدائش جي تاريخ (انگن ۾)</th>
         <th>تاريخ (لفظن ۾)</th>
         <th>مذهب</th>
         <th>ذات</th>
-        <th>پويون اسڪول</th>
-        <th>داخلا ڪلاس</th>
+        <th>ڪھڙي اسڪول مان آيو</th>
+        <th>ڪھڙي ڪلاس ۾ داخل ٿيو</th>
         <th>داخلا تاريخ</th>
-        <th>سرٽيفڪيٽ نمبر</th>
-        <th>ڇڏڻ تاريخ</th>
-        <th>ڇڏڻ ڪلاس</th>
-        <th>سبب</th>
-        <th>تعليم</th>
+        <th>پويين اسڪول جو جنرل رجسٽر نمبر</th>
+        <th>اسڪول ڇڏڻ جي تاريخ</th>
+        <th>اسڪول ڇڏڻ وقت ڪلاس</th>
+        <th>اسڪول ڇڏڻ جو سبب</th>
+        <th>تعليمي قابليت</th>
         <th>چال چلت</th>
         <th>ريمارڪس</th>
       </tr>
@@ -174,24 +224,24 @@ tr {
     <tbody>
       ${students.map(s => `
         <tr>
-          <td>${s.gr_number || ''}</td>
-          <td>${s.name || ''}</td>
-          <td>${s.father_name || ''}</td>
-          <td>${s.place_of_birth || ''}</td>
-          <td>${s.date_of_birth || ''}</td>
-          <td>${s.date_of_birth_words || ''}</td>
-          <td>${s.religion || ''}</td>
-          <td>${s.caste || ''}</td>
-          <td>${s.previous_school || ''}</td>
-          <td>${getClassName(s.admission_class_id)}</td>
-          <td>${s.admission_date || ''}</td>
-          <td>${s.leaving_certificate_number || ''}</td>
-          <td>${s.leaving_date || ''}</td>
-          <td>${getClassName(s.leaving_class_id)}</td>
-          <td>${s.reason_for_leaving || ''}</td>
-          <td>${s.educational_qualification || ''}</td>
-          <td>${s.conduct || ''}</td>
-          <td>${s.remarks || ''}</td>
+          <td>${escapeHtml(s.gr_number)}</td>
+          <td>${escapeHtml(s.name)}</td>
+          <td>${escapeHtml(s.father_name)}</td>
+          <td>${escapeHtml(s.place_of_birth)}</td>
+          <td>${escapeHtml(formatDate(s.date_of_birth))}</td>
+          <td>${escapeHtml(s.date_of_birth_in_letter)}</td>
+          <td>${escapeHtml(s.qom == "مسلمان" ? "اسلام" : s.qom)}</td>
+          <td>${escapeHtml(s.caste)}</td>
+          <td>${escapeHtml(s.previous_school)}</td>
+          <td>${escapeHtml(getClassName(s.admission_class_id))}</td>
+          <td>${escapeHtml(formatDate(s.admission_date))}</td>
+          <td>${escapeHtml(s.gr_of_previos_school) || "-"}</td>
+          <td>${escapeHtml(formatDate(s.leaving_date))}</td>
+          <td>${escapeHtml(getClassName(s.leaving_class_id))}</td>
+          <td>${escapeHtml(s.leaving_reason)}</td>
+          <td>${escapeHtml(s.educational_ability)}</td>
+          <td>${escapeHtml(s.character)}</td>
+          <td>${escapeHtml(s.remarks)}</td>
         </tr>
       `).join('')}
     </tbody>

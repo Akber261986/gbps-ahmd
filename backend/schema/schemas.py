@@ -109,6 +109,7 @@ class StudentOut(BaseModel):
     place_of_birth: Optional[str] = None
     current_address: Optional[str] = None
     previous_school: Optional[str] = None
+    gr_of_previos_school: Optional[str] = None
     class_id: int
     admission_class_id: int
     current_class_id: Optional[int] = None
@@ -152,7 +153,8 @@ class SchoolLeavingCertificateCreate(BaseModel):
     previous_school: Optional[str] = None
     gr_of_previous_school: Optional[str] = None
     leaving_date: date
-    class_on_leaving: str
+    leaving_class_id: Optional[int] = None
+    class_on_leaving: Optional[str] = None
     reason_for_leaving: Optional[str] = None
     educational_ability: Optional[str] = None
     character: Optional[str] = None
@@ -173,7 +175,8 @@ class SchoolLeavingCertificateOut(BaseModel):
     previous_school: Optional[str] = None
     gr_of_previous_school: Optional[str] = None
     leaving_date: date
-    class_on_leaving: str
+    leaving_class_id: Optional[int] = None
+    class_on_leaving: Optional[str] = None
     reason_for_leaving: Optional[str] = None
     educational_ability: Optional[str] = None
     character: Optional[str] = None

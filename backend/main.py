@@ -967,11 +967,32 @@ def create_school_leaving_certificate(
     # Update student record with all leaving information
     student.status = "left"
     student.leaving_date = certificate.leaving_date
-    student.class_on_leaving = certificate.class_on_leaving
     student.leaving_reason = certificate.reason_for_leaving
     student.educational_ability = certificate.educational_ability
     student.character = certificate.character
     student.remarks = certificate.remarks
+
+    # Handle leaving class - prefer foreign key, fallback to string
+    if certificate.leaving_class_id:
+        student.leaving_class_id = certificate.leaving_class_id
+        # Auto-populate string field from foreign key for backward compatibility
+        leaving_class = db.query(Class).filter(Class.id == certificate.leaving_class_id).first()
+        if leaving_class:
+            student.class_on_leaving = leaving_class.name
+            # Also update certificate if it wasn't set
+            if not certificate.class_on_leaving:
+                db_certificate.class_on_leaving = leaving_class.name
+    elif certificate.class_on_leaving:
+        # Legacy path: if only string provided, try to find class ID
+        student.class_on_leaving = certificate.class_on_leaving
+        leaving_class = db.query(Class).filter(
+            Class.name == certificate.class_on_leaving,
+            Class.school_id == current_user.school_id
+        ).first()
+        if leaving_class:
+            student.leaving_class_id = leaving_class.id
+            db_certificate.leaving_class_id = leaving_class.id
+
     # Also update gr_of_previous_school if provided
     if certificate.gr_of_previous_school:
         student.gr_of_previos_school = certificate.gr_of_previous_school
@@ -1035,11 +1056,28 @@ def update_school_leaving_certificate(
 
     # Also update student record with leaving information
     student.leaving_date = certificate.leaving_date
-    student.class_on_leaving = certificate.class_on_leaving
     student.leaving_reason = certificate.reason_for_leaving
     student.educational_ability = certificate.educational_ability
     student.character = certificate.character
     student.remarks = certificate.remarks
+
+    # Handle leaving class - prefer foreign key, fallback to string
+    if certificate.leaving_class_id:
+        student.leaving_class_id = certificate.leaving_class_id
+        # Auto-populate string field from foreign key for backward compatibility
+        leaving_class = db.query(Class).filter(Class.id == certificate.leaving_class_id).first()
+        if leaving_class:
+            student.class_on_leaving = leaving_class.name
+    elif certificate.class_on_leaving:
+        # Legacy path: if only string provided, try to find class ID
+        student.class_on_leaving = certificate.class_on_leaving
+        leaving_class = db.query(Class).filter(
+            Class.name == certificate.class_on_leaving,
+            Class.school_id == current_user.school_id
+        ).first()
+        if leaving_class:
+            student.leaving_class_id = leaving_class.id
+
     if certificate.gr_of_previous_school:
         student.gr_of_previos_school = certificate.gr_of_previous_school
 
@@ -1521,6 +1559,63 @@ def delete_result_sheet(
     db.commit()
 
     return {"message": "Result sheet deleted successfully"}
+
+
+@app.get("/result-sheets/{result_sheet_id}/statistics")
+@app.get("/result-sheets/{result_sheet_id}/statistics/")
+def get_result_sheet_statistics(
+    result_sheet_id: int,
+    current_user: User = Depends(require_school),
+    db: Session = Depends(get_db)
+):
+    """Get class-wise statistics for a result sheet."""
+    result_sheet = db.query(ResultSheet).filter(
+        ResultSheet.id == result_sheet_id,
+        ResultSheet.school_id == current_user.school_id
+    ).first()
+
+    if not result_sheet:
+        raise HTTPException(status_code=404, detail="Result sheet not found")
+
+    # Parse snapshot data
+    import json
+    students = json.loads(result_sheet.student_snapshot) if result_sheet.student_snapshot else []
+    classes = json.loads(result_sheet.class_snapshot) if result_sheet.class_snapshot else []
+
+    # Calculate statistics for each class
+    statistics = []
+    for cls in classes:
+        class_students = [s for s in students if s.get('current_class_id') == cls['id']]
+
+        # Count by gender
+        boys = [s for s in class_students if s.get('gender') in ['ڇوڪرو', 'boy', 'Male', 'Boy']]
+        girls = [s for s in class_students if s.get('gender') in ['ڇوڪري', 'girl', 'Female', 'Girl']]
+
+        stat = {
+            'class_id': cls['id'],
+            'class_name': cls['name'],
+            'enrolled_boys': len(boys),
+            'enrolled_girls': len(girls),
+            'enrolled_total': len(class_students),
+            # These would be calculated from grades/exam results
+            # For now, returning 0 - can be enhanced later
+            'passed_boys': 0,
+            'passed_girls': 0,
+            'passed_total': 0,
+            'failed_boys': 0,
+            'failed_girls': 0,
+            'failed_total': 0,
+            'absent_boys': 0,
+            'absent_girls': 0,
+            'absent_total': 0
+        }
+        statistics.append(stat)
+
+    return {
+        'result_sheet_id': result_sheet_id,
+        'academic_year': result_sheet.academic_year,
+        'statistics': statistics
+    }
 
 
 if __name__ == "__main__":

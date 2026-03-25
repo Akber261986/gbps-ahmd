@@ -1,9 +1,11 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const admissionFormRoute = require('./routes/admission-form');
 const grRoute = require('./routes/gr');
 const leavingCertificateRoute = require('./routes/leaving-certificate');
 const resultsheetRoute = require('./routes/resultsheet');
+const summaryResultsheetRoute = require('./routes/summary-resultsheet');
 const genericPdfRoute = require('./routes/generic');
 const fontTestRoute = require('./routes/font-test');
 
@@ -13,6 +15,9 @@ const PORT = process.env.PORT || 7860;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from public directory
+app.use('/public', express.static(path.join(__dirname, '../public')));
 
 // Health check endpoint
 app.get('/', (req, res) => {
@@ -25,6 +30,7 @@ app.get('/', (req, res) => {
       'POST /pdf/gr',
       'POST /pdf/leaving-certificate',
       'POST /pdf/resultsheet',
+      'POST /pdf/summary-resultsheet',
       'POST /pdf/generic',
       'POST /pdf/font-test'
     ]
@@ -36,6 +42,7 @@ app.use('/pdf/admission-form', admissionFormRoute);
 app.use('/pdf/gr', grRoute);
 app.use('/pdf/leaving-certificate', leavingCertificateRoute);
 app.use('/pdf/resultsheet', resultsheetRoute);
+app.use('/pdf/summary-resultsheet', summaryResultsheetRoute);
 app.use('/pdf/generic', genericPdfRoute);
 app.use('/pdf/font-test', fontTestRoute);
 

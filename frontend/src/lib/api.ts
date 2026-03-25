@@ -111,7 +111,8 @@ export interface SchoolLeavingCertificate {
   previous_school: string | null;
   gr_of_previos_school: string | null;
   leaving_date: string;
-  class_on_leaving: string;
+  leaving_class_id: number | null;
+  class_on_leaving: string | null;
   reason_for_leaving: string;
   educational_ability: string;
   character: string;
@@ -252,6 +253,8 @@ export const resultSheetApi = {
   getById: (id: number) => api.get<ResultSheet>(`/result-sheets/${id}`),
 
   getSnapshot: (id: number) => api.get(`/result-sheets/${id}/snapshot`),
+
+  getStatistics: (id: number) => api.get(`/result-sheets/${id}/statistics`),
 
   create: (data: { academic_year: string; title?: string }) =>
     api.post<ResultSheet>('/result-sheets/', data),
