@@ -121,7 +121,8 @@ const Navigation = () => {
     { name: 'ڊيشبورڊ', href: '/dashboard' },
     { name: 'داخلا', href: '/admission' },
     { name: 'شاگرد', href: '/students' },
-    { name: 'نتيجا', href: '/results' },
+    { name: 'نمبر داخل ڪريو', href: '/results/simple-entry' },
+    { name: 'رزلٽ شيٽ', href: '/results/manage' },
     { name: 'سرٽيفڪيٽ ٺاهيو', href: '/leaving-certificate' },
     { name: 'سرٽيفڪيٽ ڏسو', href: '/leaving-certificates' },
   ] : [];

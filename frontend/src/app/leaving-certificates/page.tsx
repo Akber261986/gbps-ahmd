@@ -16,6 +16,9 @@ const LeavingCertificatesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showCertificateModal, setShowCertificateModal] = useState(false);
   const [selectedCertificate, setSelectedCertificate] = useState<SchoolLeavingCertificate | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [certificateToDelete, setCertificateToDelete] = useState<SchoolLeavingCertificate | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchCertificates = async () => {
@@ -80,6 +83,32 @@ const LeavingCertificatesPage = () => {
     } catch (error) {
       console.error("Error downloading PDF:", error);
       alert("PDF ڊائونلوڊ ڪرڻ ۾ مسئلو آيو");
+    }
+  };
+
+  const handleDeleteClick = (certificate: SchoolLeavingCertificate) => {
+    setCertificateToDelete(certificate);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!certificateToDelete) return;
+
+    try {
+      setDeleting(true);
+      await leavingCertificateApi.delete(certificateToDelete.id);
+
+      // Remove from local state
+      setCertificates(certificates.filter(cert => cert.id !== certificateToDelete.id));
+
+      setShowDeleteConfirm(false);
+      setCertificateToDelete(null);
+      alert("سرٽيفڪيٽ ڪاميابيءَ سان ڊليٽ ٿي ويو");
+    } catch (error) {
+      console.error("Error deleting certificate:", error);
+      alert("سرٽيفڪيٽ ڊليٽ ڪرڻ ۾ مسئلو آيو");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -232,32 +261,54 @@ const LeavingCertificatesPage = () => {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <button
-                          onClick={() => handleViewCertificate(cert)}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center gap-2"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleViewCertificate(cert)}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center gap-2"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                            />
-                          </svg>
-                          سرٽيفڪيٽ ڏسو
-                        </button>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-4 w-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                              />
+                            </svg>
+                            ڏسو
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClick(cert)}
+                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all flex items-center gap-2"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-4 w-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                            ڊليٽ
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -379,6 +430,92 @@ const LeavingCertificatesPage = () => {
                       </svg>
                     )}
                     {loadingPdf ? "انتظار ڪريو" : "PDF ڊائونلوڊ ڪريو"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteConfirm && certificateToDelete && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+            onClick={() => !deleting && setShowDeleteConfirm(false)}
+          >
+            <div
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 text-red-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-center text-gray-800 mb-2">
+                  سرٽيفڪيٽ ڊليٽ ڪريو؟
+                </h3>
+                <p className="text-center text-gray-600 mb-6">
+                  ڇا توهان پڪ سان هن سرٽيفڪيٽ کي ڊليٽ ڪرڻ چاهيو ٿا؟
+                  <br />
+                  <span className="font-semibold">{certificateToDelete.student_name}</span>
+                  <br />
+                  GR: {certificateToDelete.gr_number}
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={deleting}
+                    className="flex-1 px-4 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition-all disabled:opacity-50"
+                  >
+                    منسوخ ڪريو
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDeleteConfirm}
+                    disabled={deleting}
+                    className="flex-1 px-4 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {deleting ? (
+                      <>
+                        <svg
+                          className="animate-spin h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        انتظار ڪريو...
+                      </>
+                    ) : (
+                      "ڊليٽ ڪريو"
+                    )}
                   </button>
                 </div>
               </div>

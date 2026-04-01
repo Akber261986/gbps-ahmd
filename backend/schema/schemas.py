@@ -371,3 +371,23 @@ class ResultSheetOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+# Batch Marks Entry schemas
+class SubjectMarks(BaseModel):
+    subject_id: int
+    marks_obtained: Optional[int] = None
+    total_marks: int = 100  # Default total marks
+
+class StudentMarksEntry(BaseModel):
+    student_id: int
+    class_id: int
+    exam_session: str
+    exam_type: str
+    academic_year: str
+    subject_teacher: Optional[str] = None
+    marks: List[SubjectMarks]
+    is_absent: bool = False
+
+class StudentMarksResponse(BaseModel):
+    student_id: int
+    marks: dict  # subject_id -> marks_obtained

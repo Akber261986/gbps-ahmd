@@ -184,12 +184,12 @@ body {
 }
 
 .signatures {
-    margin-top: 80px;
+    margin-top: 60px;
     display: flex;
     justify-content: space-evenly;
-}
-
-.sign {
+    }
+    
+    .sign {
     text-align: center;
     width: 40%;
     font-size: 18px;
@@ -198,6 +198,9 @@ body {
 .sign-line {
     border-top: 1px solid #000;
     margin-bottom: 5px;
+    }
+.qout {
+    margin-top: 20px;    
 }
 </style>
 </head>
@@ -341,6 +344,9 @@ body {
                 <div class="label">ريمارڪس</div>
             </div>
             <div class="line">${remarks}</div>
+        </div>
+        <div class= "qout">
+            * سرٽيفڪيٽ ٿو ڏجي تہ مٿيون تفصيل جنرل رجسٽر مطابق درست آھي.
         </div>
 
         <div class="signatures">

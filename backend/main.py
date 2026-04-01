@@ -17,7 +17,8 @@ from schema.schemas import (
     PasswordResetRequest, PasswordResetConfirm, PasswordResetResponse,
     GoogleLoginRequest, GoogleLoginResponse, UserProfileUpdate,
     ChatRequest, ChatResponse,
-    ResultSheetCreate, ResultSheetUpdate, ResultSheetOut
+    ResultSheetCreate, ResultSheetUpdate, ResultSheetOut,
+    StudentMarksEntry, StudentMarksResponse
 )
 from database import SessionLocal, engine, get_db
 from typing import List
@@ -493,30 +494,6 @@ def get_my_school(
 @app.put("/schools/my-school", response_model=SchoolOut)
 @app.put("/schools/my-school/", response_model=SchoolOut)
 def update_my_school(
-    school_data: SchoolUpdate,
-    current_user: User = Depends(require_school),
-    db: Session = Depends(get_db)
-):
-    """Update the current user's school information."""
-    school = db.query(School).filter(School.id == current_user.school_id).first()
-    if not school:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="School not found"
-        )
-
-    # Update only provided fields
-    for key, value in school_data.dict(exclude_unset=True).items():
-        setattr(school, key, value)
-
-    db.commit()
-    db.refresh(school)
-    return school
-
-
-@app.put("/schools/update", response_model=SchoolOut)
-@app.put("/schools/update/", response_model=SchoolOut)
-def update_school(
     school_data: SchoolUpdate,
     current_user: User = Depends(require_school),
     db: Session = Depends(get_db)
@@ -1226,6 +1203,195 @@ def get_subject_grades(
 
     grades = db.query(Grade).filter(Grade.subject_id == subject_id).all()
     return grades
+
+
+# ============ Batch Marks Entry Endpoints ============
+
+@app.post("/grades/batch")
+def save_student_marks_batch(
+    marks_entry: StudentMarksEntry,
+    current_user: User = Depends(require_school),
+    db: Session = Depends(get_db)
+):
+    """Save marks for one student across all subjects in one request."""
+    # Verify student belongs to school
+    student = db.query(Student).filter(
+        Student.id == marks_entry.student_id,
+        Student.school_id == current_user.school_id
+    ).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    # Verify class belongs to school
+    class_obj = db.query(Class).filter(
+        Class.id == marks_entry.class_id,
+        Class.school_id == current_user.school_id
+    ).first()
+    if not class_obj:
+        raise HTTPException(status_code=404, detail="Class not found")
+
+    try:
+        # Delete existing grades for this student, exam session, and academic year
+        db.query(Grade).filter(
+            Grade.student_id == marks_entry.student_id,
+            Grade.exam_session == marks_entry.exam_session,
+            Grade.academic_year == marks_entry.academic_year
+        ).delete()
+
+        total_marks_obtained = 0
+        total_marks_possible = 0
+        overall_percentage = 0
+
+        # If student is absent, keep them in same class
+        if marks_entry.is_absent:
+            # Student remains in current class (no promotion)
+            pass
+        else:
+            # Create new grade records for each subject
+            for subject_mark in marks_entry.marks:
+                # Verify subject belongs to school
+                subject = db.query(Subject).filter(
+                    Subject.id == subject_mark.subject_id,
+                    Subject.school_id == current_user.school_id
+                ).first()
+                if not subject:
+                    continue  # Skip invalid subjects
+
+                # Calculate percentage
+                percentage = None
+                if subject_mark.marks_obtained is not None and subject_mark.total_marks > 0:
+                    percentage = (subject_mark.marks_obtained / subject_mark.total_marks) * 100
+                    total_marks_obtained += subject_mark.marks_obtained
+                    total_marks_possible += subject_mark.total_marks
+
+                # Create grade entry
+                grade = Grade(
+                    student_id=marks_entry.student_id,
+                    subject_id=subject_mark.subject_id,
+                    exam_session=marks_entry.exam_session,
+                    exam_type=marks_entry.exam_type,
+                    academic_year=marks_entry.academic_year,
+                    marks_obtained=subject_mark.marks_obtained,
+                    total_marks=subject_mark.total_marks,
+                    percentage=percentage,
+                    subject_teacher=marks_entry.subject_teacher
+                )
+                db.add(grade)
+
+            # Calculate overall percentage
+            if total_marks_possible > 0:
+                overall_percentage = (total_marks_obtained / total_marks_possible) * 100
+
+            # Auto-promotion logic: if percentage >= 40%, promote to next class
+            if overall_percentage >= 40:
+                # Define class sequence mapping (Sindhi class names in order)
+                class_sequence = [
+                    'ڪلاس پھريون',   # Class 1
+                    'ڪلاس ٻيون',     # Class 2
+                    'ڪلاس ٽيون',     # Class 3
+                    'ڪلاس چوٿون',    # Class 4
+                    'ڪلاس پنجون'     # Class 5
+                ]
+
+                # Get all classes for this school
+                all_classes = db.query(Class).filter(
+                    Class.school_id == current_user.school_id
+                ).all()
+
+                # Create a mapping of class names to class objects
+                class_map = {cls.name: cls for cls in all_classes}
+
+                # Get current class object
+                current_class = db.query(Class).filter(
+                    Class.id == student.current_class_id
+                ).first()
+
+                if current_class and current_class.name in class_sequence:
+                    # Find current position in sequence
+                    current_position = class_sequence.index(current_class.name)
+
+                    # Check if not in last class
+                    if current_position < len(class_sequence) - 1:
+                        # Get next class name
+                        next_class_name = class_sequence[current_position + 1]
+
+                        # Get next class object
+                        if next_class_name in class_map:
+                            next_class = class_map[next_class_name]
+                            student.current_class_id = next_class.id
+                            student.class_id = next_class.id  # Update legacy field too
+                    # If in last class (Class 5), student remains in same class
+
+        db.commit()
+
+        promotion_status = "promoted" if not marks_entry.is_absent and overall_percentage >= 40 else "same_class"
+
+        return {
+            "message": "Marks saved successfully",
+            "student_id": marks_entry.student_id,
+            "overall_percentage": round(overall_percentage, 2),
+            "promotion_status": promotion_status,
+            "is_absent": marks_entry.is_absent
+        }
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Error saving marks: {str(e)}")
+
+
+@app.get("/grades/student/{student_id}/marks")
+def get_student_marks(
+    student_id: int,
+    academic_year: str,
+    exam_session: str,
+    current_user: User = Depends(require_school),
+    db: Session = Depends(get_db)
+):
+    """Get existing marks for a student for a specific academic year and exam session."""
+    # Verify student belongs to school
+    student = db.query(Student).filter(
+        Student.id == student_id,
+        Student.school_id == current_user.school_id
+    ).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    # Get all grades for this student, academic year, and exam session
+    grades = db.query(Grade).filter(
+        Grade.student_id == student_id,
+        Grade.academic_year == academic_year,
+        Grade.exam_session == exam_session
+    ).all()
+
+    # Format as dictionary: subject_id -> marks_obtained
+    marks_dict = {grade.subject_id: grade.marks_obtained for grade in grades}
+
+    return {"student_id": student_id, "marks": marks_dict}
+
+
+@app.get("/students/by-class/{class_id}")
+def get_students_by_class(
+    class_id: int,
+    current_user: User = Depends(require_school),
+    db: Session = Depends(get_db)
+):
+    """Get all active students in a specific class."""
+    # Verify class belongs to school
+    class_obj = db.query(Class).filter(
+        Class.id == class_id,
+        Class.school_id == current_user.school_id
+    ).first()
+    if not class_obj:
+        raise HTTPException(status_code=404, detail="Class not found")
+
+    # Get all active students in this class
+    students = db.query(Student).filter(
+        Student.current_class_id == class_id,
+        Student.school_id == current_user.school_id,
+        Student.status == "active"
+    ).order_by(Student.roll_number, Student.name).all()
+
+    return students
 
 
 # ============ AI CHATBOT ENDPOINT ============

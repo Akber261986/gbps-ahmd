@@ -206,6 +206,8 @@ export const leavingCertificateApi = {
   create: (data: any) => api.post('/school-leaving-certificates', data),
 
   update: (id: number, data: any) => api.put(`/school-leaving-certificates/${id}`, data),
+
+  delete: (id: number) => api.delete(`/school-leaving-certificates/${id}`),
 };
 
 // Subject API functions
@@ -233,6 +235,14 @@ export const gradeApi = {
     api.get<Grade[]>(`/grades/subject/${subjectId}`),
 
   create: (data: any) => api.post('/grades/', data),
+
+  // Batch marks entry
+  saveBatch: (data: any) => api.post('/grades/batch', data),
+
+  getStudentMarks: (studentId: number, academicYear: string, examSession: string) =>
+    api.get(`/grades/student/${studentId}/marks`, {
+      params: { academic_year: academicYear, exam_session: examSession }
+    }),
 
   update: (id: number, data: any) => api.put(`/grades/${id}`, data),
 

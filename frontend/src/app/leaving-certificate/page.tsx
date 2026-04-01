@@ -592,7 +592,7 @@ const LeavingCertificatePage = () => {
                 <button
                   type="submit"
                   disabled={loading || !!existingCertificate}
-                  className={`px-6 py-3 font-bold rounded-lg shadow-md flex items-center justify-center ${existingCertificate
+                  className={`px-6 py-3 font-bold rounded-lg shadow-md flex items-center justify-center, gap-4 ${existingCertificate
                       ? "bg-gray-400 text-gray-700 cursor-not-allowed"
                       : "bg-green-600 text-white hover:bg-green-700"
                     } transition duration-300`}
