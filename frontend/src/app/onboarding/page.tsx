@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { getAuthHeader } from '@/lib/auth';
+import Toast from '@/components/Toast';
 
 interface SchoolData {
   school_name: string;
@@ -76,9 +77,12 @@ export default function OnboardingPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="rounded-md bg-red-50 p-4">
-                <div className="text-sm text-red-800">{error}</div>
-              </div>
+              <Toast
+                message={error}
+                type="error"
+                onClose={() => setError('')}
+                duration={5000}
+              />
             )}
 
             <div>

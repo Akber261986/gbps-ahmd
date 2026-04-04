@@ -6,6 +6,7 @@ import { useSchool } from "@/contexts/SchoolContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ViewLeavingCertificate from "@/components/view_leaving_certificate";
 import { getToken } from "@/lib/auth";
+import Toast from "@/components/Toast";
 
 const LeavingCertificatesPage = () => {
   const { school } = useSchool();
@@ -136,8 +137,14 @@ const LeavingCertificatesPage = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-            <p>{error}</p>
+          <Toast
+            message={error}
+            type="error"
+            onClose={() => setError(null)}
+            duration={0}
+          />
+          <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
+            <p className="text-gray-600">ڊيٽا لوڊ ڪرڻ ۾ مسئلو آيو</p>
           </div>
         </div>
       </div>
@@ -179,8 +186,8 @@ const LeavingCertificatesPage = () => {
             </a>
           </div>
 
-          {/* Certificates Table */}
-          <div className="overflow-x-auto">
+          {/* Certificates Table - Desktop */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -328,6 +335,102 @@ const LeavingCertificatesPage = () => {
             </table>
           </div>
 
+          {/* Certificates Cards - Mobile */}
+          <div className="md:hidden space-y-4">
+            {filteredCertificates.length > 0 ? (
+              filteredCertificates.map((cert, index) => (
+                <div
+                  key={cert.id}
+                  className="bg-white rounded-lg shadow-md p-4 border border-gray-200"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <p className="text-lg font-bold text-gray-900">{cert.student_name}</p>
+                      <p className="text-sm text-gray-600">GR: {cert.gr_number}</p>
+                    </div>
+                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                      ڇڏي ويو
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">والد جو نالو:</span>
+                      <span className="text-gray-900 font-medium">{cert.father_name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">ڪلاس:</span>
+                      <span className="text-gray-900 font-medium">{cert.class_on_leaving}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">ڇڏڻ جي تاريخ:</span>
+                      <span className="text-gray-900 font-medium">
+                        {new Date(cert.leaving_date).toLocaleDateString("en-GB")}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex gap-2">
+                    <button
+                      onClick={() => handleViewCertificate(cert)}
+                      className="flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
+                      </svg>
+                      ڏسو
+                    </button>
+                    <button
+                      onClick={() => handleDeleteClick(cert)}
+                      className="flex-1 px-3 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                      ڊليٽ
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="bg-white rounded-lg shadow-md p-8 text-center">
+                <p className="text-gray-500">
+                  {searchTerm
+                    ? "ڪوبه سرٽيفڪيٽ نه لڌو"
+                    : "ڪوبه سرٽيفڪيٽ نه آهي"}
+                </p>
+              </div>
+            )}
+          </div>
+
           {/* Summary */}
           <div className="mt-6 flex flex-wrap gap-4">
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
@@ -377,7 +480,7 @@ const LeavingCertificatesPage = () => {
               </div>
 
               <div className="p-6">
-                <ViewLeavingCertificate formData={selectedCertificate} />
+                <ViewLeavingCertificate data={selectedCertificate} />
 
                 <div className="mt-6 flex justify-end gap-4">
                   <button

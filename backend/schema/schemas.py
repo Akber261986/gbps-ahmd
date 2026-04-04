@@ -291,6 +291,8 @@ class SchoolCreate(BaseModel):
     contact_number: Optional[str] = None
     email: Optional[str] = None
     principal_name: Optional[str] = None
+    taluka: Optional[str] = None
+    district: Optional[str] = None
 
 class SchoolUpdate(BaseModel):
     school_name: Optional[str] = None
@@ -301,6 +303,8 @@ class SchoolUpdate(BaseModel):
     contact_number: Optional[str] = None
     email: Optional[str] = None
     principal_name: Optional[str] = None
+    taluka: Optional[str] = None
+    district: Optional[str] = None
 
 class SchoolOut(BaseModel):
     id: int
@@ -312,6 +316,8 @@ class SchoolOut(BaseModel):
     contact_number: Optional[str] = None
     email: Optional[str] = None
     principal_name: Optional[str] = None
+    taluka: Optional[str] = None
+    district: Optional[str] = None
     is_active: bool
     created_at: datetime
 

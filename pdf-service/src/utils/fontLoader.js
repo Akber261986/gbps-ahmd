@@ -52,9 +52,21 @@ function mbLeekaShabir(fontFamily, fontFileName) {
   return getFontFaceCSS(fontFamily, fontFileName);
 }
 
+/**
+ * Get MBShabir Kumbhar Bold font CSS
+ * @param {string} fontFamily - Font family name
+ * @param {string} fontFileName - Font file name
+ * @returns {string} CSS @font-face declaration for MB Leeka Shabir Kumbhar
+ */
+function getSindhiShabirBold(fontFamily, fontFileName) {
+  return getFontFaceCSS(fontFamily, fontFileName);
+}
+
+
 module.exports = {
   loadFontAsBase64,
   getFontFaceCSS,
   getSindhiFontCSS,
-  mbLeekaShabir
+  mbLeekaShabir,
+  getSindhiShabirBold
 };

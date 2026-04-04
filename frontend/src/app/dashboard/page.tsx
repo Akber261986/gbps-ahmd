@@ -117,7 +117,7 @@ const Dashboard = () => {
                   src={school.logo_url}
                   alt="School Logo"
                   fill
-                  className="object-contain"
+                  className="object-contain rounded-full"
                 />
               </div>
             </div>
@@ -282,10 +282,10 @@ const Dashboard = () => {
 
                     {/* Boys */}
                     <div className="bg-white/90 rounded-xl shadow-sm border border-blue-200 p-4">
-                      <div className="w-14 h-14 mx-auto mb-2 rounded-full bg-blue-100 flex items-center justify-center">
+                      <div className="w-10 h-10 md:w-14 md:h-14 mx-auto mb-2 rounded-full bg-blue-100 flex items-center justify-center">
                         <span className="text-blue-700 text-xl font-bold">♂</span>
                       </div>
-                      <p className="text-3xl font-extrabold text-blue-800">
+                      <p className="text-2xl font-extrabold text-blue-800">
                         {studentData.filter(
                           (student) => student.class_id === cls.id && student.gender === "ڇوڪرو"
                         ).length}
@@ -295,10 +295,10 @@ const Dashboard = () => {
 
                     {/* Girls */}
                     <div className="bg-white/90 rounded-xl shadow-sm border border-pink-200 p-4">
-                      <div className="w-14 h-14 mx-auto mb-2 rounded-full bg-pink-100 flex items-center justify-center">
+                      <div className="w-10 h-10 md:w-14 md:h-14 mx-auto mb-2 rounded-full bg-pink-100 flex items-center justify-center">
                         <span className="text-pink-700 text-xl font-bold">♀</span>
                       </div>
-                      <p className="text-3xl font-extrabold text-pink-800">
+                      <p className="text-2xl font-extrabold text-pink-800">
                         {studentData.filter(
                           (student) => student.class_id === cls.id && student.gender === "ڇوڪري"
                         ).length}
@@ -308,10 +308,10 @@ const Dashboard = () => {
 
                     {/* Total */}
                     <div className="bg-white/95 rounded-xl shadow-md border border-gray-300 p-4">
-                      <div className="w-14 h-14 mx-auto mb-2 rounded-full bg-gray-200 flex items-center justify-center">
+                      <div className="w-10 h-10 md:w-14 md:h-14 mx-auto mb-2 rounded-full bg-gray-200 flex items-center justify-center ">
                         <span className="text-gray-800 text-xl font-bold">∑</span>
                       </div>
-                      <p className="text-4xl font-extrabold text-gray-900">
+                      <p className="text-3xl font-extrabold text-gray-900">
                         {studentData.filter(
                           (student) => student.class_id === cls.id
                         ).length}
@@ -321,38 +321,6 @@ const Dashboard = () => {
 
                   </div>
                 </div>
-
-                // <div
-                //   key={cls.id}
-                //   className="bg-gradient-to-br from-red-50 to-red-100  border border-gray-200 shadow-sm rounded-t-lg hover:shadow-md transition-shadow"
-                // >
-                //     <h3 className="bg-amber-300  rounded-t-lg py-2 text-lg font-semibold text-gray-800 text-center mb-4">
-                //       {cls.name}
-                //     </h3>
-                //   <div className="flex justify-around items-center text-center">
-                //     <h3 className="text-lg font-semibold text-gray-800">
-                //       ڇوڪرا
-                //     </h3>
-                //     <h3 className="text-lg font-semibold text-gray-800">
-                //       ڇوڪريون
-                //     </h3>
-                //     <h3 className="text-lg font-semibold text-gray-800">
-                //       ٽوٽل
-                //     </h3>
-                //   </div>
-                //   <div className='flex justify-around items-center'>
-                //     {/* <p className="text-gray-600 mt-1">ID: {cls.id}</p> */}
-                //     <p className="text-gray-600 mt-1">
-                //       
-                //     </p>
-                //     <p className="text-gray-600 mt-1">
-
-                //     </p>
-                //     <p className="text-gray-600 mt-1">
-
-                //     </p>
-                //   </div>
-                // </div>
               ))}
               <div className="relative overflow-hidden rounded-2xl border border-gray-200 shadow-lg bg-gradient-to-br from-rose-50 via-amber-50 to-red-100">
 
@@ -372,10 +340,10 @@ const Dashboard = () => {
 
                   {/* Boys */}
                   <div className="bg-white/90 rounded-xl shadow-sm border border-blue-200 p-4">
-                    <div className="w-14 h-14 mx-auto mb-2 rounded-full bg-blue-100 flex items-center justify-center">
+                    <div className="w-10 h-10 md:w-14 md:h-14 mx-auto mb-2 rounded-full bg-blue-100 flex items-center justify-center">
                       <span className="text-blue-700 text-xl font-bold">♂</span>
                     </div>
-                    <p className="text-3xl font-extrabold text-blue-800">
+                    <p className="text-2xl font-extrabold text-blue-800">
                       {studentData.filter(s => s.gender === "ڇوڪرو").length}
                     </p>
                     <p className="mt-1 font-semibold text-gray-700">ڇوڪرا</p>
@@ -383,10 +351,10 @@ const Dashboard = () => {
 
                   {/* Girls */}
                   <div className="bg-white/90 rounded-xl shadow-sm border border-pink-200 p-4">
-                    <div className="w-14 h-14 mx-auto mb-2 rounded-full bg-pink-100 flex items-center justify-center">
+                    <div className="w-10 h-10 md:w-14 md:h-14 mx-auto mb-2 rounded-full bg-pink-100 flex items-center justify-center">
                       <span className="text-pink-700 text-xl font-bold">♀</span>
                     </div>
-                    <p className="text-3xl font-extrabold text-pink-800">
+                    <p className="text-2xl font-extrabold text-pink-800">
                       {studentData.filter(s => s.gender === "ڇوڪري").length}
                     </p>
                     <p className="mt-1 font-semibold text-gray-700">ڇوڪريون</p>
@@ -394,10 +362,10 @@ const Dashboard = () => {
 
                   {/* Total */}
                   <div className="bg-white/95 rounded-xl shadow-md border border-gray-300 p-4">
-                    <div className="w-14 h-14 mx-auto mb-2 rounded-full bg-gray-200 flex items-center justify-center">
+                    <div className="w-10 h-10 md:w-14 md:h-14 mx-auto mb-2 rounded-full bg-gray-200 flex items-center justify-center">
                       <span className="text-gray-800 text-xl font-bold">∑</span>
                     </div>
-                    <p className="text-4xl font-extrabold text-gray-900">
+                    <p className="text-3xl font-extrabold text-gray-900">
                       {studentData.length}
                     </p>
                     <p className="mt-1 font-semibold text-gray-800">ٽوٽل</p>

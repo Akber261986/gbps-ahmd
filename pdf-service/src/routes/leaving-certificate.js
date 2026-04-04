@@ -1,8 +1,25 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
-const { getSindhiFontCSS, mbLeekaShabir } = require('../utils/fontLoader');
+const fs = require('fs');
+const path = require('path');
+const { getSindhiFontCSS, mbLeekaShabir, getSindhiShabirBold } = require('../utils/fontLoader');
 
 const router = express.Router();
+
+// Load and convert image to Base64 once at module initialization
+const loadImageAsBase64 = (imagePath) => {
+  try {
+    const absolutePath = path.join(__dirname, '..', '..', imagePath);
+    const imageBuffer = fs.readFileSync(absolutePath);
+    const base64Image = imageBuffer.toString('base64');
+    return `data:image/png;base64,${base64Image}`;
+  } catch (error) {
+    console.error(`Failed to load image: ${imagePath}`, error);
+    return '';
+  }
+};
+
+const frame2ImageBase64 = loadImageAsBase64('public/images/slc.png');
 
 router.post('/', async (req, res) => {
   let browser;
@@ -25,10 +42,12 @@ router.post('/', async (req, res) => {
     const grOfPreviousSchool = valueOrEmpty(data.gr_of_previous_school || data.gr_of_previos_school);
     const educationalAbility = valueOrEmpty(data.educational_ability || data.educational_qualification);
     const character = valueOrEmpty(data.character || data.conduct);
-    const classOnLeaving = valueOrEmpty(data.class_on_leaving);
+    const classOnLeaving = valueOrEmpty(data.class_on_leaving == "ڪلاس پنجون" ? "پنجون درجو پاس ڪيائين" : data.class_on_leaving, "پڙھندڙ" );
     const leavingReason = valueOrEmpty(data.reason_for_leaving || data.leaving_reason);
     const remarks = valueOrEmpty(data.remarks);
     const semisCode = valueOrEmpty(school?.semis_code);
+    const taluka = valueOrEmpty(school?.taluka || '');
+    const district = valueOrEmpty(school?.district || '');
 
     const html = `
 <!DOCTYPE html>
@@ -39,39 +58,52 @@ router.post('/', async (req, res) => {
 <style>
 ${getSindhiFontCSS()}
 ${mbLeekaShabir('MB-Leeka-Shabir-Kumbhar-2.0', 'MB-Leeka-Shabir-Kumbhar-2.0.ttf')}
+${getSindhiShabirBold('MB-Supreen-Shabir-Kumbhar-Bold-2.0', 'MB-Supreen-Shabir-Kumbhar-Bold-2.0.ttf')}
 
 @page { size: A4; margin: 10mm; }
 
 body {
-    font-family: 'MB Sindhi Web SK 2.0';
+    font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0', 'MB Sindhi Web SK 2.';
     direction: rtl;
     padding: 0;
     margin: 0;
     line-height: 1.6;
-    background: #e0e0e0;
     display: flex;
     justify-content: center;
-    padding: 20px;
+    align-items: center;
 }
-
-.paper {
-    background: #f5f0c9;
-    border: 6px solid #2c7a4b;
-    padding: 30px;
+.post_body {
+    background-image: url('${frame2ImageBase64}');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 0,10mm,0,10mm;
     width: 200mm;
-    min-height: 240mm;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    height: 260mm;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.paper {
+    width: 140mm;
     page-break-inside: avoid;
     page-break-after: avoid;
 }
 
+
 .header-section {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
+    justify-content:space-around;
+    align-items: center;
+    flex-direction: column;
 }
-
+.header-section-left {
+    display: flex;
+    width: 350px;
+    justify-content:space-between;
+    align-items: center;
+    flex-direction: row;
+}
 .form-number {
     text-align: right;
     font-size: 16px;
@@ -79,31 +111,21 @@ body {
 }
 
 .title {
-    font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';
     text-align: center;
     font-size: 24px;
     font-weight: bold;
-    margin-bottom: 16px;
-    line-height: 1.4;
 }
+.semis {
+    text-align: center;
+    font-size: 18px;
+}
+
 .center {
+    font-size: 24px;
     display: flex; 
     justify-content: center;
+    margin: 10px 0;
 }
-
-.school-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 16px;
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-.school-info div {
-    margin-bottom: 8px;
-}
-
 
 .row {
     display: flex;
@@ -111,7 +133,7 @@ body {
     align-items: center;
     margin: 8px 8px;
     font-size: 18px;
-    min-height: 30px;
+    min-height: 25px;
     line-height: 1.5;
     position: relative;
     gap: 8px;
@@ -121,7 +143,6 @@ body {
     display: inline-block;
     width: 28px;
     vertical-align: bottom;
-    font-family: 'Times New Roman', Times, serif;
 }
 
 .label {
@@ -140,13 +161,8 @@ body {
     margin: 0 0 2px 0;
     text-align: center;
     font-size: 18px;
-    line-height: 1.8;
+    line-height: 1.0;
     vertical-align: bottom;
-}
-
-.numeric-value,
-.date-value {
-    font-family: 'Times New Roman', Times, serif;
 }
 
 .pair-row {
@@ -200,21 +216,28 @@ body {
     margin-bottom: 5px;
     }
 .qout {
-    margin-top: 20px;    
+    font-size: 12px;
+    margin-top: 20px;
+    margin-right: 40px; 
 }
 </style>
 </head>
 
 
 <body>
-
+    <div class="post_body">
     <div class="paper">
-
-        <div class="title">اسڪول ڇڏڻ جو سرٽيفڪيٽ</div>
-
-        <div class="center"><b>${school?.school_name || ''}</b></div>
-        <div class="center" style="font-family:'Times New Roman', Times">سيمس ڪوڊ: ${semisCode}</div>
-
+        <div class="header-section">
+            <div class="title">${school?.school_name || ''}</div>
+            <div class="header-section-left">
+                <span>تعلقو</span>
+                <span>${taluka}</span>
+                <span>ضلعو</span>
+                <span>${district}</span>
+                <span class="semis">سيمس ڪوڊ: ${semisCode}</span>
+            </div>
+            <div class="center" style="font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';"><b>اسڪول ڇڏڻ جو سرٽيفڪيٽ</b></div>
+        </div>
         <div class="row">
             <div class="field">
                 <div class="number">1.</div>
@@ -360,6 +383,7 @@ body {
             </div>
         </div>
 
+    </div>
     </div>
 
 </body>

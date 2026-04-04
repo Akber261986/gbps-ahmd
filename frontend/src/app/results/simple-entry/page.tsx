@@ -5,6 +5,7 @@ import { studentApi, subjectApi, classApi } from '@/lib/api';
 import { useSchool } from '@/contexts/SchoolContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { getAuthHeader } from '@/lib/auth';
+import Toast from '@/components/Toast';
 
 interface Student {
   id: number;
@@ -17,7 +18,7 @@ interface Student {
 interface Subject {
   id: number;
   name: string;
-  code: string;
+  code: string | null;
 }
 
 interface Class {
@@ -77,7 +78,8 @@ const SimpleMarksEntryPage = () => {
         setSubjects(subjectsResponse.data);
       } catch (err) {
         console.error('Failed to load data:', err);
-        showMessage('ڊيٽا لوڊ ڪرڻ ۾ ناڪامي', 'error');
+        setMessage('ڊيٽا لوڊ ڪرڻ ۾ ناڪامي');
+        setMessageType('error');
       }
     };
     fetchData();
@@ -110,7 +112,8 @@ const SimpleMarksEntryPage = () => {
         }
       } catch (err) {
         console.error(err);
-        showMessage('شاگردن جي لسٽ لوڊ ڪرڻ ۾ ناڪامي', 'error');
+        setMessage('شاگردن جي لسٽ لوڊ ڪرڻ ۾ ناڪامي');
+        setMessageType('error');
       } finally {
         setLoading(false);
       }
@@ -201,7 +204,8 @@ const SimpleMarksEntryPage = () => {
   const handleSave = async () => {
     if (!selectedClassId || students.length === 0) return;
     if (!examSession || !academicYear) {
-      showMessage('مهرباني ڪري امتحان سيشن ۽ تعليمي سال ڀريو', 'error');
+      setMessage('مهرباني ڪري امتحان سيشن ۽ تعليمي سال ڀريو');
+      setMessageType('error');
       return;
     }
 
@@ -264,7 +268,8 @@ const SimpleMarksEntryPage = () => {
         successMsg = `✅ ${student.name} - ناڪام (${result.overall_percentage}%) - ساڳي ڪلاس ۾ رهندو`;
       }
 
-      showMessage(successMsg, 'success');
+      setMessage(successMsg);
+      setMessageType('success');
       setHasChanged(false);
 
       // Move to next student or complete
@@ -278,21 +283,17 @@ const SimpleMarksEntryPage = () => {
         // All students completed
         setAllStudentsCompleted(true);
         setTimeout(() => {
-          showMessage('🎉 هن ڪلاس جا سڀ شاگرد مڪمل ٿي ويا! ٻي ڪلاس چونڊيو.', 'success');
+          setMessage('🎉 هن ڪلاس جا سڀ شاگرد مڪمل ٿي ويا! ٻي ڪلاس چونڊيو.');
+          setMessageType('success');
         }, 2000);
       }
     } catch (err: any) {
       console.error(err);
-      showMessage(err.message || 'محفوظ ڪرڻ ۾ ناڪامي', 'error');
+      setMessage(err.message || 'محفوظ ڪرڻ ۾ ناڪامي');
+      setMessageType('error');
     } finally {
       setLoading(false);
     }
-  };
-
-  const showMessage = (msg: string, type: 'success' | 'error') => {
-    setMessage(msg);
-    setMessageType(type);
-    setTimeout(() => setMessage(''), 5000);
   };
 
   const handleSelectAnotherClass = () => {
@@ -572,13 +573,12 @@ const SimpleMarksEntryPage = () => {
 
               {/* Message */}
               {message && (
-                <div className={`mt-6 p-4 rounded-lg text-center font-medium text-lg ${
-                  messageType === 'success'
-                    ? 'bg-green-100 text-green-700 border border-green-300'
-                    : 'bg-red-100 text-red-700 border border-red-300'
-                }`}>
-                  {message}
-                </div>
+                <Toast
+                  message={message}
+                  type={messageType === 'success' ? 'success' : 'error'}
+                  onClose={() => setMessage('')}
+                  duration={3000}
+                />
               )}
             </>
           )}

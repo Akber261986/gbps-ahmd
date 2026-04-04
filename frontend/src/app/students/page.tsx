@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import ViewAdmission from "@/components/view_admission";
 import ViewLeavingCertificate from "@/components/view_leaving_certificate";
 import { getToken } from "@/lib/auth";
+import Toast from "@/components/Toast";
 
 const StudentsPage = () => {
   const { school } = useSchool();
@@ -232,8 +233,14 @@ const StudentsPage = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-            <p>{error}</p>
+          <Toast
+            message={error}
+            type="error"
+            onClose={() => setError(null)}
+            duration={0}
+          />
+          <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
+            <p className="text-gray-600">ڊيٽا لوڊ ڪرڻ ۾ مسئلو آيو</p>
           </div>
         </div>
       </div>
@@ -732,7 +739,7 @@ const StudentsPage = () => {
               </div>
 
               <div className="p-6">
-                <ViewLeavingCertificate formData={leavingCertData} />
+                <ViewLeavingCertificate data={leavingCertData} />
 
                 <div className="mt-6 flex justify-end gap-4">
                   <button

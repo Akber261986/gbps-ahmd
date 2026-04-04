@@ -1,24 +1,13 @@
 import { useSchool } from "@/contexts/SchoolContext";
 
 type ViewLeavingCertificateProps = {
-  formData: {
+  data: {
     [key: string]: any;
   };
 };
 
-const ViewLeavingCertificate = ({ formData }: ViewLeavingCertificateProps) => {
+const ViewLeavingCertificate = ({ data }: ViewLeavingCertificateProps) => {
   const { school } = useSchool();
-
-  const Row = ({ no, label, value }: any) => (
-    <div className="flex items-end text-[18px] leading-8">
-      <span className="w-8">{no}</span>
-      <span className="whitespace-nowrap ml-2">{label}</span>
-
-      <div className="flex-1 border-b border-gray-700 mx-3 text-center text-xl">
-        {value || ""}
-      </div>
-    </div>
-  );
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return "";
@@ -26,156 +15,112 @@ const ViewLeavingCertificate = ({ formData }: ViewLeavingCertificateProps) => {
     return date.toLocaleDateString("en-GB");
   };
 
+  const Field = ({ label, value }: { label: string; value?: string }) => (
+    <div className="flex items-center gap-2 mx-2 min-h-[25px]">
+      <div className="inline-flex items-baseline gap-1 whitespace-nowrap">
+        <span className="inline-block w-7 font-['Times_New_Roman']">{label.split('.')[0]}.</span>
+        <span className="inline-block text-[17px]">{label.split('.')[1]}</span>
+      </div>
+      <div className="flex-1 border-b border-black text-center text-lg leading-none mb-0.5">
+        <span className="font-['Times_New_Roman']">{value || ""}</span>
+      </div>
+    </div>
+  );
+
+  const PairRow = ({ children }: { children: React.ReactNode }) => (
+    <div className="flex justify-between gap-3 mx-2">
+      {children}
+    </div>
+  );
+
+  const FieldRow = ({ label, value }: { label: string; value?: string }) => (
+    <div className="flex items-center gap-1.5 min-h-[30px] flex-1">
+      <div className="inline-flex items-baseline gap-1 whitespace-nowrap">
+        <span className="inline-block w-7 font-['Times_New_Roman']">{label.split('.')[0]}.</span>
+        <span className="inline-block text-[17px]">{label.split('.')[1]}</span>
+      </div>
+      <div className="flex-1 border-b border-black text-center text-lg leading-none mb-0.5">
+        <span className="font-['Times_New_Roman']">{value || ""}</span>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="flex justify-center mt-8" dir="rtl">
+    <div className="flex justify-center items-center mt-8" dir="rtl">
+      {/* POST BODY WITH BACKGROUND */}
       <div
-        className="
-        w-[800px]
-        bg-[#f5f0c9]
-        border-[6px]
-        border-green-700
-        p-10
-        shadow-xl
-      "
+        className="relative w-[200mm] h-[260mm] flex items-center justify-center bg-contain bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url('/images/slc.png')`,
+          padding: '0 10mm'
+        }}
       >
-        {/* Form Number */}
-        <div className="text-right text-sm mb-2">فارم نمبر 16</div>
-
-        {/* Title */}
-        <h1 className="text-center text-4xl font-bold mb-6">
-          اسڪول ڇڏڻ جو سرٽيفڪيٽ
-        </h1>
-
-        {/* School */}
-        <div className="flex justify-center mb-4 text-2xl space-x-4 flex-col items-center">
-          <span>
-            اسڪول جو نالو:
-            <b className="mr-2">
-              {school?.school_name || "—"}
-            </b>
-          </span>
-          <span>
-            سيمس ڪوڊ:
-            <b className="mr-2">
-              {school?.semis_code || "—"}
-            </b>
-          </span>
-        </div>
-
-        <div className="space-y-2">
-          <Row no="1." label="جنرل رجسٽر نمبر" value={formData.gr_number} />
-
-          <Row
-            no="2."
-            label="شاگرد جو نالو"
-            value={formData.student_name}
-          />
-
-          <Row
-            no="3."
-            label="والد جو نالو"
-            value={formData.father_name}
-          />
-
-          <Row
-            no="4."
-            label="قوم"
-            value={formData.qom}
-          />
-
-          <Row
-            no="5."
-            label="ذات"
-            value={formData.caste}
-          />
-
-          <Row
-            no="6."
-            label="پيدائش جي جاءِ"
-            value={formData.place_of_birth}
-          />
-
-          <Row
-            no="7."
-            label="ڄمڻ جي تاريخ"
-            value={formatDate(formData.date_of_birth)}
-          />
-
-          <Row
-            no="8."
-            label="ڄمڻ جي تاريخ (لفظن ۾)"
-            value={formData.date_of_birth_in_letter}
-          />
-
-          <Row
-            no="9."
-            label="داخلا جي تاريخ"
-            value={formatDate(formData.admission_date)}
-          />
-
-          <Row
-            no="10."
-            label="پويون اسڪول"
-            value={formData.previous_school}
-          />
-          <Row
-            no="11."
-            label="اسڪول ڇڏڻ جو سرٽيفڪيٽ آڻڻ جي صورت ۾ جنرل رجسٽر نمبر"
-            value={formData.gr_of_previous_school}
-          />
-
-          <Row
-            no="12."
-            label="اسڪول ڇڏڻ جي تاريخ"
-            value={formatDate(formData.leaving_date)}
-          />
-
-          <Row
-            no="13."
-            label="اسڪول ڇڏڻ وقت ڪلاس"
-            value={formData.class_on_leaving}
-          />
-
-          <Row
-            no="14."
-            label="اسڪول ڇڏڻ جو سبب"
-            value={formData.reason_for_leaving}
-          />
-
-          <Row
-            no="15."
-            label="تعليمي قابليت"
-            value={formData.educational_ability}
-          />
-
-          <Row
-            no="16."
-            label="چال چلت"
-            value={formData.character}
-          />
-
-          <Row
-            no="17."
-            label="ريمارڪس"
-            value={formData.remarks}
-          />
-        </div>
-
-        {/* Declaration */}
-        <p className="mt-8 text-sm text-center">
-          سرٽيفڪيٽ ڏجي ٿو ته مهي ڄاڻايل تفصيل اسڪول جي جنرل رجسٽر مطابق صحيح آهن.
-        </p>
-
-        {/* Signatures */}
-        <div className="flex justify-between mt-20 text-lg">
-          <div className="text-center w-1/2">
-            <div className="border-t border-black mb-2 w-2/3 mx-auto"></div>
-            صحيح هيڊ ماسٽر / هيڊ مسٽريس
+        {/* PAPER CONTENT */}
+        <div className="w-[140mm]">
+          {/* HEADER SECTION */}
+          <div className="flex flex-col items-center justify-around mb-4">
+            <div className="text-center text-2xl font-bold">
+              {school?.school_name || ''}
+            </div>
+            <div className="flex items-center justify-between w-[350px] text-base">
+              <span>تعلقو</span>
+              <span>{school?.taluka || ''}</span>
+              <span>ضلعو</span>
+              <span>{school?.district || ''}</span>
+              <span>سيمس ڪوڊ: {school?.semis_code || ''}</span>
+            </div>
+            <div className="text-center text-2xl font-bold my-2">
+              <b>اسڪول ڇڏڻ جو سرٽيفڪيٽ</b>
+            </div>
           </div>
 
-          <div className="text-center w-1/2">
-            <div className="border-t border-black mb-2 w-2/3 mx-auto"></div>
-            صحيح ڪلاس ماسٽر / ماسترياڻي
+          {/* FIELDS */}
+          <div className="space-y-2 text-[18px]">
+            <Field label="1. جنرل رجسٽر نمبر" value={data.gr_number} />
+
+            <PairRow>
+              <FieldRow label="2. شاگرد جو نالو" value={data.student_name} />
+              <FieldRow label="3. پيءُ جو نالو" value={data.father_name} />
+            </PairRow>
+
+            <PairRow>
+              <FieldRow label="4. قوم" value={data.qom} />
+              <FieldRow label="5. ذات" value={data.caste} />
+            </PairRow>
+
+            <Field label="6. پيدائش جاءِ" value={data.place_of_birth} />
+            <Field label="7. پيدائش تاريخ" value={formatDate(data.date_of_birth)} />
+            <Field label="8. پيدائش لفظن ۾" value={data.date_of_birth_in_letter} />
+            <Field label="9. داخلا تاريخ" value={formatDate(data.admission_date)} />
+            <Field label="10. پھرين ڪھڙي اسڪول ۾ پڙھندو ھو / ھئي" value={data.previos_school || data.previous_school || ''} />
+            <Field label="11. اسڪول ڇڏڻ جو سرٽيفڪيٽ آڻڻ جي صورت ۾ جنرل رجسٽر نمبر" value={data.gr_of_previous_school || data.gr_of_previos_school || ''} />
+
+            <PairRow>
+              <FieldRow label="12. تعليمي لياقت" value={data.educational_ability || data.educational_qualification || ''} />
+              <FieldRow label="13. چال چلت" value={data.character || data.conduct || ''} />
+            </PairRow>
+
+            <Field label="14. ڪھڙي ڪلاس ۾ پڙھندو ھو / ھئي" value={data.class_on_leaving || ''} />
+            <Field label="15. اسڪول ڇڏڻ جي تاريخ" value={formatDate(data.leaving_date)} />
+            <Field label="16. اسڪول ڇڏڻ جو سبب" value={data.reason_for_leaving || data.leaving_reason || ''} />
+            <Field label="17. ريمارڪس" value={data.remarks || ''} />
+          </div>
+
+          {/* DECLARATION */}
+          <div className="text-xs mt-5 mr-10">
+            * سرٽيفڪيٽ ٿو ڏجي تہ مٿيون تفصيل جنرل رجسٽر مطابق درست آھي.
+          </div>
+
+          {/* SIGNATURES */}
+          <div className="mt-16 flex justify-evenly text-lg">
+            <div className="text-center w-2/5">
+              <div className="border-t border-black mb-1"></div>
+              <p>صحيح ڪلاس ٹيچر</p>
+            </div>
+            <div className="text-center w-2/5">
+              <div className="border-t border-black mb-1"></div>
+              <p>صحيح هيڊ ماسٽر</p>
+            </div>
           </div>
         </div>
       </div>

@@ -129,7 +129,7 @@ def save_upload_file(upload_file: UploadFile, directory: str) -> str:
 
 @app.get("/")
 def root():
-    return {"message": "School Management System - Arbab Haji Muhammad Dal"}
+    return {"message": "School Management System"}
 
 @app.get("/health")
 def health_check():

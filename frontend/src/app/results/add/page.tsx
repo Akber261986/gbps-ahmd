@@ -5,6 +5,7 @@ import { studentApi, gradeApi, subjectApi, classApi } from '@/lib/api';
 import { Student, Subject, Class } from '@/lib/api';
 import { useSchool } from '@/contexts/SchoolContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import Toast from '@/components/Toast';
 
 interface GradeFormData {
   student_id: number;
@@ -196,15 +197,21 @@ const AddResultPage = () => {
         {/* Main Content */}
         <div className="bg-white rounded-b-2xl shadow-lg p-6 border border-green-100">
           {successMessage && (
-            <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-              <p>{successMessage}</p>
-            </div>
+            <Toast
+              message={successMessage}
+              type="success"
+              onClose={() => setSuccessMessage('')}
+              duration={3000}
+            />
           )}
 
           {error && (
-            <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-              <p>{error}</p>
-            </div>
+            <Toast
+              message={error}
+              type="error"
+              onClose={() => setError(null)}
+              duration={5000}
+            />
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">

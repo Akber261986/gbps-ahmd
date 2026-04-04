@@ -46,7 +46,7 @@ const CertificateDocument = forwardRef<HTMLElement, Props>(({ data }, ref) => {
         {/* HEADER */}
         <header className="text-center mb-8">
           <p className="text-sm text-right">فارم نمبر 16</p>
-          <h1 className="text-3xl font-bold mt-2">اسڪول ڇڏڻ جو سرٽيفڪيٽ</h1>
+          <h1 className="text-3xl font-bold mt-2"> ڇڏڻ جو سرٽيفڪيٽ</h1>
           <p className="mt-2 font-semibold">
             {school?.school_name || 'اسڪول'}
           </p>

@@ -1,6 +1,8 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
-const { getSindhiFontCSS, mbLeekaShabir } = require('../utils/fontLoader');
+const fs = require('fs');
+const path = require('path');
+const { getSindhiFontCSS, mbLeekaShabir, getSindhiShabirBold } = require('../utils/fontLoader');
 const studentAgeModule = require('../utils/student_age');
 const student_age =
   typeof studentAgeModule === 'function'
@@ -8,6 +10,21 @@ const student_age =
     : studentAgeModule.default;
 
 const router = express.Router();
+
+// Load and convert image to Base64 once at module initialization
+const loadImageAsBase64 = (imagePath) => {
+  try {
+    const absolutePath = path.join(__dirname, '..', '..', imagePath);
+    const imageBuffer = fs.readFileSync(absolutePath);
+    const base64Image = imageBuffer.toString('base64');
+    return `data:image/png;base64,${base64Image}`;
+  } catch (error) {
+    console.error(`Failed to load image: ${imagePath}`, error);
+    return '';
+  }
+};
+
+const admissionFrameImageBase64 = loadImageAsBase64('public/images/admission_form_frame.png');
 
 router.post('/', async (req, res) => {
   let browser;
@@ -24,6 +41,9 @@ router.post('/', async (req, res) => {
     const formatDate = (d) => d ? new Date(d).toLocaleDateString('en-GB') : '';
     const age = student_age(student.date_of_birth, student.admission_date);
 
+    const valueOrEmpty = (value) => (value === null || value === undefined ? '' : value);
+    const taluka = valueOrEmpty(school?.taluka || '');
+
     const html = `
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -32,125 +52,135 @@ router.post('/', async (req, res) => {
 <style>
 ${getSindhiFontCSS()}
 ${mbLeekaShabir('MB-Leeka-Shabir-Kumbhar-2.0', 'MB-Leeka-Shabir-Kumbhar-2.0.ttf')}
+${getSindhiShabirBold('MB-Supreen-Shabir-Kumbhar-Bold-2.0', 'MB-Supreen-Shabir-Kumbhar-Bold-2.0.ttf')}
+
+@page { size: A4; margin: 10mm; }
 
 body {
-    font-family: 'MB Sindhi Web SK 2.';
-    direction: rtl;
-    padding: 0;
+    font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0';
     margin: 0;
-    line-height: 1.6;
-    background: #e0e0e0;
+    padding: 0;
     display: flex;
     justify-content: center;
-    padding: 20px;
+    align-items: center;
+}
+
+.post-body {
+    background-image: url('${admissionFrameImageBase64}');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 220mm;
+    height: 270mm;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .paper {
-  background: #f5f0c9;
-  border: 6px solid #2c7a4b;
-  padding: 30px;
-  width: 150mm;
-  height: 240mm;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  page-break-inside: avoid;
-  page-break-after: avoid;
+    width: 150mm;
+    page-break-inside: avoid;
+    page-break-after: avoid;
 }
 
-
-.title{
-  text-align:center;
-  font-size:28px;
-  font-weight:bold;
-  margin-bottom:15px;
+.title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 15px;
 }
 
-.top{
-  display:flex;
-  justify-content:space-between;
-  font-size:14px;
-  margin-bottom:15px;
+.top {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    font-size: 20px;
+    margin-bottom: 15px;
 }
 
-.row{
-  display:flex;
-  align-items:flex-end;
-  margin:4px 8px;
-  font-size:14px;
-  min-height:18px;
+.title2 {
+    margin-bottom: 8px;
+    font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';
+    text-align: center;
+    font-size: 24px;
 }
 
-.number{
-  width:30px;
-  font-family: 'Times New Roman', Times, serif;
+.row {
+    display: flex;
+    align-items: flex-end;
+    margin: 4px 8px;
+    font-size: 12px;
+    min-height: 18px;
 }
 
-.label{
-  white-space:nowrap;
-  font-size: 17px;
+.number {
+    width: 30px;
 }
 
-.line{
-  padding-bottom: 4px;
-  flex:1;
-  border-bottom:1px solid #000;
-  margin:4px 16px;
-  text-align:center;
-  font-size:16px;
-  font-weight: bold;
+.label {
+    white-space: nowrap;
+    font-size: 12px;
 }
 
-.digit{
-  font-family: 'Times New Roman', Times, serif;
+.line {
+    padding-bottom: 4px;
+    flex: 1;
+    border-bottom: 1px solid #000;
+    margin: 4px 16px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
 }
 
-.two-col-row{
-  display:flex;
-  gap:16px;
-  margin:4px 8px;
-  min-height:18px;
+.digit {
+    font-family: 'Times New Roman', Times, serif;
 }
 
-.col{
-  flex:1;
-  display:flex;
-  align-items:flex-end;
-  font-size:14px;
+.two-col-row {
+    display: flex;
+    gap: 16px;
+    margin: 4px 8px;
+    min-height: 18px;
 }
 
-.signatures{
-margin-top:60px;
-display:flex;
-justify-content:space-evenly;
+.col {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    font-size: 12px;
 }
 
-.sign{
-  text-align:center;
-  width:30%;
-  font-size:14px;
+.signatures {
+    margin-top: 100px;
+    display: flex;
+    justify-content: space-evenly;
 }
 
-.sign-line{
-  border-top:1px solid #000;
-  margin-bottom:5px;
+.sign {
+    text-align: center;
+    width: 30%;
+    font-size: 14px;
 }
 
+.sign-line {
+    border-top: 1px solid #000;
+    margin-bottom: 5px;
+}
 </style>
 </head>
 
 <body>
-
+<div class="post-body">
 <div class="paper">
-
-<div class="title" style= "font-family: 'MB-Leeka-Shabir-Kumbhar-2.0'">داخلا فارم</div>
-
-<div style="display:flex; flex-direction:column; align-items:center; margin-bottom:15px; font-size:18px;">
-  <div style="margin-bottom:8px;">
-    <strong>${school?.school_name || "—"}</strong>
-  </div>
-  <div>
-    <span>سيمس ڪوڊ: </span>
-    <strong class="digit">${school?.semis_code || "—"}</strong>
-  </div>
+<div>
+<div class="title" style="font-family: Arial, sans-serif;">${school?.school_name || ""}</div>
+<div class="top">
+<span>سيمس ڪوڊ: </span>
+<strong class="digit">${school?.semis_code || ""}</strong>
+</div>
+<div class="title2">
+<strong>داخلا فارم</strong>
+</div>
 </div>
 
 <div class="row">
@@ -178,29 +208,29 @@ justify-content:space-evenly;
 </div>
 
 <div class="two-col-row">
-  <div class="col">
-    <span class="number">5.</span>
-    <span class="label">قوم</span>
-    <span class="line">${student.qom || ""}</span>
-  </div>
-  <div class="col">
-    <span class="number">6.</span>
-    <span class="label">ذات</span>
-    <span class="line">${student.caste || ""}</span>
-  </div>
+<div class="col">
+<span class="number">5.</span>
+<span class="label">قوم</span>
+<span class="line">${student.qom || ""}</span>
+</div>
+<div class="col">
+<span class="number">6.</span>
+<span class="label">ذات</span>
+<span class="line">${student.caste || ""}</span>
+</div>
 </div>
 
 <div class="two-col-row">
-  <div class="col">
-    <span class="number">7.</span>
-    <span class="label"> سرپرست جو نالو</span>
-    <span class="line">${student.guardian_name || ""}</span>
-  </div>
-  <div class="col">
-    <span class="number">8.</span>
-    <span class="label"> بمعہ مائيٽي</span>
-    <span class="line">${student.relation_with_guardian || ""}</span>
-  </div>
+<div class="col">
+<span class="number">7.</span>
+<span class="label"> سرپرست جو نالو</span>
+<span class="line">${student.guardian_name || ""}</span>
+</div>
+<div class="col">
+<span class="number">8.</span>
+<span class="label"> بمعہ مائيٽي</span>
+<span class="line">${student.relation_with_guardian || ""}</span>
+</div>
 </div>
 
 <div class="row">
@@ -209,44 +239,51 @@ justify-content:space-evenly;
 <span class="line">${student.guardian_occupation || ""}</span>
 </div>
 
-<div class="row">
+<div class="two-col-row">
+<div class="col">
 <span class="number">10.</span>
 <span class="label">پيدائش جي جاءِ</span>
 <span class="line">${student.place_of_birth || ""}</span>
 </div>
+<div class="col">
+<span class="number">11.</span>
+<span class="label">تعلقو</span>
+<span class="line">${taluka}</span>
+</div>
+</div>
 
 <div class="row">
-<span class="number">11.</span>
+<span class="number">13.</span>
 <span class="label">پيدائش جي تاريخ</span>
 <span class="line"><span class="digit">${formatDate(student.date_of_birth)}</span></span>
 </div>
 
 <div class="row">
-<span class="number">12.</span>
+<span class="number">14.</span>
 <span class="label">پيدائش جي تاريخ لفظن ۾</span>
 <span class="line">${student.date_of_birth_in_letter || ""}</span>
 </div>
 
 <div class="row">
-<span class="number">13.</span>
+<span class="number">15.</span>
 <span class="label">ڪھڙي اسڪول مان آيو</span>
 <span class="line">${student.previous_school || ""}</span>
 </div>
 
 <div class="row">
-<span class="number">14.</span>
+<span class="number">16.</span>
 <span class="label"> ڪهڙي ڪلاس ۾ داخل ٿيو / ٿي</span>
 <span class="line">${className}</span>
 </div>
 
-<div class="row">
-<span class="number">15.</span>
+<div class="row" style="margin-top: 14px;">
+<span class="number">17.</span>
 <span class="label">سرپرست جي صحيح</span>
 <span class="line"></span>
 </div>
 
 <div class="row">
-<span class="number">16.</span>
+<span class="number">18.</span>
 <span class="label">داخلہ وقت عمر</span>
 <span class="line"><span class="digit">${age ? age.y : ""}</span> سال</span>
 <span class="line"><span class="digit">${age ? age.m : ""}</span> مھينا</span>
@@ -254,7 +291,6 @@ justify-content:space-evenly;
 </div>
 
 <div class="signatures">
-
 <div class="sign">
 <div class="sign-line"></div>
 <p>صحيح ڪلاس ماسٽر / ماسترياڻي</p>
@@ -264,11 +300,10 @@ justify-content:space-evenly;
 <div class="sign-line"></div>
 <p>صحيح هيڊ ماسٽر / هيڊ مسٽريس</p>
 </div>
-
 </div>
 
 </div>
-
+</div>
 </body>
 </html>
 

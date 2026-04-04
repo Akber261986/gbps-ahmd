@@ -9,6 +9,7 @@ import { convertToSindhiDate } from "@/lib/sindhi-date";
 import ConfirmDialog from '@/components/ConfirmDialog';
 import ImageUpload from '@/components/ImageUpload';
 import axios from 'axios';
+import Toast from '@/components/Toast';
 
 interface StudentFormData {
   gr_number: string;
@@ -252,9 +253,12 @@ function AdminStudentUpdate() {
             </div>
 
             {message && (
-              <div className={`mt-3 p-3 rounded-lg text-base md:text-lg ${message.includes("ڪامياب") || message.includes("لوڊ") ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                {message}
-              </div>
+              <Toast
+                message={message}
+                type={message.includes("ڪامياب") || message.includes("لوڊ") ? "success" : "error"}
+                onClose={() => setMessage('')}
+                duration={3000}
+              />
             )}
 
             {editingStudentId != null ? (

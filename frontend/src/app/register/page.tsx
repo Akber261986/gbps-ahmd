@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSchool } from '@/contexts/SchoolContext';
 import Link from 'next/link';
+import Toast from '@/components/Toast';
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -63,17 +64,16 @@ export default function RegisterPage() {
 
         {/* Register Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          {error && (
+            <Toast
+              message={error}
+              type="error"
+              onClose={() => setError('')}
+              duration={5000}
+            />
+          )}
+
           <form className="space-y-5" onSubmit={handleSubmit}>
-            {error && (
-              <div className="rounded-lg bg-red-50 border border-red-200 p-4">
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 text-red-600 ml-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                  <div className="text-sm text-red-800 font-medium">{error}</div>
-                </div>
-              </div>
-            )}
 
             <div className="space-y-4">
               <div>

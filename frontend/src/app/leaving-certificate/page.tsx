@@ -6,6 +6,7 @@ import { studentApi, leavingCertificateApi, classApi } from "@/lib/api";
 import { Student, Class } from "@/lib/api";
 import { useSchool } from "@/contexts/SchoolContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import Toast from "@/components/Toast";
 
 interface CertificateFormData {
   student_id: number;
@@ -61,6 +62,7 @@ const LeavingCertificatePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [existingCertificate, setExistingCertificate] = useState<any>(null);
+  const [selectedClass, setSelectedClass] = useState<number | "">("");
 
   // Load students and classes on mount
   useEffect(() => {
@@ -116,6 +118,14 @@ const LeavingCertificatePage = () => {
       setExistingCertificate(null);
     }
   };
+
+  // Filter students based on class
+  const filteredStudents = students.filter((student) => {
+    const matchesClass = selectedClass
+      ? student.class_id === selectedClass
+      : true;
+    return matchesClass;
+  });
 
   // Check if certificate already exists
   const checkExistingCertificate = async (studentId: number) => {
@@ -326,57 +336,76 @@ const LeavingCertificatePage = () => {
             ) : null}
 
             {successMessage && (
-              <div
-                className={`
-                  fixed top-6 right-6 z-50
-                  transition-all duration-1000 ease-out
-                  ${successMessage ? "translate-x-0 opacity-100" : "translate-x-32 opacity-0"}
-                  shadow-xl p-4 rounded-xl text-base md:text-lg  bg-green-50 text-green-900 border-l-4 border-green-500"}
-                `}
-              >
-                <p>{successMessage}</p>
-              </div>
+              <Toast
+                message={successMessage}
+                type="success"
+                onClose={() => setSuccessMessage("")}
+                duration={3000}
+              />
             )}
 
             {error && (
-              <div
-                className={`
-                  fixed top-6 right-6 z-50
-                  transition-all duration-1000 ease-out
-                  ${error ? "translate-x-0 opacity-100" : "translate-x-32 opacity-0"}
-                  shadow-xl p-4 rounded-xl text-base md:text-lg  bg-red-50 text-red-900 border-l-4 border-red-500"}
-                `}
-              >
-                <p>{error}</p>
-              </div>
+              <Toast
+                message={error}
+                type="error"
+                onClose={() => setError(null)}
+                duration={5000}
+              />
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-lg font-medium text-gray-700 mb-2">
-                    اسٽوڊنٽ چونڊيو
-                  </label>
-                  <select
-                    value={formData.student_id}
-                    onChange={handleStudentChange}
-                    required
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm text-base"
-                    disabled={!!existingCertificate}
-                  >
-                    <option value="">اسٽوڊنٽ چونڊيو</option>
-                    {students.map((student) => (
-                      <option key={student.id} value={student.id}>
-                        {student.name} (GR: {student.gr_number})
-                        {student.status === "left" && " - اسڪول ڇڏي چڪو"}
-                        {student.status === "transferred" && " - منتقل ٿيل"}
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-sm text-gray-500 mt-1">
-                    نوٽ: سڀ اسٽوڊنٽس ڏيکاريا ويا آهن (ايڪٽو ۽ اسڪول ڇڏيل)
-                  </p>
+              {/* Filter Section */}
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">اسٽوڊنٽ ڳولڻ لاءِ فلٽر</h3>
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 mb-2">
+                      ڪلاس جي لحاظ کان فلٽر ڪريو
+                    </label>
+                    <select
+                      value={selectedClass}
+                      onChange={(e) => setSelectedClass(e.target.value ? Number(e.target.value) : "")}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm text-base"
+                    >
+                      <option value="">سڀ ڪلاسز</option>
+                      {classes.map((cls) => (
+                        <option key={cls.id} value={cls.id}>
+                          {cls.name}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-sm text-gray-500 mt-3">
+                      ڪل اسٽوڊنٽس: {students.length} | فلٽر ٿيل: {filteredStudents.length}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 mb-2">
+                      اسٽوڊنٽ چونڊيو
+                    </label>
+                    <select
+                      value={formData.student_id}
+                      onChange={handleStudentChange}
+                      required
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm text-base"
+                      disabled={!!existingCertificate}
+                    >
+                      <option value="">اسٽوڊنٽ چونڊيو</option>
+                      {filteredStudents.map((student) => (
+                        <option key={student.id} value={student.id}>
+                          {student.name} (GR: {student.gr_number})
+                          {student.status === "left" && " - اسڪول ڇڏي چڪو"}
+                          {student.status === "transferred" && " - منتقل ٿيل"}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {filteredStudents.length === 0 ? "ڪوبه اسٽوڊنٽ نه لڌو" : `${filteredStudents.length} اسٽوڊنٽس ڏيکاريا ويا`}
+                    </p>
+                  </div>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 <div>
                   <label className="block text-lg font-medium text-gray-700 mb-2">
@@ -389,9 +418,7 @@ const LeavingCertificatePage = () => {
                     className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 shadow-sm text-base"
                   />
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-lg font-medium text-gray-700 mb-2">
                     اسٽوڊنٽ جو نالو
@@ -593,8 +620,8 @@ const LeavingCertificatePage = () => {
                   type="submit"
                   disabled={loading || !!existingCertificate}
                   className={`px-6 py-3 font-bold rounded-lg shadow-md flex items-center justify-center, gap-4 ${existingCertificate
-                      ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-                      : "bg-green-600 text-white hover:bg-green-700"
+                    ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+                    : "bg-green-600 text-white hover:bg-green-700"
                     } transition duration-300`}
                 >
                   {loading ? (

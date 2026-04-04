@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CertificateDocument from '@/components/CertificateDocument';
 import { leavingCertificateApi, SchoolLeavingCertificate } from '@/lib/api';
+import ViewLeavingCertificate from '@/components/view_leaving_certificate';
 
 function LeavingCertificateContent() {
   const searchParams = useSearchParams();
@@ -85,7 +86,7 @@ function LeavingCertificateContent() {
 
       {/* DOCUMENT */}
       <div className="flex justify-center">
-        <CertificateDocument ref={certRef} data={data} />
+        <ViewLeavingCertificate  data={data} />
       </div>
     </div>
   );

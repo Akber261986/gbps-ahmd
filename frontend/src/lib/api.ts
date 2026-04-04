@@ -153,6 +153,8 @@ export interface School {
   logo_url: string | null;
   principal_name: string | null;
   established_year: number | null;
+  taluka: string | null;
+  district: string | null;
   created_at: string;
   updated_at: string;
 }

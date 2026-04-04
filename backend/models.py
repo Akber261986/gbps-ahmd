@@ -17,6 +17,8 @@ class School(Base):
     contact_number = Column(String(50), nullable=True)
     email = Column(String(100), nullable=True)
     principal_name = Column(String(100), nullable=True)
+    taluka = Column(String(100), nullable=True)
+    district = Column(String(100), nullable=True)
     is_active = Column(Boolean, default=True)
 
     created_at = Column(DateTime, server_default=func.now())

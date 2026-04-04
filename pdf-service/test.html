@@ -13,41 +13,57 @@
     font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';
     src: url('./fonts/MB-Leeka-Shabir-Kumbhar-2.0.ttf') format('truetype');
 }
+@font-face {
+    font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0';
+    src: url('./fonts/MB-Supreen-Shabir-Kumbhar-Bold-2.0.ttf') format('truetype');
+}
 
 @page { size: A4; margin: 10mm; }
 
 body {
-    font-family: 'MB Sindhi Web SK 2.0';
+    font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0';
     direction: rtl;
     padding: 0;
     margin: 0;
     line-height: 1.6;
-    background: #e0e0e0;
+    font-size: 16px;
     display: flex;
     justify-content: center;
-    padding: 20px;
-    background-image:url('./public/images/frame2.png');
-    background-repeat: no-repeat;
-    background-size: cover;
+    align-items: center;
 }
-
-.paper {
-
-    /* padding: 60px 30px; */
+.post_body {
+    background-image: url('./public/images/slc.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 0,10mm,0,10mm;
     width: 200mm;
-    /* min-height: 240mm; */
-    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); */
+    height: 265mm;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.paper {
+    margin: 10mm 0;
+    width: 150mm;
     page-break-inside: avoid;
     page-break-after: avoid;
 }
 
+
 .header-section {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
+    justify-content:space-around;
+    align-items: center;
+    flex-direction: column;
 }
-
+.header-section-left {
+    display: flex;
+    width: 350px;
+    justify-content:space-between;
+    align-items: center;
+    flex-direction: row;
+}
 .form-number {
     text-align: right;
     font-size: 16px;
@@ -55,29 +71,21 @@ body {
 }
 
 .title {
-    font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';
-    text-align: center;
-    font-size: 24px;
+    /* font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0'; */
+    font-size: 20px;
     font-weight: bold;
-    margin-bottom: 16px;
-    line-height: 1.4;
 }
+.semis {
+    text-align: center;
+    font-size: 18px;
+    /* font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0'; */
+}
+
 .center {
+    font-size: 24px;
     display: flex; 
     justify-content: center;
-}
-
-.school-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 16px;
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-.school-info div {
-    margin-bottom: 8px;
+    margin: 30px 0;
 }
 
 
@@ -86,8 +94,8 @@ body {
     justify-content: flex-start;
     align-items: center;
     margin: 8px 8px;
-    font-size: 18px;
-    min-height: 30px;
+    font-size: 16px;
+    min-height: 25px;
     line-height: 1.5;
     position: relative;
     gap: 8px;
@@ -97,7 +105,6 @@ body {
     display: inline-block;
     width: 28px;
     vertical-align: bottom;
-    font-family: 'Times New Roman', Times, serif;
 }
 
 .label {
@@ -105,7 +112,8 @@ body {
     white-space: nowrap;
     line-height: 1.5;
     vertical-align: bottom;
-    font-size: 17px;
+    font-size: 14px;
+    font-weight: normal;
 }
 
 .line {
@@ -115,15 +123,11 @@ body {
     border-bottom: 1px solid #000;
     margin: 0 0 2px 0;
     text-align: center;
-    font-size: 18px;
-    line-height: 1.8;
+    font-size: 16px;
+    line-height: 1.0;
     vertical-align: bottom;
 }
 
-.numeric-value,
-.date-value {
-    font-family: 'Times New Roman', Times, serif;
-}
 
 .pair-row {
     display: flex;
@@ -175,164 +179,177 @@ body {
     border-top: 1px solid #000;
     margin-bottom: 5px;
 }
+.note {
+    font-size: 12px;
+    margin-top: 20px;
+    margin-right: 40px;
+}
 </style>
 </head>
 
 
 <body>
+    <div class="post_body">
+        <div class="paper">
 
-    <div class="paper">
-
-        <div class="title">اسڪول ڇڏڻ جو سرٽيفڪيٽ</div>
-
-        <div class="center"><b>گيورنمينٽ پرائمري اسڪول ٽي ايم شانگڊ</b></div>
-        <div class="center" style="font-family:'Times New Roman', Times">سيمس ڪوڊ: 402020100</div>
-
-        <div class="row">
-            <div class="field">
-                <div class="number">1.</div>
-                <div class="label">جنرل رجسٽر نمبر</div>
-            </div>
-            <div class="line"><span class="numeric-value">1012</span></div>
-        </div>
-        <div class="pair-row">
-            <div class="field-row">
-                <div class="field">
-                    <div class="number">2.</div>
-                    <div class="label">شاگرد جو نالو</div>
+            <div class="header-section">
+                <div class="title">گورنمينٽ پرائمري اسڪول ارباب حاجي محمد دل</div>
+                <div class="header-section-left">
+                    <span>تعلقو</span>
+                    <span>ٺٽو</span>
+                    <span>ضلعو</span>
+                    <span>ٺٽو</span>
+                    <span class="semis">سيمس ڪوڊ: 402020100</span>
                 </div>
-                <div class="line">حميد علي</div>
+                <div class="center" style="font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';"><b>اسڪول ڇڏڻ جو سرٽيفڪيٽ</b></div>
             </div>
-            <div class="field-row">
+    
+            <div class="row">
                 <div class="field">
-                    <div class="number">3.</div>
-                    <div class="label">پيءُ جو نالو</div>
+                    <div class="number">1.</div>
+                    <div class="label">جنرل رجسٽر نمبر</div>
                 </div>
-                <div class="line">الله بخش</div>
+                <div class="line"><span class="numeric-value">1012</span></div>
             </div>
-        </div>
-
-        <div class="pair-row">
-            <div class="field-row">
+            <div class="pair-row">
+                <div class="field-row">
+                    <div class="field">
+                        <div class="number">2.</div>
+                        <div class="label">شاگرد جو نالو</div>
+                    </div>
+                    <div class="line">حميد علي</div>
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <div class="number">3.</div>
+                        <div class="label">پيءُ جو نالو</div>
+                    </div>
+                    <div class="line">الله بخش</div>
+                </div>
+            </div>
+    
+            <div class="pair-row">
+                <div class="field-row">
+                    <div class="field">
+                        <div class="number">4.</div>
+                        <div class="label">قوم</div>
+                    </div>
+                    <div class="line">مغيري</div>
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <div class="number">5.</div>
+                        <div class="label">ذات</div>
+                    </div>
+                    <div class="line">کوسو</div>
+                </div>
+            </div>
+    
+            <div class="row">
                 <div class="field">
-                    <div class="number">4.</div>
-                    <div class="label">قوم</div>
+                    <div class="number">6.</div>
+                    <div class="label">پيدائش جاءِ</div>
                 </div>
-                <div class="line">مغيري</div>
+                <div class="line">شانگڊ, ڄامشورو</div>
             </div>
-            <div class="field-row">
+            <div class="row">
                 <div class="field">
-                    <div class="number">5.</div>
-                    <div class="label">ذات</div>
+                    <div class="number">7.</div>
+                    <div class="label">پيدائش تاريخ</div>
                 </div>
-                <div class="line">کوسو</div>
+                <div class="line"><span class="date-value">04-01-2012</span></div>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="field">
-                <div class="number">6.</div>
-                <div class="label">پيدائش جاءِ</div>
-            </div>
-            <div class="line">شانگڊ, ڄامشورو</div>
-        </div>
-        <div class="row">
-            <div class="field">
-                <div class="number">7.</div>
-                <div class="label">پيدائش تاريخ</div>
-            </div>
-            <div class="line"><span class="date-value">04-01-2012</span></div>
-        </div>
-        <div class="row">
-            <div class="field">
-                <div class="number">8.</div>
-                <div class="label">پيدائش لفظن ۾</div>
-            </div>
-            <div class="line">چار جنوري ٻه هزار ٻارهن</div>
-        </div>
-        <div class="row">
-            <div class="field">
-                <div class="number">9.</div>
-                <div class="label">داخلا تاريخ</div>
-            </div>
-            <div class="line"><span class="date-value">15-04-2017</span></div>
-        </div>
-        <div class="row">
-            <div class="field">
-                <div class="number">10.</div>
-                <div class="label">پھرين ڪھڙي اسڪول ۾ پڙھندو ھو / ھئي</div>
-            </div>
-            <div class="line">ڪوبه نه</div>
-        </div>
-
-        <div class="row">
-            <div class="field">
-                <div class="number">11.</div>
-                <div class="label">اسڪول ڇڏڻ جو سرٽيفڪيٽ آڻڻ جي صورت ۾ جنرل رجسٽر نمبر</div>
-            </div>
-            <div class="line"><span class="numeric-value">---</span></div>
-        </div>
-
-        <div class="pair-row">
-            <div class="field-row">
+            <div class="row">
                 <div class="field">
-                    <div class="number">12.</div>
-                    <div class="label">تعليمي لياقت</div>
+                    <div class="number">8.</div>
+                    <div class="label">پيدائش لفظن ۾</div>
                 </div>
-                <div class="line">شاندار</div>
+                <div class="line">چار جنوري ٻه هزار ٻارهن</div>
             </div>
-            <div class="field-row">
+            <div class="row">
                 <div class="field">
-                    <div class="number">13.</div>
-                    <div class="label">چال چلت</div>
+                    <div class="number">9.</div>
+                    <div class="label">داخلا تاريخ</div>
                 </div>
-                <div class="line">چڱو</div>
+                <div class="line"><span class="date-value">15-04-2017</span></div>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="field">
-                <div class="number">14.</div>
-                <div class="label">ڪھڙي ڪلاس ۾ پڙھندو ھو / ھئي</div>
+            <div class="row">
+                <div class="field">
+                    <div class="number">10.</div>
+                    <div class="label">پھرين ڪھڙي اسڪول ۾ پڙھندو ھو / ھئي</div>
+                </div>
+                <div class="line">ڪوبه نه</div>
             </div>
-            <div class="line">پنجين</div>
-        </div>
-        <div class="row">
-            <div class="field">
-                <div class="number">15.</div>
-                <div class="label">اسڪول ڇڏڻ جي تاريخ</div>
+    
+            <div class="row">
+                <div class="field">
+                    <div class="number">11.</div>
+                    <div class="label">اسڪول ڇڏڻ جو سرٽيفڪيٽ آڻڻ جي صورت ۾ جنرل رجسٽر نمبر</div>
+                </div>
+                <div class="line"><span class="numeric-value">---</span></div>
             </div>
-            <div class="line"><span class="date-value">25-03-2024</span></div>
-        </div>
-        <div class="row">
-            <div class="field">
-                <div class="number">16.</div>
-                <div class="label">اسڪول ڇڏڻ جو سبب</div>
+    
+            <div class="pair-row">
+                <div class="field-row">
+                    <div class="field">
+                        <div class="number">12.</div>
+                        <div class="label">تعليمي لياقت</div>
+                    </div>
+                    <div class="line">شاندار</div>
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <div class="number">13.</div>
+                        <div class="label">چال چلت</div>
+                    </div>
+                    <div class="line">چڱو</div>
+                </div>
             </div>
-            <div class="line">نئون اسڪول داخل ٿيڻ لاءِ</div>
-        </div>
-        <div class="row">
-            <div class="field">
-                <div class="number">17.</div>
-                <div class="label">ريمارڪس</div>
+    
+            <div class="row">
+                <div class="field">
+                    <div class="number">14.</div>
+                    <div class="label">ڪھڙي ڪلاس ۾ پڙھندو ھو / ھئي</div>
+                </div>
+                <div class="line">پنجين</div>
             </div>
-            <div class="line">اعليٰ اخلاق، ذميوار ۽ محنتي</div>
-        </div>
-        <div class="field">
-            * سرٽيفڪيٽ ٿو ڏجي تہ مٿيون تفصيل جنرل رجسٽر مطابق درست آھي.
-        </div>
-
-        <div class="signatures">
-            <div class="sign">
-                <div class="sign-line"></div>
-                صحيح ڪلاس ٽيچر
+            <div class="row">
+                <div class="field">
+                    <div class="number">15.</div>
+                    <div class="label">اسڪول ڇڏڻ جي تاريخ</div>
+                </div>
+                <div class="line"><span class="date-value">25-03-2024</span></div>
             </div>
-            <div class="sign">
-                <div class="sign-line"></div>
-                صحيح هيڊ ماسٽر
+            <div class="row">
+                <div class="field">
+                    <div class="number">16.</div>
+                    <div class="label">اسڪول ڇڏڻ جو سبب</div>
+                </div>
+                <div class="line">نئون اسڪول داخل ٿيڻ لاءِ</div>
             </div>
+            <div class="row">
+                <div class="field">
+                    <div class="number">17.</div>
+                    <div class="label">ريمارڪس</div>
+                </div>
+                <div class="line">اعليٰ اخلاق، ذميوار ۽ محنتي</div>
+            </div>
+            <div class="note">
+                * سرٽيفڪيٽ ٿو ڏجي تہ مٿيون تفصيل جنرل رجسٽر مطابق درست آھي.
+            </div>
+    
+            <div class="signatures">
+                <div class="sign">
+                    <div class="sign-line"></div>
+                    صحيح ڪلاس ٽيچر
+                </div>
+                <div class="sign">
+                    <div class="sign-line"></div>
+                    صحيح هيڊ ماسٽر
+                </div>
+            </div>
+    
         </div>
-
     </div>
 
 </body>

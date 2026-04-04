@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Image from 'next/image';
+import Toast from '@/components/Toast';
 
 export default function ProfilePage() {
   const { user, isAuthenticated, token, loading, refreshUser } = useAuth();
@@ -180,15 +181,21 @@ export default function ProfilePage() {
           <h1 className="text-3xl font-bold text-gray-900 mb-6">پروفائل سيٽنگس</h1>
 
           {message && (
-            <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-              {message}
-            </div>
+            <Toast
+              message={message}
+              type="success"
+              onClose={() => setMessage('')}
+              duration={3000}
+            />
           )}
 
           {error && (
-            <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-              {error}
-            </div>
+            <Toast
+              message={error}
+              type="error"
+              onClose={() => setError('')}
+              duration={5000}
+            />
           )}
 
           {/* Profile Image Section */}

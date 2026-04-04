@@ -5,6 +5,7 @@ import { resultSheetApi, ResultSheet, studentApi, classApi } from "@/lib/api";
 import { useSchool } from "@/contexts/SchoolContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { getAuthHeader } from "@/lib/auth";
+import Toast from "@/components/Toast";
 
 const ResultSheetManagePage = () => {
   const { school } = useSchool();
@@ -197,9 +198,12 @@ const ResultSheetManagePage = () => {
         {/* Main Content */}
         <div className="bg-white rounded-b-2xl shadow-lg p-6 border border-green-100">
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-              <p>{error}</p>
-            </div>
+            <Toast
+              message={error}
+              type="error"
+              onClose={() => setError(null)}
+              duration={5000}
+            />
           )}
 
           {/* Create Button */}

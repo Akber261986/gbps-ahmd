@@ -6,6 +6,7 @@ import { useSchool } from '@/contexts/SchoolContext';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Image from 'next/image';
+import Toast from '@/components/Toast';
 
 export default function SchoolSettingsPage() {
   const { isAuthenticated, token, loading: authLoading } = useAuth();
@@ -26,6 +27,8 @@ export default function SchoolSettingsPage() {
     email: '',
     principal_name: '',
     logo_url: '',
+    taluka: '',
+    district: '',
   });
 
   const [schoolLogo, setSchoolLogo] = useState<string | null>(null);
@@ -49,6 +52,8 @@ export default function SchoolSettingsPage() {
         email: school.email || '',
         principal_name: school.principal_name || '',
         logo_url: school.logo_url || '',
+        taluka: school.taluka || '',
+        district: school.district || '',
       });
       setSchoolLogo(school.logo_url || null);
     }
@@ -128,13 +133,15 @@ export default function SchoolSettingsPage() {
         email: formData.email,
         principal_name: formData.principal_name,
         logo_url: formData.logo_url,
+        taluka: formData.taluka,
+        district: formData.district,
       };
 
       if (formData.established_year) {
         updateData.established_year = parseInt(formData.established_year);
       }
 
-      const response = await axios.put('/api/schools/update', updateData, {
+      const response = await axios.put('/api/schools/my-school', updateData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -166,17 +173,23 @@ export default function SchoolSettingsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-          {message && (
-            <div className="fixed top-16 right-8 mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-              {message}
-            </div>
-          )}
+      {message && (
+        <Toast
+          message={message}
+          type="success"
+          onClose={() => setMessage('')}
+          duration={3000}
+        />
+      )}
 
-          {error && (
-            <div className="fixed top-16 right-8 mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-              {error}
-            </div>
-          )}
+      {error && (
+        <Toast
+          message={error}
+          type="error"
+          onClose={() => setError('')}
+          duration={5000}
+        />
+      )}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">اسڪول سيٽنگس</h1>
@@ -297,6 +310,37 @@ export default function SchoolSettingsPage() {
                 rows={3}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-lg"
               />
+            </div>
+
+            {/* Taluka and District */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="taluka" className="block text-lg font-medium text-gray-700 mb-2">
+                  تعلقو
+                </label>
+                <input
+                  type="text"
+                  id="taluka"
+                  name="taluka"
+                  value={formData.taluka}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-lg"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="district" className="block text-lg font-medium text-gray-700 mb-2">
+                  ضلعو
+                </label>
+                <input
+                  type="text"
+                  id="district"
+                  name="district"
+                  value={formData.district}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-lg"
+                />
+              </div>
             </div>
 
             {/* Contact Number */}

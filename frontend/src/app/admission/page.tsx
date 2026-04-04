@@ -8,6 +8,7 @@ import { convertToSindhiDate } from "@/lib/sindhi-date";
 import { addPendingStudent, getPendingStudentsCount } from "@/lib/offlineStorage";
 import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import Toast from "@/components/Toast";
 
 interface StudentFormData {
   class_id: string;
@@ -268,17 +269,12 @@ function AdmissionForm() {
             </div>
 
             {message && (
-              <div
-                className={`
-                    fixed top-6 right-6 z-50
-                    transition-all duration-1000 ease-out
-                    ${message ? "translate-x-0 opacity-100" : "translate-x-32 opacity-0"}
-                    shadow-xl p-4 rounded-xl text-base md:text-lg
-                    ${message.includes("ڪامياب") || message.includes("داخل") || message.includes("محفوظ") ? "bg-green-50 text-green-900 border-l-4 border-green-500" : "bg-red-50 text-red-900 border-l-4 border-red-500"}
-                  `}
-              >
-                {message}
-              </div>
+              <Toast
+                message={message}
+                type={message.includes("ڪامياب") || message.includes("داخل") || message.includes("محفوظ") ? "success" : "error"}
+                onClose={() => setMessage("")}
+                duration={3000}
+              />
             )}
 
             {/* Main Form */}

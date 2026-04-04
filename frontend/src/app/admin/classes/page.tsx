@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { classApi } from "@/lib/api";
 import { useSchool } from "@/contexts/SchoolContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import Toast from "@/components/Toast";
 
 interface Class {
   id: number;
@@ -97,11 +98,12 @@ function AdminClasses() {
           </form>
 
           {message && (
-            <div className={`mb-4 p-3 rounded-lg text-base md:text-lg ${
-              message.includes("ڪامياب") ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-            }`}>
-              {message}
-            </div>
+            <Toast
+              message={message}
+              type={message.includes("ڪامياب") ? "success" : "error"}
+              onClose={() => setMessage('')}
+              duration={3000}
+            />
           )}
         </div>
 
