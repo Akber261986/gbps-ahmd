@@ -155,6 +155,7 @@ export interface School {
   established_year: number | null;
   taluka: string | null;
   district: string | null;
+  union_council: string | null;
   created_at: string;
   updated_at: string;
 }
