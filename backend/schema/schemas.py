@@ -1,6 +1,44 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional, List
+from typing import Optional, List, Literal
 from datetime import date, datetime
+
+# Role type
+Role = Literal["SUPER_ADMIN", "CLUSTER_HEAD", "SCHOOL_ADMIN"]
+
+# Cluster schemas
+class ClusterCreate(BaseModel):
+    name: str
+    code: Optional[str] = None
+    taluka: Optional[str] = None
+    district: Optional[str] = None
+    head_id: Optional[int] = None
+
+class ClusterUpdate(BaseModel):
+    name: Optional[str] = None
+    code: Optional[str] = None
+    taluka: Optional[str] = None
+    district: Optional[str] = None
+    head_id: Optional[int] = None
+
+class ClusterOut(BaseModel):
+    id: int
+    name: str
+    code: Optional[str] = None
+    taluka: Optional[str] = None
+    district: Optional[str] = None
+    head_id: Optional[int] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# Cluster statistics
+class ClusterStats(BaseModel):
+    total_schools: int
+    total_students: int
+    total_boys: int
+    total_girls: int
+    schools_by_taluka: dict
 
 # Pydantic model for creating student (admission form data)
 class StudentCreate(BaseModel):
@@ -266,6 +304,8 @@ class UserOut(BaseModel):
     full_name: Optional[str] = None
     profile_image_url: Optional[str] = None
     school_id: Optional[int] = None
+    cluster_id: Optional[int] = None
+    role: str = "SCHOOL_ADMIN"
     is_active: bool
     is_superuser: bool
     oauth_provider: Optional[str] = None
@@ -293,6 +333,8 @@ class SchoolCreate(BaseModel):
     principal_name: Optional[str] = None
     taluka: Optional[str] = None
     district: Optional[str] = None
+    union_council: Optional[str] = None
+    cluster_id: Optional[int] = None
 
 class SchoolUpdate(BaseModel):
     school_name: Optional[str] = None
@@ -305,6 +347,8 @@ class SchoolUpdate(BaseModel):
     principal_name: Optional[str] = None
     taluka: Optional[str] = None
     district: Optional[str] = None
+    union_council: Optional[str] = None
+    cluster_id: Optional[int] = None
 
 class SchoolOut(BaseModel):
     id: int
@@ -318,6 +362,8 @@ class SchoolOut(BaseModel):
     principal_name: Optional[str] = None
     taluka: Optional[str] = None
     district: Optional[str] = None
+    union_council: Optional[str] = None
+    cluster_id: Optional[int] = None
     is_active: bool
     created_at: datetime
 

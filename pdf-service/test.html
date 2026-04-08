@@ -1,190 +1,217 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<style>
-/* These font functions are skipped for static HTML with mock data */
-@font-face {
-    font-family: 'MB Sindhi Web SK 2.0';
-    src: url('./fonts/MB-Sindhi-Web-SK-2.0.ttf') format('truetype');
-}
-@font-face {
-    font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';
-    src: url('./fonts/MB-Leeka-Shabir-Kumbhar-2.0.ttf') format('truetype');
-}
-@font-face {
-    font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0';
-    src: url('./fonts/MB-Supreen-Shabir-Kumbhar-Bold-2.0.ttf') format('truetype');
-}
+    <style>
+        /* These font functions are skipped for static HTML with mock data */
+        @font-face {
+            font-family: 'MB Sindhi Web SK 2.0';
+            src: url('./fonts/MB-Sindhi-Web-SK-2.0.ttf') format('truetype');
+        }
 
-@page { size: A4; margin: 10mm; }
+        @font-face {
+            font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';
+            src: url('./fonts/MB-Leeka-Shabir-Kumbhar-2.0.ttf') format('truetype');
+        }
 
-body {
-    font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0';
-    direction: rtl;
-    padding: 0;
-    margin: 0;
-    line-height: 1.6;
-    font-size: 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.post_body {
-    background-image: url('./public/images/slc.png');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    padding: 0,10mm,0,10mm;
-    width: 200mm;
-    height: 265mm;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.paper {
-    margin: 10mm 0;
-    width: 150mm;
-    page-break-inside: avoid;
-    page-break-after: avoid;
-}
+        @font-face {
+            font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0';
+            src: url('./fonts/MB-Supreen-Shabir-Kumbhar-Bold-2.0.ttf') format('truetype');
+        }
 
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
 
-.header-section {
-    display: flex;
-    justify-content:space-around;
-    align-items: center;
-    flex-direction: column;
-}
-.header-section-left {
-    display: flex;
-    width: 350px;
-    justify-content:space-between;
-    align-items: center;
-    flex-direction: row;
-}
-.form-number {
-    text-align: right;
-    font-size: 16px;
-    margin-bottom: 8px;
-}
+        body {
+            font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0';
+            direction: rtl;
+            padding: 0;
+            margin: 0;
+            line-height: 1.6;
+            font-size: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.title {
-    /* font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0'; */
-    font-size: 20px;
-    font-weight: bold;
-}
-.semis {
-    text-align: center;
-    font-size: 18px;
-    /* font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0'; */
-}
+        .post_body {
+            background-image: url('./public/images/slc.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            padding: 0, 10mm, 0, 10mm;
+            width: 200mm;
+            height: 265mm;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.center {
-    font-size: 24px;
-    display: flex; 
-    justify-content: center;
-    margin: 30px 0;
-}
+        .paper {
+            padding-top: 120px;
+            width: 150mm;
+            page-break-inside: avoid;
+            page-break-after: avoid;
+        }
+
+        
+        .title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
 
 
-.row {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin: 8px 8px;
-    font-size: 16px;
-    min-height: 25px;
-    line-height: 1.5;
-    position: relative;
-    gap: 8px;
-}
+        .logo {
+            width: 80px;
+            height: auto;
+            position: absolute;
+            top: 16%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+        }
 
-.number {
-    display: inline-block;
-    width: 28px;
-    vertical-align: bottom;
-}
+        .svg-title {
+            position: absolute;
+            top: 22%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
 
-.label {
-    display: inline-block;
-    white-space: nowrap;
-    line-height: 1.5;
-    vertical-align: bottom;
-    font-size: 14px;
-    font-weight: normal;
-}
-
-.line {
-    display: inline-block;
-    width: auto;
-    flex: 1;
-    border-bottom: 1px solid #000;
-    margin: 0 0 2px 0;
-    text-align: center;
-    font-size: 16px;
-    line-height: 1.0;
-    vertical-align: bottom;
-}
+        .semis-code {
+            position: absolute;
+            top: 22%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            letter-spacing: 2px;
+            color: #222;
+        }
 
 
-.pair-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    margin: 8px 8px;
-}
+        .center {
+            font-size: 24px;
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
 
-.field-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 30px;
-    flex: 1;
-}
 
-.field-row .line {
-    width: auto;
-    flex: 1;
-    margin: 0 0 2px 0;
-}
+        .row {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin: 8px 8px;
+            font-size: 16px;
+            min-height: 25px;
+            line-height: 1.5;
+            position: relative;
+            gap: 8px;
+        }
 
-.field {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 4px;
-    white-space: nowrap;
-}
+        .number {
+            display: inline-block;
+            width: 28px;
+            vertical-align: bottom;
+        }
 
-.declaration {
-    margin-top: 20px;
-    margin-right: 8px;
-    font-size: 11px;
-}
+        .label {
+            display: inline-block;
+            white-space: nowrap;
+            line-height: 1.5;
+            vertical-align: bottom;
+            font-size: 14px;
+            font-weight: normal;
+        }
 
-.signatures {
-    margin-top: 80px;
-    display: flex;
-    justify-content: space-evenly;
-}
+        .line {
+            display: inline-block;
+            width: auto;
+            flex: 1;
+            border-bottom: 1px solid #000;
+            margin: 0 0 2px 0;
+            text-align: center;
+            font-size: 16px;
+            line-height: 1.0;
+            vertical-align: bottom;
+        }
 
-.sign {
-    text-align: center;
-    width: 40%;
-    font-size: 18px;
-}
 
-.sign-line {
-    border-top: 1px solid #000;
-    margin-bottom: 5px;
-}
-.note {
-    font-size: 12px;
-    margin-top: 20px;
-    margin-right: 40px;
-}
-</style>
+        .pair-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 8px 8px;
+        }
+
+        .field-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 30px;
+            flex: 1;
+        }
+
+        .field-row .line {
+            width: auto;
+            flex: 1;
+            margin: 0 0 2px 0;
+        }
+
+        .field {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        .declaration {
+            margin-top: 20px;
+            margin-right: 8px;
+            font-size: 11px;
+        }
+
+        .signatures {
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        .sign {
+            text-align: center;
+            width: 40%;
+            font-size: 18px;
+        }
+
+        .sign-line {
+            border-top: 1px solid #000;
+            margin-bottom: 5px;
+        }
+
+        .note {
+            font-size: 12px;
+            margin-top: 20px;
+            margin-right: 40px;
+        }
+
+        svg {
+            width: 650px;
+            height: 400px;
+            margin-top: auto;
+            display: block;
+        }
+
+        text {
+            fill: #000;
+            text-anchor: middle;
+        }
+    </style>
 </head>
 
 
@@ -192,18 +219,24 @@ body {
     <div class="post_body">
         <div class="paper">
 
-            <div class="header-section">
-                <div class="title">گورنمينٽ پرائمري اسڪول ارباب حاجي محمد دل</div>
-                <div class="header-section-left">
-                    <span>تعلقو</span>
-                    <span>ٺٽو</span>
-                    <span>ضلعو</span>
-                    <span>ٺٽو</span>
-                    <span class="semis">سيمس ڪوڊ: 402020100</span>
+            <img src="./public/images/logo_english.png" alt="Logo" class="logo">
+            <div class="title" style="font-family: Arial, sans-serif;">
+
+                <svg viewBox="65 -100 450 500" class="svg-title">
+                    <path id="curve" d="M 0,250 A 200,170 0 0,1 580,250" fill="transparent" />
+                    <text width="500">
+                        <textPath xlink:href="#curve" startOffset="50%">
+                            گورنمينٽ پرائمري اسڪول ارباب حاجي محمد دل تعلقو ٺٽو ضلعو ٺٽو
+                        </textPath>
+                </svg>
+                <div class="semis-code">
+                    <span>سيمس ڪوڊ: </span>
+                    <strong class="digit">404090098</strong>
                 </div>
-                <div class="center" style="font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';"><b>اسڪول ڇڏڻ جو سرٽيفڪيٽ</b></div>
+                <div class="center" style="font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';"><b>اسڪول ڇڏڻ جو سرٽيفڪيٽ</b>
+                </div>
             </div>
-    
+
             <div class="row">
                 <div class="field">
                     <div class="number">1.</div>
@@ -227,7 +260,7 @@ body {
                     <div class="line">الله بخش</div>
                 </div>
             </div>
-    
+
             <div class="pair-row">
                 <div class="field-row">
                     <div class="field">
@@ -244,7 +277,7 @@ body {
                     <div class="line">کوسو</div>
                 </div>
             </div>
-    
+
             <div class="row">
                 <div class="field">
                     <div class="number">6.</div>
@@ -280,7 +313,7 @@ body {
                 </div>
                 <div class="line">ڪوبه نه</div>
             </div>
-    
+
             <div class="row">
                 <div class="field">
                     <div class="number">11.</div>
@@ -288,7 +321,7 @@ body {
                 </div>
                 <div class="line"><span class="numeric-value">---</span></div>
             </div>
-    
+
             <div class="pair-row">
                 <div class="field-row">
                     <div class="field">
@@ -305,7 +338,7 @@ body {
                     <div class="line">چڱو</div>
                 </div>
             </div>
-    
+
             <div class="row">
                 <div class="field">
                     <div class="number">14.</div>
@@ -337,7 +370,7 @@ body {
             <div class="note">
                 * سرٽيفڪيٽ ٿو ڏجي تہ مٿيون تفصيل جنرل رجسٽر مطابق درست آھي.
             </div>
-    
+
             <div class="signatures">
                 <div class="sign">
                     <div class="sign-line"></div>
@@ -348,9 +381,10 @@ body {
                     صحيح هيڊ ماسٽر
                 </div>
             </div>
-    
+
         </div>
     </div>
 
 </body>
+
 </html>

@@ -5,6 +5,23 @@ from database import Base
 from datetime import date, datetime
 
 
+class Cluster(Base):
+    __tablename__ = "clusters"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(200), nullable=False)
+    code = Column(String(50), unique=True, nullable=True)
+    taluka = Column(String(100), nullable=True)
+    district = Column(String(100), nullable=True)
+    head_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+    # Relationships
+    schools = relationship("School", back_populates="cluster")
+    head = relationship("User", foreign_keys=[head_id], back_populates="managed_cluster")
+    users = relationship("User", foreign_keys="[User.cluster_id]", back_populates="cluster")
+
+
 class School(Base):
     __tablename__ = "schools"
 
@@ -19,6 +36,8 @@ class School(Base):
     principal_name = Column(String(100), nullable=True)
     taluka = Column(String(100), nullable=True)
     district = Column(String(100), nullable=True)
+    union_council = Column(String(100), nullable=True)  # Union Council
+    cluster_id = Column(Integer, ForeignKey("clusters.id"), nullable=True)
     is_active = Column(Boolean, default=True)
 
     created_at = Column(DateTime, server_default=func.now())
@@ -29,6 +48,7 @@ class School(Base):
     classes = relationship("Class", back_populates="school")
     students = relationship("Student", back_populates="school")
     subjects = relationship("Subject", back_populates="school")
+    cluster = relationship("Cluster", back_populates="schools")
 
 
 class User(Base):
@@ -40,6 +60,8 @@ class User(Base):
     full_name = Column(String(100), nullable=True)
     profile_image_url = Column(String(500), nullable=True)  # Profile picture URL
     school_id = Column(Integer, ForeignKey("schools.id"), nullable=True)  # Nullable for superusers
+    cluster_id = Column(Integer, ForeignKey("clusters.id"), nullable=True)  # For cluster heads
+    role = Column(String(50), default="SCHOOL_ADMIN")  # SUPER_ADMIN, CLUSTER_HEAD, SCHOOL_ADMIN
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)  # Platform admin
 
@@ -56,6 +78,8 @@ class User(Base):
 
     # Relationships
     school = relationship("School", back_populates="users")
+    cluster = relationship("Cluster", foreign_keys=[cluster_id], back_populates="users")
+    managed_cluster = relationship("Cluster", foreign_keys="[Cluster.head_id]", back_populates="head", uselist=False)
 
 
 class Class(Base):

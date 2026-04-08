@@ -2,6 +2,8 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
+const http = require('http');
 const { getSindhiFontCSS, mbLeekaShabir, getSindhiShabirBold } = require('../utils/fontLoader');
 
 const router = express.Router();
@@ -20,6 +22,66 @@ const loadImageAsBase64 = (imagePath) => {
 };
 
 const frame2ImageBase64 = loadImageAsBase64('public/images/slc.png');
+const defaultLogoBase64 = loadImageAsBase64('public/images/logo_sindh_gov.png');
+
+// Function to fetch image from URL and convert to base64
+const fetchImageAsBase64 = (imageUrl) => {
+  return new Promise((resolve, reject) => {
+    const protocol = imageUrl.startsWith('https') ? https : http;
+
+    const request = protocol.get(imageUrl, { timeout: 5000 }, (response) => {
+      // Handle redirects
+      if (response.statusCode === 301 || response.statusCode === 302) {
+        return fetchImageAsBase64(response.headers.location)
+          .then(resolve)
+          .catch(reject);
+      }
+
+      if (response.statusCode !== 200) {
+        reject(new Error(`Failed to fetch image: ${response.statusCode}`));
+        return;
+      }
+
+      const chunks = [];
+      response.on('data', (chunk) => chunks.push(chunk));
+      response.on('end', () => {
+        try {
+          const buffer = Buffer.concat(chunks);
+          const base64Image = buffer.toString('base64');
+          const contentType = response.headers['content-type'] || 'image/png';
+          resolve(`data:${contentType};base64,${base64Image}`);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+
+    request.on('error', reject);
+    request.on('timeout', () => {
+      request.destroy();
+      reject(new Error('Request timeout'));
+    });
+  });
+};
+
+// Function to get logo - school logo if available, otherwise default logo
+const getLogoBase64 = async (schoolLogo) => {
+  if (schoolLogo && schoolLogo.trim() !== '') {
+    // Check if it's a URL (Cloudinary or other)
+    if (schoolLogo.startsWith('http://') || schoolLogo.startsWith('https://')) {
+      try {
+        const fetchedLogo = await fetchImageAsBase64(schoolLogo);
+        return fetchedLogo;
+      } catch (error) {
+        console.error('Failed to fetch school logo:', error.message);
+      }
+    } else if (schoolLogo.startsWith('data:image')) {
+      // Already base64
+      return schoolLogo;
+    }
+  }
+  return defaultLogoBase64;
+};
 
 router.post('/', async (req, res) => {
   let browser;
@@ -48,6 +110,7 @@ router.post('/', async (req, res) => {
     const semisCode = valueOrEmpty(school?.semis_code);
     const taluka = valueOrEmpty(school?.taluka || '');
     const district = valueOrEmpty(school?.district || '');
+    const logoBase64 = await getLogoBase64(school?.logo_url);
 
     const html = `
 <!DOCTYPE html>
@@ -63,68 +126,75 @@ ${getSindhiShabirBold('MB-Supreen-Shabir-Kumbhar-Bold-2.0', 'MB-Supreen-Shabir-K
 @page { size: A4; margin: 10mm; }
 
 body {
-    font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0', 'MB Sindhi Web SK 2.';
+    font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0';
     direction: rtl;
     padding: 0;
     margin: 0;
     line-height: 1.6;
+    font-size: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 .post_body {
     background-image: url('${frame2ImageBase64}');
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-    padding: 0,10mm,0,10mm;
+    padding: 0, 10mm, 0, 10mm;
     width: 200mm;
-    height: 260mm;
+    height: 265mm;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 .paper {
-    width: 140mm;
+    padding-top: 120px;
+    width: 150mm;
     page-break-inside: avoid;
     page-break-after: avoid;
 }
 
-
-.header-section {
-    display: flex;
-    justify-content:space-around;
-    align-items: center;
-    flex-direction: column;
-}
-.header-section-left {
-    display: flex;
-    width: 350px;
-    justify-content:space-between;
-    align-items: center;
-    flex-direction: row;
-}
-.form-number {
-    text-align: right;
-    font-size: 16px;
-    margin-bottom: 8px;
-}
-
 .title {
     text-align: center;
-    font-size: 24px;
+    font-size: 30px;
     font-weight: bold;
-}
-.semis {
-    text-align: center;
-    font-size: 18px;
+    margin-bottom: 15px;
 }
 
+.logo {
+    width: 80px;
+    height: auto;
+    position: absolute;
+    top: 16%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+}
+
+.svg-title {
+    position: absolute;
+    top: 22%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.semis-code {
+    position: absolute;
+    top: 22%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: #222;
+}
 .center {
     font-size: 24px;
-    display: flex; 
+    display: flex;
     justify-content: center;
-    margin: 10px 0;
+    margin: 30px 0;
 }
 
 .row {
@@ -132,7 +202,7 @@ body {
     justify-content: flex-start;
     align-items: center;
     margin: 8px 8px;
-    font-size: 18px;
+    font-size: 16px;
     min-height: 25px;
     line-height: 1.5;
     position: relative;
@@ -150,7 +220,8 @@ body {
     white-space: nowrap;
     line-height: 1.5;
     vertical-align: bottom;
-    font-size: 17px;
+    font-size: 14px;
+    font-weight: normal;
 }
 
 .line {
@@ -160,7 +231,7 @@ body {
     border-bottom: 1px solid #000;
     margin: 0 0 2px 0;
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1.0;
     vertical-align: bottom;
 }
@@ -203,9 +274,9 @@ body {
     margin-top: 60px;
     display: flex;
     justify-content: space-evenly;
-    }
-    
-    .sign {
+}
+
+.sign {
     text-align: center;
     width: 40%;
     font-size: 18px;
@@ -214,11 +285,24 @@ body {
 .sign-line {
     border-top: 1px solid #000;
     margin-bottom: 5px;
-    }
-.qout {
+}
+
+.note {
     font-size: 12px;
     margin-top: 20px;
-    margin-right: 40px; 
+    margin-right: 40px;
+}
+
+svg {
+    width: 650px;
+    height: 400px;
+    margin-top: auto;
+    display: block;
+}
+
+text {
+    fill: #000;
+    text-anchor: middle;
 }
 </style>
 </head>
@@ -227,14 +311,20 @@ body {
 <body>
     <div class="post_body">
     <div class="paper">
-        <div class="header-section">
-            <div class="title">${school?.school_name || ''}</div>
-            <div class="header-section-left">
-                <span>تعلقو</span>
-                <span>${taluka}</span>
-                <span>ضلعو</span>
-                <span>${district}</span>
-                <span class="semis">سيمس ڪوڊ: ${semisCode}</span>
+
+        <img src="${logoBase64}" alt="Logo" class="logo">
+        <div class="title" style="font-family: Arial, sans-serif;">
+
+            <svg viewBox="65 -100 450 500" class="svg-title">
+                <path id="curve" d="M 0,250 A 200,170 0 0,1 580,250" fill="transparent" />
+                <text width="500">
+                    <textPath xlink:href="#curve" startOffset="50%">
+                        ${school?.school_name || ''} تعلقو ${taluka} ضلعو ${district}
+                    </textPath>
+            </svg>
+            <div class="semis-code">
+                <span>سيمس ڪوڊ: </span>
+                <strong class="digit">${semisCode}</strong>
             </div>
             <div class="center" style="font-family: 'MB-Leeka-Shabir-Kumbhar-2.0';"><b>اسڪول ڇڏڻ جو سرٽيفڪيٽ</b></div>
         </div>
@@ -368,7 +458,7 @@ body {
             </div>
             <div class="line">${remarks}</div>
         </div>
-        <div class= "qout">
+        <div class="note">
             * سرٽيفڪيٽ ٿو ڏجي تہ مٿيون تفصيل جنرل رجسٽر مطابق درست آھي.
         </div>
 
@@ -403,6 +493,13 @@ body {
     res.setHeader('Content-Type', 'application/pdf');
     res.end(pdf);
 
+  } catch (error) {
+    console.error('=== Leaving Certificate PDF Generation Error ===');
+    console.error(error);
+    res.status(500).json({
+      error: 'PDF generation failed',
+      message: error.message
+    });
   } finally {
     if (browser) await browser.close();
   }

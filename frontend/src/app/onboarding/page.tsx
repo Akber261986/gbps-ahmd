@@ -15,6 +15,9 @@ interface SchoolData {
   contact_number?: string;
   email?: string;
   principal_name?: string;
+  district?: string;
+  taluka?: string;
+  union_council?: string;
 }
 
 export default function OnboardingPage() {
@@ -27,7 +30,10 @@ export default function OnboardingPage() {
     address: '',
     contact_number: '',
     email: '',
-    principal_name: ''
+    principal_name: '',
+    district: '',
+    taluka: '',
+    union_council: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -197,6 +203,57 @@ export default function OnboardingPage() {
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="school@example.com"
+                disabled={loading}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="district" className="block text-sm font-medium text-gray-700 mb-1">
+                ضلعو <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="district"
+                name="district"
+                required
+                value={formData.district}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="مثال: حيدرآباد"
+                disabled={loading}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="taluka" className="block text-sm font-medium text-gray-700 mb-1">
+                تعلقو <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="taluka"
+                name="taluka"
+                required
+                value={formData.taluka}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="مثال: لطيف آباد"
+                disabled={loading}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="union_council" className="block text-sm font-medium text-gray-700 mb-1">
+                يونين ڪائونسل <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="union_council"
+                name="union_council"
+                required
+                value={formData.union_council}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="مثال: UC-5"
                 disabled={loading}
               />
             </div>

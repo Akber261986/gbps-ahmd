@@ -2,6 +2,8 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
+const http = require('http');
 const { getSindhiFontCSS, mbLeekaShabir, getSindhiShabirBold } = require('../utils/fontLoader');
 const studentAgeModule = require('../utils/student_age');
 const student_age =
@@ -25,12 +27,73 @@ const loadImageAsBase64 = (imagePath) => {
 };
 
 const admissionFrameImageBase64 = loadImageAsBase64('public/images/admission_form_frame.png');
+const defaultLogoBase64 = loadImageAsBase64('public/images/logo_sindh_gov.png');
+
+// Function to fetch image from URL and convert to base64
+const fetchImageAsBase64 = (imageUrl) => {
+  return new Promise((resolve, reject) => {
+    const protocol = imageUrl.startsWith('https') ? https : http;
+
+    const request = protocol.get(imageUrl, { timeout: 5000 }, (response) => {
+      // Handle redirects
+      if (response.statusCode === 301 || response.statusCode === 302) {
+        return fetchImageAsBase64(response.headers.location)
+          .then(resolve)
+          .catch(reject);
+      }
+
+      if (response.statusCode !== 200) {
+        reject(new Error(`Failed to fetch image: ${response.statusCode}`));
+        return;
+      }
+
+      const chunks = [];
+      response.on('data', (chunk) => chunks.push(chunk));
+      response.on('end', () => {
+        try {
+          const buffer = Buffer.concat(chunks);
+          const base64Image = buffer.toString('base64');
+          const contentType = response.headers['content-type'] || 'image/png';
+          resolve(`data:${contentType};base64,${base64Image}`);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+
+    request.on('error', reject);
+    request.on('timeout', () => {
+      request.destroy();
+      reject(new Error('Request timeout'));
+    });
+  });
+};
+
+// Function to get logo - school logo if available, otherwise default logo
+const getLogoBase64 = async (schoolLogo) => {
+  if (schoolLogo && schoolLogo.trim() !== '') {
+    // Check if it's a URL (Cloudinary or other)
+    if (schoolLogo.startsWith('http://') || schoolLogo.startsWith('https://')) {
+      try {
+        const fetchedLogo = await fetchImageAsBase64(schoolLogo);
+        return fetchedLogo;
+      } catch (error) {
+        console.error('Failed to fetch school logo:', error.message);
+      }
+    } else if (schoolLogo.startsWith('data:image')) {
+      // Already base64
+      return schoolLogo;
+    }
+  }
+  return defaultLogoBase64;
+};
 
 router.post('/', async (req, res) => {
   let browser;
 
   try {
     const { student, school, classes } = req.body;
+
     if (!student || typeof student !== 'object') {
       return res.status(400).json({ error: 'Student data is required' });
     }
@@ -43,6 +106,7 @@ router.post('/', async (req, res) => {
 
     const valueOrEmpty = (value) => (value === null || value === undefined ? '' : value);
     const taluka = valueOrEmpty(school?.taluka || '');
+    const logoBase64 = await getLogoBase64(school?.logo_url);
 
     const html = `
 <!DOCTYPE html>
@@ -78,24 +142,46 @@ body {
 }
 
 .paper {
+    padding-top: 170px;
     width: 150mm;
     page-break-inside: avoid;
     page-break-after: avoid;
+    position: absolute;
 }
 
 .title {
     text-align: center;
-    font-size: 28px;
+    font-size: 32px;
     font-weight: bold;
     margin-bottom: 15px;
 }
 
-.top {
-    display: flex;
-    justify-content: center;
-    gap: 14px;
-    font-size: 20px;
-    margin-bottom: 15px;
+.logo {
+    width: 80px;
+    height: auto;
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+
+}
+
+.svg-title {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.semis-code {
+    position: absolute;
+    top: 17%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: #222;
 }
 
 .title2 {
@@ -151,7 +237,7 @@ body {
 }
 
 .signatures {
-    margin-top: 100px;
+    margin-top: 70px;
     display: flex;
     justify-content: space-evenly;
 }
@@ -166,20 +252,45 @@ body {
     border-top: 1px solid #000;
     margin-bottom: 5px;
 }
+
+svg {
+    width: 650px;
+    height: 400px;
+    margin-top: auto;
+    display: block;
+}
+
+text {
+    fill: #000;
+    text-anchor: middle;
+}
 </style>
 </head>
 
 <body>
 <div class="post-body">
+
+<div class="t"></div>
+
 <div class="paper">
-<div>
-<div class="title" style="font-family: Arial, sans-serif;">${school?.school_name || ""}</div>
-<div class="top">
+
+<img src="${logoBase64}" alt="Logo" class="logo">
+<div class="title" style="font-family: Arial, sans-serif;">
+
+<svg viewBox="65 -100 450 500" class="svg-title">
+<path id="curve" d="M 0,250 A 200,170 0 0,1 580,250" fill="transparent" />
+<text width="500">
+<textPath xlink:href="#curve" startOffset="50%">
+${school?.school_name || ""} تعلقو  ${school?.taluka} ضلعو ${school?.district}
+</textPath>
+</text>
+</svg>
+<div class="semis-code">
 <span>سيمس ڪوڊ: </span>
 <strong class="digit">${school?.semis_code || ""}</strong>
 </div>
 <div class="title2">
-<strong>داخلا فارم</strong>
+<strong>شاگرد جو داخلا فارم</strong>
 </div>
 </div>
 

@@ -18,11 +18,12 @@ from schema.schemas import (
     GoogleLoginRequest, GoogleLoginResponse, UserProfileUpdate,
     ChatRequest, ChatResponse,
     ResultSheetCreate, ResultSheetUpdate, ResultSheetOut,
-    StudentMarksEntry, StudentMarksResponse
+    StudentMarksEntry, StudentMarksResponse,
+    ClusterCreate, ClusterUpdate, ClusterOut, ClusterStats
 )
 from database import SessionLocal, engine, get_db
 from typing import List
-from models import Base, Student, Class, SchoolLeavingCertificate, Grade, Subject, User, School, ResultSheet
+from models import Base, Student, Class, SchoolLeavingCertificate, Grade, Subject, User, School, ResultSheet, Cluster
 from auth import (
     get_password_hash, verify_password, create_access_token,
     get_current_user, get_current_active_user, require_school
@@ -44,6 +45,8 @@ except ImportError:
 import os
 from datetime import timedelta
 from routes import images as images_router
+from routes import clusters as clusters_router
+from routes import admin as admin_router
 
 
 Base.metadata.create_all(bind=engine)
@@ -82,6 +85,8 @@ app.add_middleware(
 
 # Include routers
 app.include_router(images_router.router, prefix="/images", tags=["images"])
+app.include_router(clusters_router.router, prefix="/clusters", tags=["clusters"])
+app.include_router(admin_router.router, prefix="/admin", tags=["admin"])
 
 # Create uploads directory only if not in serverless environment
 if not IS_SERVERLESS:

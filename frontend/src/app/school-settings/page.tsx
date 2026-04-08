@@ -29,6 +29,7 @@ export default function SchoolSettingsPage() {
     logo_url: '',
     taluka: '',
     district: '',
+    union_council: '',
   });
 
   const [schoolLogo, setSchoolLogo] = useState<string | null>(null);
@@ -54,6 +55,7 @@ export default function SchoolSettingsPage() {
         logo_url: school.logo_url || '',
         taluka: school.taluka || '',
         district: school.district || '',
+        union_council: school.union_council || '',
       });
       setSchoolLogo(school.logo_url || null);
     }
@@ -135,6 +137,7 @@ export default function SchoolSettingsPage() {
         logo_url: formData.logo_url,
         taluka: formData.taluka,
         district: formData.district,
+        union_council: formData.union_council,
       };
 
       if (formData.established_year) {
@@ -312,25 +315,11 @@ export default function SchoolSettingsPage() {
               />
             </div>
 
-            {/* Taluka and District */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="taluka" className="block text-lg font-medium text-gray-700 mb-2">
-                  تعلقو
-                </label>
-                <input
-                  type="text"
-                  id="taluka"
-                  name="taluka"
-                  value={formData.taluka}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-lg"
-                />
-              </div>
-
-              <div>
+            {/* Taluka, Union Council and District */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
                 <label htmlFor="district" className="block text-lg font-medium text-gray-700 mb-2">
-                  ضلعو
+                  ضلعو *
                 </label>
                 <input
                   type="text"
@@ -339,6 +328,36 @@ export default function SchoolSettingsPage() {
                   value={formData.district}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-lg"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="taluka" className="block text-lg font-medium text-gray-700 mb-2">
+                  تعلقو *
+                </label>
+                <input
+                  type="text"
+                  id="taluka"
+                  name="taluka"
+                  value={formData.taluka}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-lg"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="union_council" className="block text-lg font-medium text-gray-700 mb-2">
+                  يونين ڪائونسل *
+                </label>
+                <input
+                  type="text"
+                  id="union_council"
+                  name="union_council"
+                  value={formData.union_council}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-lg"
+                  required
                 />
               </div>
             </div>

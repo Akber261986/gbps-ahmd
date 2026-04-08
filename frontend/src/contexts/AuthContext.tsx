@@ -27,6 +27,10 @@ interface AuthContextType {
   refreshUser: () => Promise<void>;
   isAuthenticated: boolean;
   hasSchool: boolean;
+  isSuperAdmin: boolean;
+  isClusterHead: boolean;
+  isSchoolAdmin: boolean;
+  getDashboardRoute: () => string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -101,11 +105,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Small delay to ensure state updates are complete
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      // Redirect based on school onboarding status
-      if (userResponse.data.school_id) {
-        router.push('/');
+      // Redirect based on role
+      if (userResponse.data.role === 'SUPER_ADMIN') {
+        router.push('/dashboard/admin');
+      } else if (userResponse.data.role === 'CLUSTER_HEAD') {
+        router.push('/dashboard/cluster');
+      } else if (userResponse.data.role === 'SCHOOL_ADMIN') {
+        // Check if school onboarding is complete
+        if (userResponse.data.school_id) {
+          router.push('/dashboard/school');
+        } else {
+          router.push('/onboarding');
+        }
       } else {
-        router.push('/onboarding');
+        router.push('/');
       }
     } catch (error) {
       console.error('Login failed:', error);
@@ -132,11 +145,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Small delay to ensure state updates are complete
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      // Redirect based on school onboarding status
-      if (userResponse.data.school_id) {
-        router.push('/');
+      // Redirect based on role
+      if (userResponse.data.role === 'SUPER_ADMIN') {
+        router.push('/dashboard/admin');
+      } else if (userResponse.data.role === 'CLUSTER_HEAD') {
+        router.push('/dashboard/cluster');
+      } else if (userResponse.data.role === 'SCHOOL_ADMIN') {
+        // Check if school onboarding is complete
+        if (userResponse.data.school_id) {
+          router.push('/dashboard/school');
+        } else {
+          router.push('/onboarding');
+        }
       } else {
-        router.push('/onboarding');
+        router.push('/');
       }
     } catch (error) {
       console.error('Google login failed:', error);
@@ -176,6 +198,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Role-based helper functions
+  const isSuperAdmin = user?.role === "SUPER_ADMIN";
+  const isClusterHead = user?.role === "CLUSTER_HEAD";
+  const isSchoolAdmin = user?.role === "SCHOOL_ADMIN";
+
+  const getDashboardRoute = (): string => {
+    if (!user) return '/login';
+
+    switch (user.role) {
+      case "SUPER_ADMIN":
+        return '/dashboard/admin';
+      case "CLUSTER_HEAD":
+        return '/dashboard/cluster';
+      case "SCHOOL_ADMIN":
+        return '/dashboard/school';
+      default:
+        return '/';
+    }
+  };
+
   const value: AuthContextType = {
     user,
     token,
@@ -186,7 +228,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     refreshUser,
     isAuthenticated: user !== null,
-    hasSchool: user !== null && user.school_id !== null
+    hasSchool: user !== null && user.school_id !== null,
+    isSuperAdmin,
+    isClusterHead,
+    isSchoolAdmin,
+    getDashboardRoute
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

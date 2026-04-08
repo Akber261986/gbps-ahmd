@@ -1,10 +1,14 @@
 // Authentication utilities for token management and API calls
 
+export type Role = "SUPER_ADMIN" | "CLUSTER_HEAD" | "SCHOOL_ADMIN";
+
 export interface User {
   id: number;
   email: string;
   full_name: string | null;
   school_id: number | null;
+  cluster_id: number | null;
+  role: Role;
   is_active: boolean;
   is_superuser: boolean;
   created_at: string;
