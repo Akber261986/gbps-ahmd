@@ -150,7 +150,7 @@ const StudentsPage = () => {
       const token = getToken();
 
       // Fetch the leaving certificate data
-      const response = await fetch(`/api/school-leaving-certificates/${student.id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/school-leaving-certificates/${student.id}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
