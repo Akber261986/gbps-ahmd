@@ -313,7 +313,7 @@ text {
     <div class="paper">
 
         <img src="${logoBase64}" alt="Logo" class="logo">
-        <div class="title" style="font-family: Arial, sans-serif;">
+        <div class="title">
 
             <svg viewBox="65 -100 450 500" class="svg-title">
                 <path id="curve" d="M 0,250 A 200,170 0 0,1 580,250" fill="transparent" />

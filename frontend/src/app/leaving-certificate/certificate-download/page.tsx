@@ -68,25 +68,15 @@ function LeavingCertificateContent() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      {/* ACTION BAR */}
-      <div className="max-w-5xl mx-auto mb-4 flex justify-end gap-3 print:hidden">
-        <button
-          onClick={handlePdfDownload}
-          className="px-6 py-2 bg-black text-white rounded"
-        >
-          ڊائون لوڊ PDF
-        </button>
-        <button
-          onClick={() => window.print()}
-          className="px-6 py-2 bg-green-600 text-white rounded"
-        >
-          پرنٽ ڪريو
-        </button>
-      </div>
-
       {/* DOCUMENT */}
       <div className="flex justify-center">
-        <ViewLeavingCertificate  data={data} />
+        <ViewLeavingCertificate
+          data={data}
+          isOpen={true}
+          onClose={undefined}
+          onPrint={handlePdfDownload}
+          loadingPdf={false}
+        />
       </div>
     </div>
   );

@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --font-lateef: 'Lateef', 'Noto Nastaliq Urdu', 'Scheherazade New', system-ui, sans-serif;
@@ -12,4 +15,21 @@ body {
 
 input, textarea, select {
   font-family: var(--font-lateef);
+}
+
+@font-face {
+  font-family: 'Leeka';
+  src: url('/fonts/MB-Leeka-Shabir-Kumbhar-2.0.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF;
+}
+
+@font-face {
+  font-family: 'Supreen';
+  src: url('/fonts/MB-Supreen-Shabir-Kumbhar-Bold-2.0.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }

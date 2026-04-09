@@ -90,7 +90,7 @@ const ViewAdmission = ({ formData, classes, isOpen = true, onClose, onPrint, loa
               className="flex justify-center items-start min-h-full p-3 sm:p-4 md:p-6"
               dir="rtl"
             >
-              <div className="w-full max-w-4xl">
+              <div className="w-full max-w-160">
                 <div
                   className="relative w-full bg-cover bg-center bg-no-repeat flex justify-center items-center p-3 sm:p-4 md:p-6 lg:p-8"
                   style={{
@@ -98,14 +98,14 @@ const ViewAdmission = ({ formData, classes, isOpen = true, onClose, onPrint, loa
                     aspectRatio: "180/240",
                   }}
                 >
-                  <div className="w-full max-w-2xl pt-28 sm:pt-32 md:pt-36 lg:pt-40 relative">
+                  <div className="w-full max-w-2xl pt-20 sm:pt-28 md:pt-32 lg:pt-36 relative">
                     {/* Logo */}
                     <img
                       src={school?.logo_url || "/images/logo_sindh_gov.png"}
                       alt="Logo"
-                      className="absolute w-10 sm:w-14 md:w-18 lg:w-22 h-auto rounded-full"
+                      className="absolute w-12 sm:w-16 md:w-20 lg:w-24 h-auto rounded-full"
                       style={{
-                        top: "8%",
+                        top: "10%",
                         left: "50%",
                         transform: "translate(-50%, -50%)",
                       }}
@@ -113,7 +113,7 @@ const ViewAdmission = ({ formData, classes, isOpen = true, onClose, onPrint, loa
 
                     {/* Header */}
                     <div className="mb-1 sm:mb-2 md:mb-3 relative">
-                      <div className="absolute left-1/2 top-1 sm:top-2 md:top-3 -translate-x-1/2 -translate-y-1/2">
+                      <div className="absolute left-1/2 top-0 md:top-12 -translate-x-1/2 -translate-y-1/2">
                         <svg viewBox="0 0 570 450" className="w-80 sm:w-96 md:w-xl lg:w-2xl h-auto">
                           <defs>
                             <path id="curve" d="M 0,240 A 100,75 0 0,1 550,260" />
@@ -123,7 +123,7 @@ const ViewAdmission = ({ formData, classes, isOpen = true, onClose, onPrint, loa
                             <textPath
                               href="#curve"
                               startOffset="50%"
-                              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold"
+                              className="text-3xl font-bold"
                             >
                               {school?.school_name || ""} تعلقو {school?.taluka} ضلعو{" "}
                               {school?.district}
@@ -134,8 +134,8 @@ const ViewAdmission = ({ formData, classes, isOpen = true, onClose, onPrint, loa
 
                       {/* SEMIS Code */}
                       <div
-                        className="absolute text-[10px] sm:text-xs md:text-sm lg:text-base tracking-wider text-gray-800"
-                        style={{ top: "-100%", left: "50%", transform: "translate(-50%, -50%)" }}
+                        className="absolute text-[10px] sm:text-xs md:text-sm lg:text-base tracking-wider text-gray-800 left-1/2 -top-4 md:-top-6"
+                        style={{transform: "translate(-50%, -50%)" }}
                       >
                         <span>سيمس ڪوڊ: </span>
                         <strong className="font-serif">
@@ -145,14 +145,14 @@ const ViewAdmission = ({ formData, classes, isOpen = true, onClose, onPrint, loa
 
                       {/* Title */}
                       <h2
-                        className="text-center text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-1 sm:mb-2"
-                        style={{ fontFamily: "MB-leeka-Shabir" }}
+                        className="text-center text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-1 sm:mb-2 mt-6 sm:mt-8"
+                        style={{ fontFamily: "Leeka" }}
                       >
                         <strong>شاگرد جو داخلا فارم</strong>
                       </h2>
                     </div>
 
-                    <div className="space-y-0.5 sm:space-y-1">
+                    <div className="space-y-0.5 sm:space-y-1 px-4 sm:px-0">
                       <Row no="1." label="جنرل رجسٽر نمبر" value={formData.gr_number} />
 
                       <Row

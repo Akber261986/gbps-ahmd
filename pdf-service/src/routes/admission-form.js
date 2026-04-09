@@ -124,6 +124,8 @@ body {
     font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0';
     margin: 0;
     padding: 0;
+    line-height: 1.6;
+    font-size: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -176,7 +178,7 @@ body {
 
 .semis-code {
     position: absolute;
-    top: 17%;
+    top: 18%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 16px;
@@ -193,29 +195,40 @@ body {
 
 .row {
     display: flex;
-    align-items: flex-end;
-    margin: 4px 8px;
-    font-size: 12px;
-    min-height: 18px;
+    align-items: center;
+    margin: 8px 8px;
+    font-size: 16px;
+    min-height: 25px;
+    line-height: 1.5;
+    position: relative;
+    gap: 8px;
 }
 
 .number {
-    width: 30px;
+    display: inline-block;
+    width: 28px;
+    vertical-align: bottom;
 }
 
 .label {
+    display: inline-block;
     white-space: nowrap;
-    font-size: 12px;
+    line-height: 1.5;
+    vertical-align: bottom;
+    font-size: 14px;
+    font-weight: normal;
 }
 
 .line {
-    padding-bottom: 4px;
+    display: inline-block;
+    width: auto;
     flex: 1;
     border-bottom: 1px solid #000;
-    margin: 4px 16px;
+    margin: 0 0 2px 0;
     text-align: center;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 16px;
+    line-height: 1.0;
+    vertical-align: bottom;
 }
 
 .digit {
@@ -224,16 +237,23 @@ body {
 
 .two-col-row {
     display: flex;
-    gap: 16px;
-    margin: 4px 8px;
-    min-height: 18px;
+    gap: 12px;
+    margin: 8px 8px;
+    min-height: 25px;
 }
 
 .col {
     flex: 1;
     display: flex;
-    align-items: flex-end;
-    font-size: 12px;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+}
+
+.col .line {
+    width: auto;
+    flex: 1;
+    margin: 0 0 2px 0;
 }
 
 .signatures {
@@ -275,7 +295,7 @@ text {
 <div class="paper">
 
 <img src="${logoBase64}" alt="Logo" class="logo">
-<div class="title" style="font-family: Arial, sans-serif;">
+<div class="title">
 
 <svg viewBox="65 -100 450 500" class="svg-title">
 <path id="curve" d="M 0,250 A 200,170 0 0,1 580,250" fill="transparent" />
