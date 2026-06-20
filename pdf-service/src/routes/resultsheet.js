@@ -24,6 +24,47 @@ router.post('/', async (req, res) => {
       return { boys, girls };
     };
 
+    const tableHead = `
+<tr>
+  <th colspan="15" class="sindhi">
+    <div class="header-title">جديد رزلٽ شيٽ - سال - ${displayYear}</div>
+    <div class="header-sub">
+      <span>نقشو امتحان جي مارڪن جو</span>
+      <span class="s-name">${school?.school_name || 'اسڪول'}</span>
+      <span>جي درجي ــــــــــــــــ جو ساليانو امتحان تاريخ ـــــــــــ مھينو ــــــــــــــــــ سال ـــــــــــــــــ</span>
+    </div>
+  </th>
+</tr>
+
+<tr>
+    <th rowspan="2" style="width: 17mm;">جنرل رجسٽر نمبر</th>
+    <th rowspan="2" style="width: 12mm">ڳاڻيٽي جو نمبر</th>
+    <th rowspan="2" style="width: 35mm">شاگرد جو نالو</th>
+    <th rowspan="2" style="width: 35mm">پيءُجو نالو </th>
+    <th style="width: 14mm">دينيات</th>
+    <th style="width: 14mm">مادري زبان</th>
+    <th style="width: 14mm">رياضي</th>
+    <th style="width: 14mm">سماجي</th>
+    <th style="width: 14mm">سائنس</th>
+    <th style="width: 14mm">اردو</th>
+    <th style="width: 14mm">انگلش</th>
+    <th style="width: 14mm">ڊرائنگ</th>
+    <th rowspan="2" style="width: 25mm">ڄمڻ جي تاريخ</th>
+    <th rowspan="2" style="width: 25mm">داخلا جي تاريخ</th>
+    <th rowspan="2" style="width: 16mm">پاس يا ناپاس</th>
+</tr>
+
+<tr>
+  <th>100</th>
+  <th>100</th>
+  <th>100</th>
+  <th>100</th>
+  <th>100</th>
+  <th>100</th>
+  <th>100</th>
+  <th>100</th>
+</tr>`;
+
     const html = `
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -59,6 +100,14 @@ body {
   min-height: 355mm;
 }
 
+.class-block {
+  width: 100%;
+}
+
+.class-block.new-page {
+  page-break-before: always;
+}
+
 /* TABLE STYLING */
 table {
   width: 100%;
@@ -66,30 +115,22 @@ table {
   page-break-inside: auto;
 }
 
-/* HEADER REPEAT */
+/* HEADER REPEAT — break-inside:avoid required by Chromium */
 thead {
   display: table-header-group;
   break-inside: avoid;
+  page-break-inside: avoid;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
-}
-
-thead tr {
-  display: table-row;
-  page-break-inside: avoid;
-  page-break-after: avoid;
 }
 
 tbody {
   display: table-row-group;
 }
 
-tfoot {
-  display: table-footer-group;
-}
-
 /* PREVENT ROW BREAKING */
-tr {
+tbody tr {
+  break-inside: avoid;
   page-break-inside: avoid;
   height: 13mm;
 }
@@ -137,17 +178,40 @@ th {
   padding: 2mm;
 }
 
-/* PAGE BREAKS */
-.class-section {
-  page-break-before: always;
-}
-
-.class-section:first-child {
-  page-break-before: auto;
-}
-
 .class-name-row {
+  break-after: avoid;
   page-break-after: avoid;
+}
+
+@media print {
+  html, body {
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  body {
+    display: block;
+  }
+
+  .paper {
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+  }
+
+  thead {
+    display: table-header-group;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .header-sub {
+    display: block;
+    text-align: center;
+  }
 }
 
 /* TITLE STYLING */
@@ -177,53 +241,6 @@ th {
 <body>
 
 <div class="paper">
-<table>
-
-<thead>
-
-<tr>
-  <th colspan="15" class="sindhi">
-    <div class="header-title">جديد رزلٽ شيٽ - سال - ${displayYear}</div>
-    <div class="header-sub">
-      <span>نقشو امتحان جي مارڪن جو</span>
-      <span class="s-name">${school?.school_name || 'اسڪول'}</span>
-      <span>جي درجي ــــــــــــــــ جو ساليانو امتحان تاريخ ـــــــــــ مھينو ــــــــــــــــــ سال ـــــــــــــــــ</span>
-    </div>
-  </th>
-</tr>
-
-<tr>
-    <th rowspan="2" style="width: 17mm;">جنرل رجسٽر نمبر</th>
-    <th rowspan="2" style="width: 12mm">ڳاڻيٽي جو نمبر</th>
-    <th rowspan="2" style="width: 35mm">شاگرد جو نالو</th>
-    <th rowspan="2" style="width: 35mm">پيءُجو نالو </th>
-    <th style="width: 14mm">دينيات</th>
-    <th style="width: 14mm">مادري زبان</th>
-    <th style="width: 14mm">رياضي</th>
-    <th style="width: 14mm">سماجي</th>
-    <th style="width: 14mm">سائنس</th>
-    <th style="width: 14mm">اردو</th>
-    <th style="width: 14mm">انگلش</th>
-    <th style="width: 14mm">ڊرائنگ</th>
-    <th rowspan="2" style="width: 25mm">ڄمڻ جي تاريخ</th>
-    <th rowspan="2" style="width: 25mm">داخلا جي تاريخ</th>
-    <th rowspan="2" style="width: 16mm">پاس يا ناپاس</th>
-</tr>
-
-<tr>
-  <th>100</th>
-  <th>100</th>
-  <th>100</th>
-  <th>100</th>
-  <th>100</th>
-  <th>100</th>
-  <th>100</th>
-  <th>100</th>
-</tr>
-
-</thead>
-
-<tbody>
 
 ${classes.map((cls, classIndex) => {
   const classStudents = students.filter(s => s.current_class_id === cls.id);
@@ -252,15 +269,21 @@ ${classes.map((cls, classIndex) => {
   };
 
   return `
-<!-- Class Name Row -->
-<tr class="${classIndex > 0 ? 'class-section class-name-row' : 'class-name-row'}">
+<div class="class-block${classIndex > 0 ? ' new-page' : ''}">
+<table>
+
+<thead>
+${tableHead}
+</thead>
+
+<tbody>
+
+<tr class="class-name-row">
   <td colspan="15" class="class-header sindhi">${cls.name}</td>
 </tr>
 
-<!-- Boys Section -->
 ${boys.length > 0 ? renderStudents(boys, 0) : ''}
 
-<!-- Girls Section -->
 ${girls.length > 0 ? `
 <tr class="no-break">
   <td colspan="15" class="gender-header sindhi">ڇوڪريون (Girls)</td>
@@ -273,12 +296,14 @@ ${classStudents.length === 0 ? `
   <td colspan="15" style="padding: 4mm; text-align: center; color: #9ca3af; font-style: italic;">هن ڪلاس ۾ ڪوبه شاگرد موجود ناهي</td>
 </tr>
 ` : ''}
-  `;
-}).join('')}
 
 </tbody>
 
 </table>
+</div>
+  `;
+}).join('')}
+
 </div>
 
 </body>
@@ -298,6 +323,7 @@ ${classStudents.length === 0 ? `
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
+    await page.emulateMediaType('print');
 
     const pdfBuffer = await page.pdf({
       format: 'Legal',
