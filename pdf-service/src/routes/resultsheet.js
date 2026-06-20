@@ -34,6 +34,7 @@ router.post('/', async (req, res) => {
 ${getSindhiFontCSS()}
 @page {
   size: Legal landscape;
+  margin: 4mm 4mm 10mm 4mm;
 }
 
 html, body {
@@ -69,10 +70,22 @@ table {
 thead {
   display: table-header-group;
   break-inside: avoid;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+thead tr {
+  display: table-row;
+  page-break-inside: avoid;
+  page-break-after: avoid;
 }
 
 tbody {
   display: table-row-group;
+}
+
+tfoot {
+  display: table-footer-group;
 }
 
 /* PREVENT ROW BREAKING */
@@ -274,7 +287,13 @@ ${classStudents.length === 0 ? `
 
     browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox']
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--disable-software-rasterizer'
+      ]
     });
 
     const page = await browser.newPage();
@@ -284,6 +303,7 @@ ${classStudents.length === 0 ? `
       format: 'Legal',
       landscape: true,
       printBackground: true,
+      preferCSSPageSize: true,
       margin: {
         top: '4mm',
         bottom: '10mm',

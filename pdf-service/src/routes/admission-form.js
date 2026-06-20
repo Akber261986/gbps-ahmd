@@ -440,7 +440,16 @@ ${school?.school_name || ""} تعلقو  ${school?.taluka} ضلعو ${school?.di
 
 `;
 
-    browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+    browser = await puppeteer.launch({
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--disable-software-rasterizer'
+      ]
+    });
 
     const page = await browser.newPage();
     await page.setContent(html);
