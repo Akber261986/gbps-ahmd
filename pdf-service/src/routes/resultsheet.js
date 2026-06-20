@@ -37,10 +37,10 @@ router.post('/', async (req, res) => {
 </tr>
 
 <tr>
-    <th rowspan="2" style="width: 17mm;">جنرل رجسٽر نمبر</th>
-    <th rowspan="2" style="width: 12mm">ڳاڻيٽي جو نمبر</th>
-    <th rowspan="2" style="width: 35mm">شاگرد جو نالو</th>
-    <th rowspan="2" style="width: 35mm">پيءُجو نالو </th>
+    <th style="width: 17mm;">جنرل رجسٽر نمبر</th>
+    <th style="width: 12mm">ڳاڻيٽي جو نمبر</th>
+    <th style="width: 35mm">شاگرد جو نالو</th>
+    <th style="width: 35mm">پيءُجو نالو </th>
     <th style="width: 14mm">دينيات</th>
     <th style="width: 14mm">مادري زبان</th>
     <th style="width: 14mm">رياضي</th>
@@ -49,12 +49,13 @@ router.post('/', async (req, res) => {
     <th style="width: 14mm">اردو</th>
     <th style="width: 14mm">انگلش</th>
     <th style="width: 14mm">ڊرائنگ</th>
-    <th rowspan="2" style="width: 25mm">ڄمڻ جي تاريخ</th>
-    <th rowspan="2" style="width: 25mm">داخلا جي تاريخ</th>
-    <th rowspan="2" style="width: 16mm">پاس يا ناپاس</th>
+    <th style="width: 25mm">ڄمڻ جي تاريخ</th>
+    <th style="width: 25mm">داخلا جي تاريخ</th>
+    <th style="width: 16mm">پاس يا ناپاس</th>
 </tr>
 
-<tr>
+<tr class="marks-row">
+  <th colspan="4"></th>
   <th>100</th>
   <th>100</th>
   <th>100</th>
@@ -63,6 +64,7 @@ router.post('/', async (req, res) => {
   <th>100</th>
   <th>100</th>
   <th>100</th>
+  <th colspan="3"></th>
 </tr>`;
 
     const html = `
@@ -73,6 +75,7 @@ router.post('/', async (req, res) => {
 
 <style>
 ${getSindhiFontCSS()}
+${getSindhiShabirBold('MB-Supreen-Shabir-Kumbhar-Bold-2.0', 'MB-Supreen-Shabir-Kumbhar-Bold-2.0.ttf')}
 @page {
   size: Legal landscape;
   margin: 4mm 4mm 10mm 4mm;
@@ -86,7 +89,7 @@ html, body {
 }
 
 body {
-  font-family: 'MB Sindhi Web SK 2';
+  font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0';
   direction: rtl;
   background: #e0e0e0;
   display: flex;
@@ -97,45 +100,25 @@ body {
 /* PAPER STYLING */
 .paper {
   min-width: 215mm;
-  min-height: 355mm;
-}
-
-.class-block {
-  width: 100%;
-}
-
-.class-block.new-page {
-  page-break-before: always;
 }
 
 /* TABLE STYLING */
-table {
+table.resultsheet {
   width: 100%;
   border-collapse: collapse;
-  page-break-inside: auto;
+  table-layout: fixed;
 }
 
-/* HEADER REPEAT — break-inside:avoid required by Chromium */
 thead {
   display: table-header-group;
-  break-inside: avoid;
-  page-break-inside: avoid;
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
 }
 
 tbody {
   display: table-row-group;
 }
 
-/* PREVENT ROW BREAKING */
-tbody tr {
+.student-row td {
   break-inside: avoid;
-  page-break-inside: avoid;
-  height: 13mm;
-}
-
-.no-break {
   page-break-inside: avoid;
 }
 
@@ -152,6 +135,16 @@ th, td {
 th {
   background: #e5e7eb;
   font-size: 15pt;
+}
+
+thead tr:nth-child(2) th {
+  border-bottom: none;
+}
+
+thead tr.marks-row th {
+  border-top: none;
+  padding-top: 0;
+  font-size: 13pt;
 }
 
 /* SINDHI TEXT */
@@ -183,6 +176,11 @@ th {
   page-break-after: avoid;
 }
 
+tr.class-section {
+  break-before: page;
+  page-break-before: always;
+}
+
 @media print {
   html, body {
     width: auto;
@@ -198,7 +196,6 @@ th {
 
   .paper {
     min-width: 0;
-    min-height: 0;
     width: 100%;
   }
 
@@ -241,6 +238,13 @@ th {
 <body>
 
 <div class="paper">
+<table class="resultsheet">
+
+<thead>
+${tableHead}
+</thead>
+
+<tbody>
 
 ${classes.map((cls, classIndex) => {
   const classStudents = students.filter(s => s.current_class_id === cls.id);
@@ -248,7 +252,7 @@ ${classes.map((cls, classIndex) => {
 
   const renderStudents = (studentList, startIndex) => {
     return studentList.map((s, idx) => `
-<tr class="no-break">
+<tr class="student-row">
   <td>${s.gr_number || '-'}</td>
   <td>${startIndex + idx + 1}</td>
   <td class="sindhi">${s.name || '-'}</td>
@@ -269,23 +273,14 @@ ${classes.map((cls, classIndex) => {
   };
 
   return `
-<div class="class-block${classIndex > 0 ? ' new-page' : ''}">
-<table>
-
-<thead>
-${tableHead}
-</thead>
-
-<tbody>
-
-<tr class="class-name-row">
+<tr class="class-name-row${classIndex > 0 ? ' class-section' : ''}">
   <td colspan="15" class="class-header sindhi">${cls.name}</td>
 </tr>
 
 ${boys.length > 0 ? renderStudents(boys, 0) : ''}
 
 ${girls.length > 0 ? `
-<tr class="no-break">
+<tr>
   <td colspan="15" class="gender-header sindhi">ڇوڪريون (Girls)</td>
 </tr>
 ${renderStudents(girls, boys.length)}
@@ -296,14 +291,12 @@ ${classStudents.length === 0 ? `
   <td colspan="15" style="padding: 4mm; text-align: center; color: #9ca3af; font-style: italic;">هن ڪلاس ۾ ڪوبه شاگرد موجود ناهي</td>
 </tr>
 ` : ''}
+  `;
+}).join('')}
 
 </tbody>
 
 </table>
-</div>
-  `;
-}).join('')}
-
 </div>
 
 </body>
