@@ -44,6 +44,25 @@ const AddResultPage = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
 
+  // Subject display order for result sheet (by code)
+  const subjectOrderByCodes = ['ISL', 'SND', 'MATH', 'GK', 'SCIENCE', 'URD', 'ENG', 'DRW'];
+
+  const sortSubjects = (subjects: Subject[]) => {
+    return [...subjects].sort((a, b) => {
+      const aCode = (a.code || '').toUpperCase().trim();
+      const bCode = (b.code || '').toUpperCase().trim();
+
+      let aIndex = subjectOrderByCodes.indexOf(aCode);
+      let bIndex = subjectOrderByCodes.indexOf(bCode);
+
+      // If not found in order list, put at end
+      if (aIndex === -1) aIndex = 999;
+      if (bIndex === -1) bIndex = 999;
+
+      return aIndex - bIndex;
+    });
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -52,9 +71,9 @@ const AddResultPage = () => {
           subjectApi.getAll(),
           classApi.getAll()
         ]);
-        
+
         setStudents(studentsResponse.data);
-        setSubjects(subjectsResponse.data);
+        setSubjects(sortSubjects(subjectsResponse.data));
         setClasses(classesResponse.data);
       } catch (err) {
         setError('Failed to load data');

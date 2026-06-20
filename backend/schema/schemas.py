@@ -374,6 +374,14 @@ class SchoolOut(BaseModel):
 class PasswordResetRequest(BaseModel):
     email: EmailStr
 
+class OTPVerifyRequest(BaseModel):
+    email: EmailStr
+    otp: str
+
+class OTPVerifyResponse(BaseModel):
+    message: str
+    token: str  # Temporary token for password reset
+
 class PasswordResetConfirm(BaseModel):
     token: str
     new_password: str

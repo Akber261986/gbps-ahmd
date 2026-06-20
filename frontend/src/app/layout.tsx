@@ -15,8 +15,8 @@ const lateef = Lateef({
 })
 
 export const metadata: Metadata = {
-  title: 'اسڪول مئنيجمينٽ سسٽم',
-  description: 'گورنمينٽ پرائمري اسڪول جو مئنيجمينٽ',
+  title: 'School Management System',
+  description: 'An School Management System For Primary Schools in Sindh',
 }
 
 export default function RootLayout({

@@ -20,6 +20,45 @@ const ResultsPage = () => {
   const [studentGrades, setStudentGrades] = useState<Grade[]>([]);
   const [showGrades, setShowGrades] = useState(false);
 
+  // Subject display order for result sheet (by code)
+  const subjectOrderByCodes = ['ISL', 'SND', 'MATH', 'GK', 'SCIENCE', 'URD', 'ENG', 'DRW'];
+
+  const sortSubjects = (subjects: Subject[]) => {
+    return [...subjects].sort((a, b) => {
+      const aCode = (a.code || '').toUpperCase().trim();
+      const bCode = (b.code || '').toUpperCase().trim();
+
+      let aIndex = subjectOrderByCodes.indexOf(aCode);
+      let bIndex = subjectOrderByCodes.indexOf(bCode);
+
+      // If not found in order list, put at end
+      if (aIndex === -1) aIndex = 999;
+      if (bIndex === -1) bIndex = 999;
+
+      return aIndex - bIndex;
+    });
+  };
+
+  const sortGradesBySubject = (grades: Grade[]) => {
+    return [...grades].sort((a, b) => {
+      const subjectA = subjects.find(s => s.id === a.subject_id);
+      const subjectB = subjects.find(s => s.id === b.subject_id);
+
+      if (!subjectA || !subjectB) return 0;
+
+      const aCode = (subjectA.code || '').toUpperCase().trim();
+      const bCode = (subjectB.code || '').toUpperCase().trim();
+
+      let aIndex = subjectOrderByCodes.indexOf(aCode);
+      let bIndex = subjectOrderByCodes.indexOf(bCode);
+
+      if (aIndex === -1) aIndex = 999;
+      if (bIndex === -1) bIndex = 999;
+
+      return aIndex - bIndex;
+    });
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -29,10 +68,10 @@ const ResultsPage = () => {
           classApi.getAll(),
           subjectApi.getAll()
         ]);
-        
+
         setStudents(studentsResponse.data);
         setClasses(classesResponse.data);
-        setSubjects(subjectsResponse.data);
+        setSubjects(sortSubjects(subjectsResponse.data));
       } catch (err) {
         setError('Failed to load data');
         console.error(err);
@@ -51,10 +90,10 @@ const ResultsPage = () => {
 
   const handleViewGrades = async () => {
     if (!selectedStudent) return;
-    
+
     try {
       const response = await gradeApi.getByStudentId(Number(selectedStudent));
-      setStudentGrades(response.data.grades);
+      setStudentGrades(sortGradesBySubject(response.data.grades));
       setShowGrades(true);
     } catch (err) {
       setError('Failed to load grades');

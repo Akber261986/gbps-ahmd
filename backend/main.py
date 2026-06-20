@@ -15,6 +15,7 @@ from schema.schemas import (
     GradeCreate, GradeOut, SubjectCreate, SubjectOut, StudentMarksheet,
     UserRegister, UserLogin, UserOut, Token, SchoolCreate, SchoolUpdate, SchoolOut,
     PasswordResetRequest, PasswordResetConfirm, PasswordResetResponse,
+    OTPVerifyRequest, OTPVerifyResponse,
     GoogleLoginRequest, GoogleLoginResponse, UserProfileUpdate,
     ChatRequest, ChatResponse,
     ResultSheetCreate, ResultSheetUpdate, ResultSheetOut,
@@ -29,7 +30,7 @@ from auth import (
     get_current_user, get_current_active_user, require_school
 )
 from password_reset import (
-    create_password_reset_token, verify_reset_token,
+    create_password_reset_otp, verify_otp,
     reset_password_with_token, send_password_reset_email
 )
 from google.oauth2 import id_token
@@ -320,27 +321,44 @@ async def upload_profile_image(
 
 @app.post("/auth/forgot-password", response_model=PasswordResetResponse)
 def forgot_password(request: PasswordResetRequest, db: Session = Depends(get_db)):
-    """Request a password reset token."""
-    token = create_password_reset_token(request.email, db)
+    """Request a password reset OTP."""
+    otp = create_password_reset_otp(request.email, db)
 
-    if not token:
-        # Email doesn't exist in database
+    if not otp:
+        # Email doesn't exist in database or is OAuth user
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No account found with this email address"
+            detail="No account found with this email address or account uses social login"
         )
 
-    # Send email with reset link
-    send_password_reset_email(request.email, token)
+    # Send email with OTP
+    send_password_reset_email(request.email, otp)
 
     return PasswordResetResponse(
-        message="Password reset link has been sent to your email"
+        message="Password reset OTP has been sent to your email"
+    )
+
+
+@app.post("/auth/verify-otp", response_model=OTPVerifyResponse)
+def verify_password_reset_otp(request: OTPVerifyRequest, db: Session = Depends(get_db)):
+    """Verify OTP and return temporary token for password reset."""
+    temp_token = verify_otp(request.email, request.otp, db)
+
+    if not temp_token:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired OTP"
+        )
+
+    return OTPVerifyResponse(
+        message="OTP verified successfully",
+        token=temp_token
     )
 
 
 @app.post("/auth/reset-password", response_model=PasswordResetResponse)
 def reset_password(request: PasswordResetConfirm, db: Session = Depends(get_db)):
-    """Reset password using a valid token."""
+    """Reset password using a valid temporary token."""
     success = reset_password_with_token(request.token, request.new_password, db)
 
     if not success:
@@ -1126,11 +1144,27 @@ def list_subjects(
     current_user: User = Depends(require_school),
     db: Session = Depends(get_db)
 ):
-    """List all subjects for the current user's school."""
+    """List all subjects for the current user's school, ordered by result sheet sequence."""
     query = db.query(Subject).filter(Subject.school_id == current_user.school_id)
     if class_id:
         query = query.filter(Subject.class_id == class_id)
-    return query.all()
+
+    subjects = query.all()
+
+    # Subject display order for result sheet (by code)
+    subject_order_by_codes = ['ISL', 'SND', 'MATH', 'GK', 'SCIENCE', 'URD', 'ENG', 'DRW']
+
+    def get_order_index(subject):
+        code_upper = (subject.code or '').upper().strip()
+        try:
+            return subject_order_by_codes.index(code_upper)
+        except ValueError:
+            return 999  # Put unmatched subjects at the end
+
+    # Sort subjects by the defined order
+    subjects.sort(key=get_order_index)
+
+    return subjects
 
 
 # ============ Grade/Marksheet Endpoints (Multi-tenant) ============
@@ -1247,89 +1281,90 @@ def save_student_marks_batch(
         total_marks_possible = 0
         overall_percentage = 0
 
-        # If student is absent, keep them in same class
-        if marks_entry.is_absent:
-            # Student remains in current class (no promotion)
-            pass
-        else:
-            # Create new grade records for each subject
-            for subject_mark in marks_entry.marks:
-                # Verify subject belongs to school
-                subject = db.query(Subject).filter(
-                    Subject.id == subject_mark.subject_id,
-                    Subject.school_id == current_user.school_id
-                ).first()
-                if not subject:
-                    continue  # Skip invalid subjects
+        # Create grade records for all subjects (even if absent)
+        for subject_mark in marks_entry.marks:
+            # Verify subject belongs to school
+            subject = db.query(Subject).filter(
+                Subject.id == subject_mark.subject_id,
+                Subject.school_id == current_user.school_id
+            ).first()
+            if not subject:
+                continue  # Skip invalid subjects
 
-                # Calculate percentage
-                percentage = None
-                if subject_mark.marks_obtained is not None and subject_mark.total_marks > 0:
-                    percentage = (subject_mark.marks_obtained / subject_mark.total_marks) * 100
-                    total_marks_obtained += subject_mark.marks_obtained
-                    total_marks_possible += subject_mark.total_marks
+            # Calculate percentage
+            percentage = None
+            if subject_mark.marks_obtained is not None and subject_mark.total_marks > 0:
+                percentage = (subject_mark.marks_obtained / subject_mark.total_marks) * 100
+                total_marks_obtained += subject_mark.marks_obtained
+                total_marks_possible += subject_mark.total_marks
 
-                # Create grade entry
-                grade = Grade(
-                    student_id=marks_entry.student_id,
-                    subject_id=subject_mark.subject_id,
-                    exam_session=marks_entry.exam_session,
-                    exam_type=marks_entry.exam_type,
-                    academic_year=marks_entry.academic_year,
-                    marks_obtained=subject_mark.marks_obtained,
-                    total_marks=subject_mark.total_marks,
-                    percentage=percentage,
-                    subject_teacher=marks_entry.subject_teacher
-                )
-                db.add(grade)
+            # Create grade entry
+            grade = Grade(
+                student_id=marks_entry.student_id,
+                subject_id=subject_mark.subject_id,
+                exam_session=marks_entry.exam_session,
+                exam_type=marks_entry.exam_type,
+                academic_year=marks_entry.academic_year,
+                marks_obtained=subject_mark.marks_obtained,
+                total_marks=subject_mark.total_marks,
+                percentage=percentage,
+                subject_teacher=marks_entry.subject_teacher
+            )
+            db.add(grade)
 
-            # Calculate overall percentage
-            if total_marks_possible > 0:
-                overall_percentage = (total_marks_obtained / total_marks_possible) * 100
+        # Calculate overall percentage (AFTER processing all subjects)
+        if total_marks_possible > 0:
+            overall_percentage = (total_marks_obtained / total_marks_possible) * 100
 
-            # Auto-promotion logic: if percentage >= 40%, promote to next class
-            if overall_percentage >= 40:
-                # Define class sequence mapping (Sindhi class names in order)
-                class_sequence = [
-                    'ڪلاس پھريون',   # Class 1
-                    'ڪلاس ٻيون',     # Class 2
-                    'ڪلاس ٽيون',     # Class 3
-                    'ڪلاس چوٿون',    # Class 4
-                    'ڪلاس پنجون'     # Class 5
-                ]
+        # Auto-promotion logic: if percentage >= 40% AND not absent, promote to next class
+        if not marks_entry.is_absent and overall_percentage >= 40:
+            # Get current class object
+            current_class = db.query(Class).filter(
+                Class.id == student.current_class_id
+            ).first()
 
-                # Get all classes for this school
+            if current_class:
+                # Get all classes for this school, sorted by ID (assuming created in order)
                 all_classes = db.query(Class).filter(
                     Class.school_id == current_user.school_id
-                ).all()
+                ).order_by(Class.id).all()
 
-                # Create a mapping of class names to class objects
-                class_map = {cls.name: cls for cls in all_classes}
+                # Find current class position in the sorted list
+                try:
+                    current_position = [cls.id for cls in all_classes].index(current_class.id)
 
-                # Get current class object
-                current_class = db.query(Class).filter(
-                    Class.id == student.current_class_id
-                ).first()
-
-                if current_class and current_class.name in class_sequence:
-                    # Find current position in sequence
-                    current_position = class_sequence.index(current_class.name)
-
-                    # Check if not in last class
-                    if current_position < len(class_sequence) - 1:
-                        # Get next class name
-                        next_class_name = class_sequence[current_position + 1]
-
-                        # Get next class object
-                        if next_class_name in class_map:
-                            next_class = class_map[next_class_name]
-                            student.current_class_id = next_class.id
-                            student.class_id = next_class.id  # Update legacy field too
-                    # If in last class (Class 5), student remains in same class
+                    # Check if there's a next class available
+                    if current_position < len(all_classes) - 1:
+                        # Promote to next class
+                        next_class = all_classes[current_position + 1]
+                        student.current_class_id = next_class.id
+                        student.class_id = next_class.id  # Update legacy field too
+                        print(f"PROMOTION: {student.name} promoted from {current_class.name} to {next_class.name}")
+                    else:
+                        # Student is in the last class - mark as graduated
+                        student.status = "graduated"
+                        student.leaving_class_id = current_class.id
+                        student.class_on_leaving = current_class.name
+                        print(f"GRADUATION: {student.name} graduated from {current_class.name}")
+                except ValueError:
+                    # Current class not found in list - shouldn't happen but handle gracefully
+                    print(f"ERROR: Could not find current class in school's class list")
+                    pass
 
         db.commit()
 
-        promotion_status = "promoted" if not marks_entry.is_absent and overall_percentage >= 40 else "same_class"
+        # Determine promotion status
+        if marks_entry.is_absent:
+            promotion_status = "same_class"
+        elif overall_percentage >= 40:
+            # Check if student graduated (status changed to graduated)
+            db.refresh(student)
+            if student.status == "graduated":
+                promotion_status = "graduated"
+            else:
+                promotion_status = "promoted"
+        else:
+            promotion_status = "same_class"
 
         return {
             "message": "Marks saved successfully",
@@ -1535,6 +1570,28 @@ Remember: You are an assistant that GUIDES users. You cannot directly perform ac
 
 # ============ Result Sheet Endpoints (Multi-tenant) ============
 
+@app.get("/debug/class-names")
+def debug_class_names(
+    current_user: User = Depends(require_school),
+    db: Session = Depends(get_db)
+):
+    """Debug endpoint to check actual class names in database."""
+    classes = db.query(Class).filter(
+        Class.school_id == current_user.school_id
+    ).all()
+
+    return {
+        "classes": [
+            {
+                "id": cls.id,
+                "name": cls.name,
+                "name_repr": repr(cls.name),
+                "name_bytes": cls.name.encode('utf-8').hex()
+            } for cls in classes
+        ]
+    }
+
+
 @app.get("/result-sheets/", response_model=List[ResultSheetOut])
 @app.get("/result-sheets", response_model=List[ResultSheetOut])
 def get_all_result_sheets(
@@ -1569,9 +1626,10 @@ def create_result_sheet(
             detail=f"Result sheet for academic year {result_sheet.academic_year} already exists"
         )
 
-    # Capture current students and classes as snapshot
+    # Capture current ACTIVE students and classes as snapshot
     students = db.query(Student).filter(
-        Student.school_id == current_user.school_id
+        Student.school_id == current_user.school_id,
+        Student.status == "active"
     ).all()
 
     classes = db.query(Class).filter(

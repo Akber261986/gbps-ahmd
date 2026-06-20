@@ -416,7 +416,7 @@ const StudentsPage = () => {
                           <button
                             onClick={() => handleViewLeavingCertificate(student)}
                             disabled={loadingCert}
-                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all flex items-center gap-2 disabled:opacity-50"
+                            className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 cursor-pointer transition-all flex items-center gap-2 disabled:opacity-50"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -437,7 +437,7 @@ const StudentsPage = () => {
                         ) : (
                           <button
                             onClick={() => handleViewAdmission(student)}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center gap-2"
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center gap-2 cursor-pointer"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"

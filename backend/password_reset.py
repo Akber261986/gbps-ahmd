@@ -1,6 +1,7 @@
 # password_reset.py
 import secrets
 import os
+import random
 from datetime import datetime, timedelta
 from typing import Optional
 from sqlalchemy.orm import Session
@@ -11,10 +12,14 @@ def generate_reset_token() -> str:
     """Generate a secure random token for password reset."""
     return secrets.token_urlsafe(32)
 
-def create_password_reset_token(email: str, db: Session) -> Optional[str]:
+def generate_otp() -> str:
+    """Generate a 6-digit OTP."""
+    return str(random.randint(100000, 999999))
+
+def create_password_reset_otp(email: str, db: Session) -> Optional[str]:
     """
-    Create a password reset token for a user.
-    Returns the token if successful, None if user not found.
+    Create a password reset OTP for a user.
+    Returns the OTP if successful, None if user not found.
     """
     user = db.query(User).filter(User.email == email).first()
     if not user:
@@ -24,13 +29,35 @@ def create_password_reset_token(email: str, db: Session) -> Optional[str]:
     if user.oauth_provider:
         return None
 
-    # Generate token and set expiration (1 hour)
-    token = generate_reset_token()
-    user.reset_token = token
-    user.reset_token_expires = datetime.utcnow() + timedelta(hours=1)
+    # Generate OTP and set expiration (10 minutes)
+    otp = generate_otp()
+    user.reset_token = otp  # Store OTP in reset_token field
+    user.reset_token_expires = datetime.utcnow() + timedelta(minutes=10)
 
     db.commit()
-    return token
+    return otp
+
+def verify_otp(email: str, otp: str, db: Session) -> Optional[str]:
+    """
+    Verify an OTP for password reset.
+    Returns a temporary token if OTP is valid, None otherwise.
+    """
+    user = db.query(User).filter(User.email == email).first()
+
+    if not user or user.reset_token != otp:
+        return None
+
+    # Check if OTP has expired
+    if user.reset_token_expires < datetime.utcnow():
+        return None
+
+    # Generate a temporary token for password reset (valid for 15 minutes)
+    temp_token = generate_reset_token()
+    user.reset_token = temp_token
+    user.reset_token_expires = datetime.utcnow() + timedelta(minutes=15)
+
+    db.commit()
+    return temp_token
 
 def verify_reset_token(token: str, db: Session) -> Optional[User]:
     """
@@ -66,28 +93,24 @@ def reset_password_with_token(token: str, new_password: str, db: Session) -> boo
     db.commit()
     return True
 
-def send_password_reset_email(email: str, token: str):
+def send_password_reset_email(email: str, otp: str):
     """
-    Send password reset email to user.
-    For now, this just logs the reset link.
+    Send password reset OTP to user via email.
+    For now, this just logs the OTP.
     In production, integrate with an email service.
     """
-    # Use environment variable for frontend URL, default to localhost:3001
-    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3001")
-    reset_link = f"{frontend_url}/reset-password?token={token}"
-
     # For development: print to console
     print("=" * 60)
-    print("PASSWORD RESET EMAIL")
+    print("PASSWORD RESET OTP")
     print("=" * 60)
     print(f"To: {email}")
-    print(f"Reset Link: {reset_link}")
+    print(f"OTP: {otp}")
     print("=" * 60)
     print("\nNote: In production, this should send an actual email.")
-    print("For now, copy the link above to reset your password.\n")
+    print("For now, use the OTP above to reset your password.\n")
 
-    # For production: Uncomment the code below and configure SMTP settings
-    
+    # For production: Send actual email
+
     import smtplib
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
@@ -101,7 +124,7 @@ def send_password_reset_email(email: str, token: str):
 
     # Create email message
     message = MIMEMultipart("alternative")
-    message["Subject"] = "Password Reset Request"
+    message["Subject"] = "Password Reset OTP"
     message["From"] = f"School Management System <{from_email}>"
     message["To"] = email
 
@@ -110,16 +133,13 @@ def send_password_reset_email(email: str, token: str):
     <html>
       <body style="font-family: Arial, sans-serif; padding: 20px;">
         <h2>Password Reset Request</h2>
-        <p>You requested to reset your password. Click the link below to reset it:</p>
-        <p>
-          <a href="{reset_link}" style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">
-            Reset Password
-          </a>
-        </p>
-        <p>Or copy and paste this link in your browser:</p>
-        <p style="color: #666; word-break: break-all;">{reset_link}</p>
+        <p>You requested to reset your password. Use the OTP below to verify your identity:</p>
+        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
+          <h1 style="color: #16a34a; font-size: 36px; letter-spacing: 8px; margin: 0;">{otp}</h1>
+        </div>
+        <p style="color: #666;">This OTP will expire in 10 minutes.</p>
         <p style="color: #999; font-size: 12px; margin-top: 30px;">
-          This link will expire in 1 hour. If you didn't request this, please ignore this email.
+          If you didn't request this, please ignore this email.
         </p>
       </body>
     </html>
@@ -135,7 +155,7 @@ def send_password_reset_email(email: str, token: str):
             server.starttls()
             server.login(smtp_username, smtp_password)
             server.sendmail(from_email, email, message.as_string())
-        print(f"SUCCESS: Password reset email sent to {email}")
+        print(f"SUCCESS: Password reset OTP sent to {email}")
     except Exception as e:
         print(f"ERROR: Failed to send email: {e}")
 

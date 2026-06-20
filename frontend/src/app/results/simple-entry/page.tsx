@@ -66,6 +66,25 @@ const SimpleMarksEntryPage = () => {
   const [subjectTeacher, setSubjectTeacher] = useState('');
   const [totalMarks, setTotalMarks] = useState(100);
 
+  // Subject display order for result sheet (by code)
+  const subjectOrderByCodes = ['ISL', 'SND', 'MATH', 'GK', 'SCIENCE', 'URD', 'ENG', 'DRW'];
+
+  const sortSubjects = (subjects: Subject[]) => {
+    return [...subjects].sort((a, b) => {
+      const aCode = (a.code || '').toUpperCase().trim();
+      const bCode = (b.code || '').toUpperCase().trim();
+
+      let aIndex = subjectOrderByCodes.indexOf(aCode);
+      let bIndex = subjectOrderByCodes.indexOf(bCode);
+
+      // If not found in order list, put at end
+      if (aIndex === -1) aIndex = 999;
+      if (bIndex === -1) bIndex = 999;
+
+      return aIndex - bIndex;
+    });
+  };
+
   // Fetch classes and subjects on mount
   useEffect(() => {
     const fetchData = async () => {
@@ -75,7 +94,7 @@ const SimpleMarksEntryPage = () => {
           subjectApi.getAll()
         ]);
         setClasses(classesResponse.data);
-        setSubjects(subjectsResponse.data);
+        setSubjects(sortSubjects(subjectsResponse.data));
       } catch (err) {
         console.error('Failed to load data:', err);
         setMessage('ڊيٽا لوڊ ڪرڻ ۾ ناڪامي');
@@ -262,6 +281,8 @@ const SimpleMarksEntryPage = () => {
       let successMsg = '';
       if (result.is_absent) {
         successMsg = `✅ ${student.name} - غير حاضر (ساڳي ڪلاس ۾ رهندو)`;
+      } else if (result.promotion_status === 'graduated') {
+        successMsg = `🎓 ${student.name} - گريجوئيٽ ٿيو! (${result.overall_percentage}%) - مبارڪ!`;
       } else if (result.promotion_status === 'promoted') {
         successMsg = `✅ ${student.name} - پاس (${result.overall_percentage}%) - اڳتي وڌو!`;
       } else {
@@ -486,6 +507,8 @@ const SimpleMarksEntryPage = () => {
                 <div className={`mb-6 p-4 rounded-xl border-2 ${
                   lastResult.isAbsent
                     ? 'bg-yellow-50 border-yellow-400'
+                    : lastResult.promotionStatus === 'graduated'
+                    ? 'bg-purple-50 border-purple-400'
                     : lastResult.promotionStatus === 'promoted'
                     ? 'bg-green-50 border-green-400'
                     : 'bg-red-50 border-red-400'
@@ -497,7 +520,9 @@ const SimpleMarksEntryPage = () => {
                       ) : (
                         <>
                           <p className="text-2xl font-bold">
-                            {lastResult.promotionStatus === 'promoted' ? (
+                            {lastResult.promotionStatus === 'graduated' ? (
+                              <span className="text-purple-700">🎓 گريجوئيٽ ٿيو - مبارڪ!</span>
+                            ) : lastResult.promotionStatus === 'promoted' ? (
                               <span className="text-green-700">✓ پاس - اڳتي وڌو!</span>
                             ) : (
                               <span className="text-red-700">✗ ناڪام - ساڳي ڪلاس ۾ رهندو</span>
@@ -508,7 +533,7 @@ const SimpleMarksEntryPage = () => {
                       )}
                     </div>
                     <div className="text-5xl">
-                      {lastResult.isAbsent ? '⚠️' : lastResult.promotionStatus === 'promoted' ? '🎉' : '📚'}
+                      {lastResult.isAbsent ? '⚠️' : lastResult.promotionStatus === 'graduated' ? '🎓' : lastResult.promotionStatus === 'promoted' ? '🎉' : '📚'}
                     </div>
                   </div>
                 </div>
