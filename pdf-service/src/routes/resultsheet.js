@@ -39,8 +39,8 @@ router.post('/', async (req, res) => {
 <tr>
     <th rowspan="2" style="width: 17mm;">جنرل رجسٽر نمبر</th>
     <th rowspan="2" style="width: 12mm">ڳاڻيٽي جو نمبر</th>
-    <th rowspan="2" style="width: 35mm">شاگرد جو نالو</th>
-    <th rowspan="2" style="width: 35mm">پيءُجو نالو </th>
+    <th rowspan="2" style="width: 34mm">شاگرد جو نالو</th>
+    <th rowspan="2" style="width: 34mm">پيءُجو نالو </th>
     <th style="width: 14mm">دينيات</th>
     <th style="width: 14mm">مادري زبان</th>
     <th style="width: 14mm">رياضي</th>
@@ -51,7 +51,7 @@ router.post('/', async (req, res) => {
     <th style="width: 14mm">ڊرائنگ</th>
     <th rowspan="2" style="width: 25mm">ڄمڻ جي تاريخ</th>
     <th rowspan="2" style="width: 25mm">داخلا جي تاريخ</th>
-    <th rowspan="2" style="width: 16mm">پاس يا ناپاس</th>
+    <th style="width: 16mm">پاس يا ناپاس</th>
 </tr>
 
 <tr>
@@ -147,13 +147,13 @@ th, td {
   padding: 2mm;
   text-align: center;
   vertical-align: middle;
-  font-size: 15pt;
+  font-size: 14pt;
 }
 
 /* HEADER CELLS */
 th {
   background: #e5e7eb;
-  font-size: 15pt;
+  font-size: 14pt;
 }
 
 /* SINDHI TEXT */
@@ -166,7 +166,7 @@ th {
 .class-header {
   background-color: #e5e5e5;
   font-weight: bold;
-  font-size: 14pt;
+  font-size: 13pt;
   padding: 2mm;
   text-align: center;
   /* padding-right: 6mm; */
@@ -176,7 +176,7 @@ th {
 .gender-header {
   background-color: #ffd1dc;
   font-weight: bold;
-  font-size: 13pt;
+  font-size: 12pt;
   padding: 2mm;
 }
 
@@ -201,13 +201,13 @@ th {
 
 .s-name {
   font-weight: bold;
-  font-size: 14pt;
+  font-size: 13pt;
   text-decoration: underline;
   text-underline-offset: 6px;
 }
 
 .header-sub {
-  font-size: 12pt;
+  font-size: 11pt;
   gap: 10mm;
   padding: 1mm;
   display: flex;
@@ -250,7 +250,7 @@ th {
     <th style="width: 14mm">ڊرائنگ</th>
     <th rowspan="2" style="width: 25mm">ڄمڻ جي تاريخ</th>
     <th rowspan="2" style="width: 25mm">داخلا جي تاريخ</th>
-    <th rowspan="2" style="width: 16mm">پاس يا ناپاس</th>
+    <th style="width: 16mm">پاس يا ناپاس</th>
 </tr>
 
 
