@@ -1,6 +1,6 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
-const { getSindhiFontCSS } = require('../utils/fontLoader');
+const { getSindhiFontCSS, getSindhiShabirBold } = require('../utils/fontLoader');
 
 const router = express.Router();
 
@@ -73,6 +73,8 @@ router.post('/', async (req, res) => {
 
 <style>
 ${getSindhiFontCSS()}
+${getSindhiShabirBold('MB-Supreen-Shabir-Kumbhar-Bold-2.0', 'MB-Supreen-Shabir-Kumbhar-Bold-2.0.ttf')}
+
 @page {
   size: Legal landscape;
   margin: 4mm 4mm 10mm 4mm;
@@ -86,7 +88,7 @@ html, body {
 }
 
 body {
-  font-family: 'MB Sindhi Web SK 2';
+  font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0';
   direction: rtl;
   background: #e0e0e0;
   display: flex;
