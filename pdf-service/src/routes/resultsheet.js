@@ -1,6 +1,6 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
-const { getSindhiFontCSS, getSindhiShabirBold } = require('../utils/fontLoader');
+const { getSindhiFontCSS } = require('../utils/fontLoader');
 
 const router = express.Router();
 
@@ -37,10 +37,10 @@ router.post('/', async (req, res) => {
 </tr>
 
 <tr>
-    <th style="width: 17mm;">جنرل رجسٽر نمبر</th>
-    <th style="width: 12mm">ڳاڻيٽي جو نمبر</th>
-    <th style="width: 35mm">شاگرد جو نالو</th>
-    <th style="width: 35mm">پيءُجو نالو </th>
+    <th rowspan="2" style="width: 17mm;">جنرل رجسٽر نمبر</th>
+    <th rowspan="2" style="width: 12mm">ڳاڻيٽي جو نمبر</th>
+    <th rowspan="2" style="width: 35mm">شاگرد جو نالو</th>
+    <th rowspan="2" style="width: 35mm">پيءُجو نالو </th>
     <th style="width: 14mm">دينيات</th>
     <th style="width: 14mm">مادري زبان</th>
     <th style="width: 14mm">رياضي</th>
@@ -49,13 +49,12 @@ router.post('/', async (req, res) => {
     <th style="width: 14mm">اردو</th>
     <th style="width: 14mm">انگلش</th>
     <th style="width: 14mm">ڊرائنگ</th>
-    <th style="width: 25mm">ڄمڻ جي تاريخ</th>
-    <th style="width: 25mm">داخلا جي تاريخ</th>
-    <th style="width: 16mm">پاس يا ناپاس</th>
+    <th rowspan="2" style="width: 25mm">ڄمڻ جي تاريخ</th>
+    <th rowspan="2" style="width: 25mm">داخلا جي تاريخ</th>
+    <th rowspan="2" style="width: 16mm">پاس يا ناپاس</th>
 </tr>
 
-<tr class="marks-row">
-  <th colspan="4"></th>
+<tr>
   <th>100</th>
   <th>100</th>
   <th>100</th>
@@ -64,7 +63,6 @@ router.post('/', async (req, res) => {
   <th>100</th>
   <th>100</th>
   <th>100</th>
-  <th colspan="3"></th>
 </tr>`;
 
     const html = `
@@ -75,7 +73,6 @@ router.post('/', async (req, res) => {
 
 <style>
 ${getSindhiFontCSS()}
-${getSindhiShabirBold('MB-Supreen-Shabir-Kumbhar-Bold-2.0', 'MB-Supreen-Shabir-Kumbhar-Bold-2.0.ttf')}
 @page {
   size: Legal landscape;
   margin: 4mm 4mm 10mm 4mm;
@@ -89,7 +86,7 @@ html, body {
 }
 
 body {
-  font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0';
+  font-family: 'MB Sindhi Web SK 2';
   direction: rtl;
   background: #e0e0e0;
   display: flex;
@@ -100,25 +97,45 @@ body {
 /* PAPER STYLING */
 .paper {
   min-width: 215mm;
+  min-height: 355mm;
 }
 
 /* TABLE STYLING */
-table.resultsheet {
+table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
+  page-break-inside: auto;
 }
 
+/* HEADER REPEAT */
 thead {
   display: table-header-group;
+  break-inside: avoid;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+thead tr {
+  display: table-row;
+  page-break-inside: avoid;
+  page-break-after: avoid;
 }
 
 tbody {
   display: table-row-group;
 }
 
-.student-row td {
-  break-inside: avoid;
+tfoot {
+  display: table-footer-group;
+}
+
+/* PREVENT ROW BREAKING */
+tr {
+  page-break-inside: avoid;
+  height: 13mm;
+}
+
+.no-break {
   page-break-inside: avoid;
 }
 
@@ -135,16 +152,6 @@ th, td {
 th {
   background: #e5e7eb;
   font-size: 15pt;
-}
-
-thead tr:nth-child(2) th {
-  border-bottom: none;
-}
-
-thead tr.marks-row th {
-  border-top: none;
-  padding-top: 0;
-  font-size: 13pt;
 }
 
 /* SINDHI TEXT */
@@ -171,44 +178,17 @@ thead tr.marks-row th {
   padding: 2mm;
 }
 
-.class-name-row {
-  break-after: avoid;
-  page-break-after: avoid;
-}
-
-tr.class-section {
-  break-before: page;
+/* PAGE BREAKS */
+.class-section {
   page-break-before: always;
 }
 
-@media print {
-  html, body {
-    width: auto;
-    height: auto;
-    margin: 0;
-    padding: 0;
-    background: white;
-  }
+.class-section:first-child {
+  page-break-before: auto;
+}
 
-  body {
-    display: block;
-  }
-
-  .paper {
-    min-width: 0;
-    width: 100%;
-  }
-
-  thead {
-    display: table-header-group;
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  .header-sub {
-    display: block;
-    text-align: center;
-  }
+.class-name-row {
+  page-break-after: avoid;
 }
 
 /* TITLE STYLING */
@@ -238,10 +218,40 @@ tr.class-section {
 <body>
 
 <div class="paper">
-<table class="resultsheet">
+<table>
 
 <thead>
-${tableHead}
+
+<tr>
+  <th colspan="15" class="sindhi">
+    <div class="header-title">جديد رزلٽ شيٽ - سال - ${displayYear}</div>
+    <div class="header-sub">
+      <span>نقشو امتحان جي مارڪن جو</span>
+      <span class="s-name">${school?.school_name || 'اسڪول'}</span>
+      <span>جي درجي ــــــــــــــــ جو ساليانو امتحان تاريخ ـــــــــــ مھينو ــــــــــــــــــ سال ـــــــــــــــــ</span>
+    </div>
+  </th>
+</tr>
+
+<tr>
+    <th rowspan="2" style="width: 17mm;">جنرل رجسٽر نمبر</th>
+    <th rowspan="2" style="width: 12mm">ڳاڻيٽي جو نمبر</th>
+    <th rowspan="2" style="width: 35mm">شاگرد جو نالو</th>
+    <th rowspan="2" style="width: 35mm">پيءُجو نالو </th>
+    <th style="width: 14mm">دينيات</th>
+    <th style="width: 14mm">مادري زبان</th>
+    <th style="width: 14mm">رياضي</th>
+    <th style="width: 14mm">سماجي</th>
+    <th style="width: 14mm">سائنس</th>
+    <th style="width: 14mm">اردو</th>
+    <th style="width: 14mm">انگلش</th>
+    <th style="width: 14mm">ڊرائنگ</th>
+    <th rowspan="2" style="width: 25mm">ڄمڻ جي تاريخ</th>
+    <th rowspan="2" style="width: 25mm">داخلا جي تاريخ</th>
+    <th rowspan="2" style="width: 16mm">پاس يا ناپاس</th>
+</tr>
+
+
 </thead>
 
 <tbody>
@@ -252,7 +262,7 @@ ${classes.map((cls, classIndex) => {
 
   const renderStudents = (studentList, startIndex) => {
     return studentList.map((s, idx) => `
-<tr class="student-row">
+<tr class="no-break">
   <td>${s.gr_number || '-'}</td>
   <td>${startIndex + idx + 1}</td>
   <td class="sindhi">${s.name || '-'}</td>
@@ -273,14 +283,17 @@ ${classes.map((cls, classIndex) => {
   };
 
   return `
-<tr class="class-name-row${classIndex > 0 ? ' class-section' : ''}">
+<!-- Class Name Row -->
+<tr class="${classIndex > 0 ? 'class-section class-name-row' : 'class-name-row'}">
   <td colspan="15" class="class-header sindhi">${cls.name}</td>
 </tr>
 
+<!-- Boys Section -->
 ${boys.length > 0 ? renderStudents(boys, 0) : ''}
 
+<!-- Girls Section -->
 ${girls.length > 0 ? `
-<tr>
+<tr class="no-break">
   <td colspan="15" class="gender-header sindhi">ڇوڪريون (Girls)</td>
 </tr>
 ${renderStudents(girls, boys.length)}
@@ -316,7 +329,6 @@ ${classStudents.length === 0 ? `
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
-    await page.emulateMediaType('print');
 
     const pdfBuffer = await page.pdf({
       format: 'Legal',

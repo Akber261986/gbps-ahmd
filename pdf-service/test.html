@@ -7,7 +7,7 @@
 <style>
 @font-face {
   font-family: 'MB Sindhi Web SK 2.0';
-  src: url('./fonts/MB-Sindhi-Web-SK-2.0.ttf') format('truetype');
+  src: url('./fonts/MB-Supreen-Shabir-Kumbhar-Bold-2.0.ttf') format('truetype');
 }
 
 @page {
@@ -23,7 +23,7 @@ html, body {
 }
 
 body {
-  font-family: 'MB Sindhi Web SK 2.0';
+  font-family: 'MB Sindhi Web SK 2';
   direction: rtl;
   background: #e0e0e0;
   display: flex;
@@ -34,26 +34,45 @@ body {
 /* PAPER STYLING */
 .paper {
   min-width: 215mm;
+  min-height: 355mm;
 }
 
 /* TABLE STYLING */
-table.resultsheet {
+table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
+  page-break-inside: auto;
 }
 
+/* HEADER REPEAT */
 thead {
   display: table-header-group;
+  break-inside: avoid;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+thead tr {
+  display: table-row;
+  page-break-inside: avoid;
+  page-break-after: avoid;
 }
 
 tbody {
   display: table-row-group;
 }
 
-/* Keep each student row on one page without blocking table fragmentation */
-.student-row td {
-  break-inside: avoid;
+tfoot {
+  display: table-footer-group;
+}
+
+/* PREVENT ROW BREAKING */
+tr {
+  page-break-inside: avoid;
+  height: 13mm;
+}
+
+.no-break {
   page-break-inside: avoid;
 }
 
@@ -72,16 +91,6 @@ th {
   font-size: 15pt;
 }
 
-thead tr:nth-child(2) th {
-  border-bottom: none;
-}
-
-thead tr.marks-row th {
-  border-top: none;
-  padding-top: 0;
-  font-size: 13pt;
-}
-
 /* SINDHI TEXT */
 .sindhi {
   direction: rtl;
@@ -95,6 +104,7 @@ thead tr.marks-row th {
   font-size: 14pt;
   padding: 2mm;
   text-align: center;
+  /* padding-right: 6mm; */
 }
 
 /* GENDER HEADER */
@@ -105,44 +115,17 @@ thead tr.marks-row th {
   padding: 2mm;
 }
 
-.class-name-row {
-  break-after: avoid;
-  page-break-after: avoid;
-}
-
-tr.class-section {
-  break-before: page;
+/* PAGE BREAKS */
+.class-section {
   page-break-before: always;
 }
 
-@media print {
-  html, body {
-    width: auto;
-    height: auto;
-    margin: 0;
-    padding: 0;
-    background: white;
-  }
+.class-section:first-child {
+  page-break-before: auto;
+}
 
-  body {
-    display: block;
-  }
-
-  .paper {
-    min-width: 0;
-    width: 100%;
-  }
-
-  thead {
-    display: table-header-group;
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  .header-sub {
-    display: block;
-    text-align: center;
-  }
+.class-name-row {
+  page-break-after: avoid;
 }
 
 /* TITLE STYLING */
@@ -175,72 +158,72 @@ tr.class-section {
 <table class="resultsheet">
 
 <thead>
-
-<tr>
-  <th colspan="15" class="sindhi">
-    <div class="header-title">جديد رزلٽ شيٽ - سال - 2025</div>
-    <div class="header-sub">
-      <span>نقشو امتحان جي مارڪن جو</span>
-      <span class="s-name">گورنمينٽ بنيادي پرائمري اسڪول احمد پور</span>
-      <span>جي درجي ــــــــــــــــ جو ساليانو امتحان تاريخ ـــــــــــ مھينو ــــــــــــــــــ سال ـــــــــــــــــ</span>
-    </div>
-  </th>
-</tr>
-
-<tr>
-  <th style="width: 17mm;">جنرل رجسٽر نمبر</th>
-  <th style="width: 12mm">ڳاڻيٽي جو نمبر</th>
-  <th style="width: 35mm">شاگرد جو نالو</th>
-  <th style="width: 35mm">پيءُجو نالو</th>
-  <th style="width: 14mm">دينيات</th>
-  <th style="width: 14mm">مادري زبان</th>
-  <th style="width: 14mm">رياضي</th>
-  <th style="width: 14mm">سماجي</th>
-  <th style="width: 14mm">سائنس</th>
-  <th style="width: 14mm">اردو</th>
-  <th style="width: 14mm">انگلش</th>
-  <th style="width: 14mm">ڊرائنگ</th>
-  <th style="width: 25mm">ڄمڻ جي تاريخ</th>
-  <th style="width: 25mm">داخلا جي تاريخ</th>
-  <th style="width: 16mm">پاس يا ناپاس</th>
-</tr>
-
-<tr class="marks-row">
-  <th colspan="4"></th>
-  <th>100</th>
-  <th>100</th>
-  <th>100</th>
-  <th>100</th>
-  <th>100</th>
-  <th>100</th>
-  <th>100</th>
-  <th>100</th>
-  <th colspan="3"></th>
-</tr>
-
+  <tr>
+    <th colspan="19" class="sindhi">
+      <div class="header-title">جديد رزلٽ شيٽ - سال - ${displayYear}</div>
+      <div class="header-sub">
+        <span>نقشو امتحان جي مارڪن جو</span>
+        <span class="s-name">${school?.school_name || 'اسڪول'}</span>
+        <span>جي درجي ــــــــــــــــ جو ساليانو امتحان تاريخ ـــــــــــ مھينو ــــــــــــــــــ سال ـــــــــــــــــ</span>
+      </div>
+    </th>
+  </tr>
+  
+  <tr>
+      <th style="width: 17mm;">جنرل رجسٽر نمبر</th>
+      <th style="width: 12mm">ڳاڻيٽي جو نمبر</th>
+      <th colspan="2" style="width: 35mm">شاگرد جو نالو</th>
+      <th colspan="2" style="width: 35mm">پيءُجو نالو </th>
+      <th style="width: 14mm">دينيات</th>
+      <th style="width: 14mm">مادري زبان</th>
+      <th style="width: 14mm">رياضي</th>
+      <th style="width: 14mm">سماجي</th>
+      <th style="width: 14mm">سائنس</th>
+      <th style="width: 14mm">اردو</th>
+      <th style="width: 14mm">انگلش</th>
+      <th style="width: 14mm">ڊرائنگ</th>
+      <th colspan="2" style="width: 25mm">ڄمڻ جي تاريخ</th>
+      <th colspan="2" style="width: 25mm">داخلا جي تاريخ</th>
+      <th style="width: 16mm">پاس يا ناپاس</th>
+  </tr>
+  
+  <tr>
+    <th colspan="6"></th>
+    <th>100</th>
+    <th>100</th>
+    <th>100</th>
+    <th>100</th>
+    <th>100</th>
+    <th>100</th>
+    <th>100</th>
+    <th>100</th>
+    <th colspan="5"></th>
+  </tr>
+  
+  </thead>
 </thead>
 
 <tbody>
 
 <tr class="class-name-row">
-  <td colspan="15" class="class-header sindhi">پنجون درجو</td>
+  <td colspan="19" class="class-header sindhi">پنجون درجو</td>
 </tr>
 
-<tr class="student-row"><td>GR-1001</td><td>1</td><td class="sindhi">علي احمد</td><td class="sindhi">محمد حسن</td><td>85</td><td>78</td><td>92</td><td>80</td><td>88</td><td>75</td><td>82</td><td>90</td><td>15/03/2014</td><td>01/04/2019</td><td>پاس</td></tr>
-<tr class="student-row"><td>GR-1002</td><td>2</td><td class="sindhi">بلال خان</td><td class="sindhi">عبدالرحمن</td><td>70</td><td>72</td><td>68</td><td>75</td><td>71</td><td>69</td><td>74</td><td>80</td><td>22/07/2014</td><td>05/04/2019</td><td>پاس</td></tr>
-<tr class="student-row"><td>GR-1003</td><td>3</td><td class="sindhi">حسن علي</td><td class="sindhi">غلام رضا</td><td>88</td><td>85</td><td>90</td><td>82</td><td>86</td><td>80</td><td>84</td><td>88</td><td>10/01/2014</td><td>08/04/2019</td><td>پاس</td></tr>
-<tr class="student-row"><td>GR-1004</td><td>4</td><td class="sindhi">جاويد اقبال</td><td class="sindhi">اقبال حسين</td><td>65</td><td>68</td><td>70</td><td>72</td><td>66</td><td>64</td><td>70</td><td>75</td><td>05/09/2014</td><td>10/04/2019</td><td>پاس</td></tr>
-<tr class="student-row"><td>GR-1005</td><td>5</td><td class="sindhi">ذيشان محمود</td><td class="sindhi">محمود احمد</td><td>92</td><td>88</td><td>95</td><td>90</td><td>93</td><td>85</td><td>89</td><td>91</td><td>18/11/2013</td><td>12/04/2019</td><td>پاس</td></tr>
-<tr class="student-row"><td>GR-1006</td><td>6</td><td class="sindhi">راشد محمود</td><td class="sindhi">محمود علي</td><td>78</td><td>80</td><td>82</td><td>76</td><td>79</td><td>77</td><td>81</td><td>83</td><td>30/04/2014</td><td>15/04/2019</td><td>پاس</td></tr>
-<tr class="student-row"><td>GR-1007</td><td>7</td><td class="sindhi">سجاد حسين</td><td class="sindhi">حسين بخش</td><td>55</td><td>58</td><td>60</td><td>62</td><td>57</td><td>54</td><td>59</td><td>65</td><td>12/06/2014</td><td>18/04/2019</td><td>ناپاس</td></tr>
-<tr class="student-row"><td>GR-1008</td><td>8</td><td class="sindhi">طارق محمود</td><td class="sindhi">محمود حسن</td><td>82</td><td>79</td><td>85</td><td>81</td><td>83</td><td>78</td><td>80</td><td>86</td><td>25/02/2014</td><td>20/04/2019</td><td>پاس</td></tr>
-<tr class="student-row"><td>GR-1009</td><td>9</td><td class="sindhi">عمران خان</td><td class="sindhi">خان محمد</td><td>90</td><td>87</td><td>91</td><td>88</td><td>89</td><td>84</td><td>86</td><td>88</td><td>08/08/2014</td><td>22/04/2019</td><td>پاس</td></tr>
-<tr class="student-row"><td>GR-1010</td><td>10</td><td class="sindhi">فيصل رحمن</td><td class="sindhi">عبدالرحمن</td><td>73</td><td>76</td><td>78</td><td>74</td><td>75</td><td>72</td><td>77</td><td>79</td><td>14/12/2013</td><td>25/04/2019</td><td>پاس</td></tr>
-<tr class="student-row"><td>GR-1011</td><td>11</td><td class="sindhi">قاسم علي</td><td class="sindhi">علي احمد</td><td>68</td><td>70</td><td>72</td><td>69</td><td>71</td><td>67</td><td>73</td><td>76</td><td>03/05/2014</td><td>28/04/2019</td><td>پاس</td></tr>
-<tr class="student-row"><td>GR-1012</td><td>12</td><td class="sindhi">کامران شاہ</td><td class="sindhi">شاہ نواز</td><td>86</td><td>83</td><td>88</td><td>85</td><td>87</td><td>81</td><td>84</td><td>87</td><td>19/10/2014</td><td>02/05/2019</td><td>پاس</td></tr>
-<tr class="student-row"><td>GR-1013</td><td>13</td><td class="sindhi">نعیم اللہ</td><td class="sindhi">اللہ بخش</td><td>79</td><td>77</td><td>81</td><td>78</td><td>80</td><td>76</td><td>78</td><td>82</td><td>27/03/2014</td><td>05/05/2019</td><td>پاس</td></tr>
-<tr class="student-row"><td>GR-1014</td><td>14</td><td class="sindhi">وسیم اکرم</td><td class="sindhi">اکرم حسین</td><td>91</td><td>89</td><td>93</td><td>90</td><td>92</td><td>86</td><td>88</td><td>90</td><td>11/07/2013</td><td>08/05/2019</td><td>پاس</td></tr>
-<tr class="student-row"><td>GR-1015</td><td>15</td><td class="sindhi">یاسین محمود</td><td class="sindhi">محمود علی</td><td>74</td><td>71</td><td>76</td><td>73</td><td>75</td><td>70</td><td>74</td><td>77</td><td>06/04/2014</td><td>12/05/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1001</td><td>1</td><td colspan="2" class="sindhi">علي احمد</td><td colspan="2" class="sindhi">محمد حسن</td><td>85</td><td>78</td><td>92</td><td>80</td><td>88</td><td>75</td><td>82</td><td>90</td><td colspan="2">15/03/2014</td><td colspan="2">01/04/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1002</td><td>2</td><td colspan="2" class="sindhi">بلال خان</td><td colspan="2" class="sindhi">عبدالرحمن</td><td>70</td><td>72</td><td>68</td><td>75</td><td>71</td><td>69</td><td>74</td><td>80</td><td colspan="2">22/07/2014</td><td colspan="2">05/04/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1003</td><td>3</td><td colspan="2" class="sindhi">حسن علي</td><td colspan="2" class="sindhi">غلام رضا</td><td>88</td><td>85</td><td>90</td><td>82</td><td>86</td><td>80</td><td>84</td><td>88</td><td colspan="2">10/01/2014</td><td colspan="2">08/04/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1004</td><td>4</td><td colspan="2" class="sindhi">جاويد اقبال</td><td colspan="2" class="sindhi">اقبال حسين</td><td>65</td><td>68</td><td>70</td><td>72</td><td>66</td><td>64</td><td>70</td><td>75</td><td colspan="2">05/09/2014</td><td colspan="2">10/04/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1005</td><td>5</td><td colspan="2" class="sindhi">ذيشان محمود</td><td colspan="2" class="sindhi">محمود احمد</td><td>92</td><td>88</td><td>95</td><td>90</td><td>93</td><td>85</td><td>89</td><td>91</td><td colspan="2">18/11/2013</td><td colspan="2">12/04/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1006</td><td>6</td><td colspan="2" class="sindhi">راشد محمود</td><td colspan="2" class="sindhi">محمود علي</td><td>78</td><td>80</td><td>82</td><td>76</td><td>79</td><td>77</td><td>81</td><td>83</td><td colspan="2">30/04/2014</td><td colspan="2">15/04/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1007</td><td>7</td><td colspan="2" class="sindhi">سجاد حسين</td><td colspan="2" class="sindhi">حسين بخش</td><td>55</td><td>58</td><td>60</td><td>62</td><td>57</td><td>54</td><td>59</td><td>65</td><td colspan="2">12/06/2014</td><td colspan="2">18/04/2019</td><td>ناپاس</td></tr>
+<tr class="student-row"><td>GR-1008</td><td>8</td><td colspan="2" class="sindhi">طارق محمود</td><td colspan="2" class="sindhi">محمود حسن</td><td>82</td><td>79</td><td>85</td><td>81</td><td>83</td><td>78</td><td>80</td><td>86</td><td colspan="2">25/02/2014</td><td colspan="2">20/04/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1009</td><td>9</td><td colspan="2" class="sindhi">عمران خان</td><td colspan="2" class="sindhi">خان محمد</td><td>90</td><td>87</td><td>91</td><td>88</td><td>89</td><td>84</td><td>86</td><td>88</td><td colspan="2">08/08/2014</td><td colspan="2">22/04/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1010</td><td>10</td><td colspan="2" class="sindhi">فيصل رحمن</td><td colspan="2" class="sindhi">عبدالرحمن</td><td>73</td><td>76</td><td>78</td><td>74</td><td>75</td><td>72</td><td>77</td><td>79</td><td colspan="2">14/12/2013</td><td colspan="2">25/04/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1011</td><td>11</td><td colspan="2" class="sindhi">قاسم علي</td><td colspan="2" class="sindhi">علي احمد</td><td>68</td><td>70</td><td>72</td><td>69</td><td>71</td><td>67</td><td>73</td><td>76</td><td colspan="2">03/05/2014</td><td colspan="2">28/04/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1012</td><td>12</td><td colspan="2" class="sindhi">کامران شاہ</td><td colspan="2" class="sindhi">شاہ نواز</td><td>86</td><td>83</td><td>88</td><td>85</td><td>87</td><td>81</td><td>84</td><td>87</td><td colspan="2">19/10/2014</td><td colspan="2">02/05/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1013</td><td>13</td><td colspan="2" class="sindhi">نعیم اللہ</td><td colspan="2" class="sindhi">اللہ بخش</td><td>79</td><td>77</td><td>81</td><td>78</td><td>80</td><td>76</td><td>78</td><td>82</td><td colspan="2">27/03/2014</td><td colspan="2">05/05/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1014</td><td>14</td><td colspan="2" class="sindhi">وسیم اکرم</td><td colspan="2" class="sindhi">اکرم حسین</td><td>91</td><td>89</td><td>93</td><td>90</td><td>92</td><td>86</td><td>88</td><td>90</td><td colspan="2">11/07/2013</td><td colspan="2">08/05/2019</td><td>پاس</td></tr>
+<tr class="student-row"><td>GR-1015</td><td>15</td><td colspan="2" class="sindhi">یاسین محمود</td><td colspan="2" class="sindhi">محمود علی</td><td>74</td><td>71</td><td>76</td><td>73</td><td>75</td><td>70</td><td>74</td><td>77</td><td colspan="2">06/04/2014</td><td colspan="2">12/05/2019</td><td>پاس</td></tr>
 
 <tr>
   <td colspan="15" class="gender-header sindhi">ڇوڪريون (Girls)</td>
