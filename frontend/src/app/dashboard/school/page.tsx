@@ -586,6 +586,29 @@ const Dashboard = () => {
                   <span>ڪلاس مئنيجمينٽ</span>
                 </div>
               </a>
+
+              <a
+                href="/dashboard/change-class"
+                className="bg-gradient-to-r from-orange-600 to-orange-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-orange-700 hover:to-orange-800 transition-all duration-300"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                    />
+                  </svg>
+                  <span>شاگرد جي ڪلاس تبديل ڪريو</span>
+                </div>
+              </a>
             </div>
           </div>
         </div>

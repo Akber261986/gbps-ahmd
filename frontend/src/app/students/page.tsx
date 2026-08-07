@@ -576,19 +576,25 @@ const StudentsPage = () => {
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
               <p className="text-sm text-gray-600">ڪل اسٽوڊنٽس</p>
               <p className="text-xl font-bold text-blue-700">
-                {students.length}
+                {filteredStudents.length}
               </p>
             </div>
             <div className="bg-green-50 p-4 rounded-lg border border-green-200">
               <p className="text-sm text-gray-600">ايڪٽو اسٽوڊنٽس</p>
               <p className="text-xl font-bold text-green-700">
-                {students.filter((s) => s.status === "active").length}
+                {filteredStudents.filter((s) => s.status === "active").length}
               </p>
             </div>
             <div className="bg-red-50 p-4 rounded-lg border border-red-200">
               <p className="text-sm text-gray-600">اسڪول ڇڏيل اسٽوڊنٽس</p>
               <p className="text-xl font-bold text-red-700">
-                {students.filter((s) => s.status === "left").length}
+                {filteredStudents.filter((s) => s.status === "left").length}
+              </p>
+            </div>
+            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <p className="text-sm text-gray-600">گريجوئيٽ (پاس آئوٽ)</p>
+              <p className="text-xl font-bold text-purple-700">
+                {filteredStudents.filter((s) => s.status === "graduated").length}
               </p>
             </div>
           </div>

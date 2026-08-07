@@ -220,6 +220,106 @@ const SimpleMarksEntryPage = () => {
     setHasChanged(true);
   };
 
+  const handlePromote = async () => {
+    if (!selectedClassId || students.length === 0) return;
+    if (!examSession || !academicYear) {
+      setMessage('مهرباني ڪري امتحان سيشن ۽ تعليمي سال ڀريو');
+      setMessageType('error');
+      return;
+    }
+
+    const student = students[currentIndex];
+    setLoading(true);
+
+    try {
+      // Promote student without marks - just pass 100% in all subjects
+      const promoteMarks = subjects.map(subject => ({
+        subject_id: subject.id,
+        marks_obtained: totalMarks, // Full marks for promotion
+        total_marks: totalMarks
+      }));
+
+      const payload = {
+        student_id: student.id,
+        class_id: selectedClassId,
+        exam_session: examSession,
+        exam_type: examType,
+        academic_year: academicYear,
+        subject_teacher: subjectTeacher || null,
+        marks: promoteMarks,
+        is_absent: false
+      };
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/grades/batch`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...getAuthHeader()
+          },
+          body: JSON.stringify(payload)
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Failed to promote student');
+      }
+
+      const result = await response.json();
+
+      // Save to memory
+      setMarksData(prev => ({
+        ...prev,
+        [student.id]: { marks: promoteMarks, is_absent: false }
+      }));
+
+      // Store last result for display
+      setLastResult({
+        percentage: 100,
+        promotionStatus: result.promotion_status,
+        isAbsent: false
+      });
+
+      // Show success message
+      let successMsg = '';
+      if (result.promotion_status === 'graduated') {
+        successMsg = `🎓 ${student.name} - گريجوئيٽ ٿيو! - مبارڪ!`;
+      } else if (result.promotion_status === 'promoted') {
+        successMsg = `✅ ${student.name} - اڳتي وڌيو!`;
+      } else {
+        successMsg = `✅ ${student.name} - محفوظ ٿي ويو`;
+      }
+
+      setMessage(successMsg);
+      setMessageType('success');
+      setHasChanged(false);
+
+      // Move to next student or complete
+      if (currentIndex < students.length - 1) {
+        setTimeout(() => {
+          setCurrentIndex(prev => prev + 1);
+          setMessage('');
+          setLastResult(null);
+        }, 2000);
+      } else {
+        // All students completed
+        setAllStudentsCompleted(true);
+        setTimeout(() => {
+          setMessage('🎉 هن ڪلاس جا سڀ شاگرد مڪمل ٿي ويا! ٻي ڪلاس چونڊيو.');
+          setMessageType('success');
+        }, 2000);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setMessage(err.message || 'پروموٽ ڪرڻ ۾ ناڪامي');
+      setMessageType('error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!selectedClassId || students.length === 0) return;
     if (!examSession || !academicYear) {
@@ -284,7 +384,7 @@ const SimpleMarksEntryPage = () => {
       } else if (result.promotion_status === 'graduated') {
         successMsg = `🎓 ${student.name} - گريجوئيٽ ٿيو! (${result.overall_percentage}%) - مبارڪ!`;
       } else if (result.promotion_status === 'promoted') {
-        successMsg = `✅ ${student.name} - پاس (${result.overall_percentage}%) - اڳتي وڌو!`;
+        successMsg = `✅ ${student.name} - پاس (${result.overall_percentage}%) - اڳتي وڌيو!`;
       } else {
         successMsg = `✅ ${student.name} - ناڪام (${result.overall_percentage}%) - ساڳي ڪلاس ۾ رهندو`;
       }
@@ -449,7 +549,7 @@ const SimpleMarksEntryPage = () => {
             <div className="bg-gradient-to-r from-green-100 to-blue-100 border-2 border-green-500 rounded-2xl p-8 text-center mb-6">
               <div className="text-6xl mb-4">🎉</div>
               <h2 className="text-3xl font-bold text-green-800 mb-4">
-                مبارڪ ٿيو! سڀ شاگرد مڪمل ٿي ويا
+                مبارڪ ! سڀ شاگرد مڪمل ٿي ويا
               </h2>
               <p className="text-xl text-gray-700 mb-6">
                 هن ڪلاس جا {students.length} شاگردن جا نمبر ڪاميابيءَ سان محفوظ ٿي ويا
@@ -523,7 +623,7 @@ const SimpleMarksEntryPage = () => {
                             {lastResult.promotionStatus === 'graduated' ? (
                               <span className="text-purple-700">🎓 گريجوئيٽ ٿيو - مبارڪ!</span>
                             ) : lastResult.promotionStatus === 'promoted' ? (
-                              <span className="text-green-700">✓ پاس - اڳتي وڌو!</span>
+                              <span className="text-green-700">✓ پاس - اڳتي وڌيو!</span>
                             ) : (
                               <span className="text-red-700">✗ ناڪام - ساڳي ڪلاس ۾ رهندو</span>
                             )}
@@ -568,7 +668,7 @@ const SimpleMarksEntryPage = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-4">
+              <div className="flex gap-4 mb-4">
                 <button
                   onClick={handleAbsent}
                   disabled={hasChanged || loading}
@@ -591,7 +691,30 @@ const SimpleMarksEntryPage = () => {
                       محفوظ ٿي رهيو...
                     </>
                   ) : (
-                    'محفوظ ڪريو ۽ اڳتي وڌو'
+                    'محفوظ ڪريو '
+                  )}
+                </button>
+              </div>
+
+              {/* Promote Button */}
+              <div className="mb-4">
+                <button
+                  onClick={handlePromote}
+                  disabled={hasChanged || loading}
+                  className="w-full py-6 text-xl font-semibold bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl transition-all flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      پروموٽ ٿي رهيو...
+                    </>
+                  ) : (
+                    <>
+                      🎓 نمبر کان سواءِ پروموٽ ڪريو
+                    </>
                   )}
                 </button>
               </div>

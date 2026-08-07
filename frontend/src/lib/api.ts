@@ -78,7 +78,7 @@ export interface Student {
   leaving_class_id: number | null;
   admission_age_years: number | null;
   roll_number: string | null;
-  status: 'active' | 'left' | 'transferred';
+  status: 'active' | 'left' | 'transferred' | 'graduated';
   leaving_date: string | null;
   leaving_reason: string | null;
   created_at: string;

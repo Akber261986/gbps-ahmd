@@ -912,6 +912,57 @@ def delete_student(
     return {"message": "Student and associated leaving certificate (if any) deleted successfully"}
 
 
+@app.patch("/students/{student_id}/change-class")
+def change_student_class(
+    student_id: int,
+    new_class_id: int,
+    current_user: User = Depends(require_school),
+    db: Session = Depends(get_db)
+):
+    """Change a student's current class (rollback promotion or correct mistakes)."""
+    # Verify student exists and belongs to the same school
+    student = db.query(Student).filter(
+        Student.id == student_id,
+        Student.school_id == current_user.school_id
+    ).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    # Verify new class exists and belongs to the same school
+    new_class = db.query(Class).filter(
+        Class.id == new_class_id,
+        Class.school_id == current_user.school_id
+    ).first()
+    if not new_class:
+        raise HTTPException(status_code=404, detail="Class not found")
+
+    # Store old class info
+    old_class = db.query(Class).filter(Class.id == student.current_class_id).first()
+    old_class_name = old_class.name if old_class else "Unknown"
+
+    # Update student's class
+    student.current_class_id = new_class_id
+    student.class_id = new_class_id  # Update legacy field too
+
+    # If student was graduated, change status back to active
+    if student.status == "graduated":
+        student.status = "active"
+        student.leaving_class_id = None
+        student.class_on_leaving = None
+
+    db.commit()
+    db.refresh(student)
+
+    return {
+        "message": f"Student class changed from {old_class_name} to {new_class.name}",
+        "student_id": student.id,
+        "student_name": student.name,
+        "old_class": old_class_name,
+        "new_class": new_class.name,
+        "status": student.status
+    }
+
+
 # ============ School Leaving Certificate Endpoints (Multi-tenant) ============
 
 @app.get("/school-leaving-certificates/", response_model=List[SchoolLeavingCertificateOut])

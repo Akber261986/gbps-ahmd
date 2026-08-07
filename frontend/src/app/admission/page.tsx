@@ -348,15 +348,20 @@ function AdmissionForm() {
                 </div>
                 <div className="bg-indigo-50 p-4 rounded-xl">
                   <label className="block text-lg md:text-xl font-medium text-gray-700 mb-2">
-                    قوم
+                    <span>قوم</span>
+                    <Star />
                   </label>
-                  <input
+                  <select
                     name="qom"
                     value={formData.qom || ""}
                     onChange={handleChange}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm text-base md:text-lg"
-                    placeholder="قوم = مسلمان، هندو، عيسائي وغيره"
-                  />
+                  >
+                    <option value="مسلمان">مسلمان</option>
+                    <option value="هندو">هندو</option>
+                    <option value="عيسائي">عيسائي</option>
+                    <option value="ڪو ٻيو">ڪو ٻيو</option>
+                  </select>
                 </div>
 
                 <div className="bg-blue-50 p-4 rounded-xl">
@@ -449,13 +454,19 @@ function AdmissionForm() {
                   <label className="block text-lg md:text-xl font-medium text-gray-700 mb-2">
                     سرپرست سان تعلق
                   </label>
-                  <input
+                  <select
                     name="relation_with_guardian"
                     value={formData.relation_with_guardian || ""}
                     onChange={handleChange}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent shadow-sm text-base md:text-lg"
-                    placeholder="سرپرست سان تعلق (مثال: پيءُ، ماءُ، ڀاءُ، ڀيڻ، چاچو، مامو وغيره) "
-                  />
+                  >
+                    <option value="پيءُ">پيءُ</option>
+                    <option value="ماءُ">ماءُ</option>
+                    <option value="ڀاءُ">ڀاءُ</option>
+                    <option value="ڀيڻ">ڀيڻ</option>
+                    <option value="چاچو">چاچو</option>
+                    <option value="مامو">مامو</option>
+                  </select>
                 </div>
                 <div className="bg-lime-50 p-4 rounded-xl">
                   <label className="block text-lg md:text-xl font-medium text-gray-700 mb-2">
