@@ -7,6 +7,7 @@ import Sidebar from '@/components/Sidebar'
 import FloatingChatbot from '@/components/FloatingChatbot'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { SchoolProvider } from '@/contexts/SchoolContext'
+import { SidebarProvider } from '@/contexts/SidebarContext'
 import DashboardWrapper from '@/components/DashboardWrapper'
 
 const lateef = Lateef({
@@ -31,12 +32,14 @@ export default function RootLayout({
       <body className={`${lateef.variable} font-lateef antialiased bg-gray-50 text-lg md:text-xl leading-relaxed`}>
         <AuthProvider>
           <SchoolProvider>
-            <Navigation />
-            <Sidebar />
-            <DashboardWrapper>
-              {children}
-            </DashboardWrapper>
-            <FloatingChatbot />
+            <SidebarProvider>
+              <Navigation />
+              <Sidebar />
+              <DashboardWrapper>
+                {children}
+              </DashboardWrapper>
+              <FloatingChatbot />
+            </SidebarProvider>
           </SchoolProvider>
         </AuthProvider>
       </body>

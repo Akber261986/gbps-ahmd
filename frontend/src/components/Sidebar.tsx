@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSchool } from '@/contexts/SchoolContext';
+import { useSidebar } from '@/contexts/SidebarContext';
 import {
   LayoutDashboard,
   UserPlus,
@@ -12,7 +12,6 @@ import {
   FileText,
   Award,
   FileCheck,
-  FileBadge,
   BookOpen,
   Settings,
   Menu,
@@ -20,8 +19,12 @@ import {
   ChevronLeft,
   ChevronRight,
   GraduationCap,
-  ClipboardList
+  ClipboardList,
+  User,
+  Building2,
+  LogOut
 } from 'lucide-react';
+import Image from 'next/image';
 
 interface NavItem {
   name: string;
@@ -30,10 +33,9 @@ interface NavItem {
 }
 
 export default function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar();
   const pathname = usePathname();
-  const { isAuthenticated, hasSchool } = useAuth();
+  const { isAuthenticated, hasSchool, user, logout } = useAuth();
   const { school } = useSchool();
 
   const navItems: NavItem[] = [
@@ -46,7 +48,6 @@ export default function Sidebar() {
     { name: 'سرٽيفڪيٽ ڏسو', href: '/leaving-certificates', icon: FileCheck },
     { name: 'جنرل رجسٽر', href: '/gr', icon: BookOpen },
     { name: 'ڪلاس مئنيجمينٽ', href: '/admin/classes', icon: GraduationCap },
-    { name: 'سيٽنگس', href: '/school-settings', icon: Settings },
   ];
 
   // Routes that should show the sidebar
@@ -74,7 +75,7 @@ export default function Sidebar() {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileOpen(!isMobileOpen)}
-        className="lg:hidden fixed top-20 left-4 z-50 p-2 rounded-lg bg-green-600 text-white shadow-lg hover:bg-green-700 transition-colors print:hidden"
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 rounded-xl bg-green-600 text-white shadow-lg hover:bg-green-700 transition-colors print:hidden"
         aria-label="Toggle menu"
       >
         {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -91,13 +92,13 @@ export default function Sidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          fixed right-0 top-16 h-[calc(100vh-4rem)] bg-gradient-to-b from-green-50 to-white border-l border-gray-200 shadow-xl z-40 transition-all duration-300 ease-in-out print:hidden
+          fixed right-0 top-0 h-screen bg-gradient-to-b from-green-50 to-white border-l border-gray-200 shadow-xl z-40 transition-all duration-300 ease-in-out print:hidden flex flex-col
           ${isCollapsed ? 'lg:w-20' : 'lg:w-72'}
           ${isMobileOpen ? 'w-72 translate-x-0' : 'w-72 translate-x-full lg:translate-x-0'}
         `}
       >
         {/* School Info Header */}
-        <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-green-600 to-emerald-600">
+        <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-green-600 to-emerald-600 flex-shrink-0">
           <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0">
               <GraduationCap className="w-6 h-6 text-green-600" />
@@ -142,6 +143,90 @@ export default function Sidebar() {
             );
           })}
         </nav>
+
+        {/* User Profile Section */}
+        <div className="border-t border-gray-200 p-3 flex-shrink-0 bg-white">
+          {!isCollapsed ? (
+            <div className="space-y-2">
+              {/* User Info */}
+              <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-green-600">
+                  {user?.profile_image_url ? (
+                    <Image
+                      src={user.profile_image_url}
+                      alt="Profile"
+                      width={40}
+                      height={40}
+                      className="rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-lg font-bold text-green-700">
+                      {user?.full_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}
+                    </span>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-sm text-gray-900 truncate">
+                    {user?.full_name || user?.email}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                </div>
+              </div>
+
+              {/* Profile Links */}
+              <Link
+                href="/profile"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-green-50 hover:text-green-700 transition-all"
+              >
+                <User className="w-5 h-5 text-green-600" />
+                <span className="font-medium text-base">پروفائل سيٽنگس</span>
+              </Link>
+
+              <Link
+                href="/school-settings"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-green-50 hover:text-green-700 transition-all"
+              >
+                <Building2 className="w-5 h-5 text-green-600" />
+                <span className="font-medium text-base">اسڪول سيٽنگس</span>
+              </Link>
+
+              <button
+                onClick={logout}
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition-all"
+              >
+                <LogOut className="w-5 h-5" />
+                <span className="font-medium text-base">لاگ آئوٽ</span>
+              </button>
+            </div>
+          ) : (
+            /* Collapsed User Menu */
+            <div className="space-y-2">
+              <Link
+                href="/profile"
+                className="flex justify-center items-center p-2 rounded-lg text-gray-700 hover:bg-green-50 hover:text-green-700 transition-all"
+                title="پروفائل سيٽنگس"
+              >
+                <User className="w-5 h-5 text-green-600" />
+              </Link>
+
+              <Link
+                href="/school-settings"
+                className="flex justify-center items-center p-2 rounded-lg text-gray-700 hover:bg-green-50 hover:text-green-700 transition-all"
+                title="اسڪول سيٽنگس"
+              >
+                <Building2 className="w-5 h-5 text-green-600" />
+              </Link>
+
+              <button
+                onClick={logout}
+                className="w-full flex justify-center items-center p-2 rounded-lg text-red-600 hover:bg-red-50 transition-all"
+                title="لاگ آئوٽ"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Collapse Toggle Button - Desktop Only */}
         <button

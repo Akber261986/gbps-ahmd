@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSidebar } from '@/contexts/SidebarContext';
 
 export default function DashboardWrapper({
   children,
@@ -10,6 +11,7 @@ export default function DashboardWrapper({
 }) {
   const pathname = usePathname();
   const { isAuthenticated, hasSchool } = useAuth();
+  const { isCollapsed } = useSidebar();
 
   // Routes that should have sidebar spacing
   const shouldHaveSidebarSpacing = isAuthenticated && hasSchool && (
@@ -26,7 +28,13 @@ export default function DashboardWrapper({
   );
 
   return (
-    <main className={`transition-all duration-300 ${shouldHaveSidebarSpacing ? 'lg:mr-72' : ''}`}>
+    <main className={`transition-all duration-300 ${
+      shouldHaveSidebarSpacing
+        ? isCollapsed
+          ? 'lg:mr-20'
+          : 'lg:mr-72'
+        : ''
+    }`}>
       {children}
     </main>
   );
