@@ -116,7 +116,7 @@ function SchoolsManagementPage() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 py-10 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-700 to-purple-800 text-white rounded-t-2xl shadow-lg p-7">
+        <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7">
           <button
             onClick={() => router.push('/dashboard/admin')}
             className="mb-4 flex items-center gap-2 text-white hover:text-indigo-200 transition"
@@ -194,7 +194,7 @@ function SchoolsManagementPage() {
           {/* Schools Table */}
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-              <thead className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+              <thead className="bg-gradient-to-r from-green-600 to-green-700 text-white">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">School Name</th>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">SEMIS Code</th>
