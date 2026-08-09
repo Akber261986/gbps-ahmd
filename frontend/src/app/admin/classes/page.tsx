@@ -65,10 +65,10 @@ function AdminClasses() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 py-10 px-4 md:px-8 lg:px-10">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4 md:px-8 lg:px-10">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-700 to-pink-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
+        <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">ڪلاس مئنيجمينٽ</h1>
           <p className="text-2xl font-bold opacity-90">{school?.school_name || 'اسڪول'}</p>
           {school?.semis_code && (
@@ -77,7 +77,7 @@ function AdminClasses() {
         </div>
 
         {/* Add Class Form */}
-        <div className="bg-white p-6 shadow-lg border border-purple-100">
+        <div className="bg-white p-6 shadow-lg border border-green-100">
           <h2 className="text-2xl font-semibold text-gray-800 mb-5">نئين ڪلاس شامل ڪريو</h2>
 
           <form onSubmit={handleAddClass} className="flex gap-3 mb-6">
@@ -86,12 +86,12 @@ function AdminClasses() {
               value={newClassName}
               onChange={(e) => setNewClassName(e.target.value)}
               placeholder="ڪلاس جو نالو (مثال: ڪلاس پھريون، ڪلاس ٻيون)"
-              className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm text-base md:text-lg"
+              className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm text-base md:text-lg"
             />
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 transition duration-300 text-base md:text-lg"
+              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition duration-300 text-base md:text-lg"
             >
               {loading ? "شامل ٿي رهيو آهي..." : "شامل ڪريو"}
             </button>
@@ -108,7 +108,7 @@ function AdminClasses() {
         </div>
 
         {/* Classes List */}
-        <div className="bg-white p-6 rounded-b-2xl shadow-lg border border-purple-100">
+        <div className="bg-white p-6 rounded-b-2xl shadow-lg border border-green-100">
           <h2 className="text-2xl font-semibold text-gray-800 mb-5">موجوده ڪلاسز ({classes.length})</h2>
 
           {classes.length === 0 ? (
@@ -121,7 +121,7 @@ function AdminClasses() {
               {classes.map((cls) => (
                 <div
                   key={cls.id}
-                  className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200 shadow-sm flex justify-between items-center"
+                  className="bg-gradient-to-br from-green-50 to-blue-50 p-4 rounded-xl border border-green-200 shadow-sm flex justify-between items-center"
                 >
                   <div>
                     <h3 className="text-xl font-bold text-gray-800">{cls.name}</h3>
