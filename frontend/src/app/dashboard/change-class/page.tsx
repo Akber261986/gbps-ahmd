@@ -148,13 +148,13 @@ const ChangeClassPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 py-10 px-4 md:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-orange-700 to-orange-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
+        <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">شاگرد جي ڪلاس تبديل ڪريو</h1>
           <p className="text-2xl font-bold opacity-90">{school?.school_name || 'اسڪول'}</p>
         </div>
 
         {/* Main Content */}
-        <div className="bg-white rounded-b-2xl shadow-lg p-6 border border-orange-100">
+        <div className="bg-white rounded-b-2xl shadow-lg p-6 border border-green-100">
           {/* Search Section */}
           <div className="mb-8">
             <label className="block text-lg font-medium text-gray-700 mb-2">
@@ -167,13 +167,13 @@ const ChangeClassPage = () => {
                 onChange={(e) => setGrNumber(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 placeholder="مثال: 001"
-                className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 text-lg"
+                className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-lg"
                 disabled={loading || !!student}
               />
               <button
                 onClick={handleSearch}
                 disabled={loading || !!student}
-                className="px-6 py-3 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'ڳولي رهيو...' : 'ڳوليو'}
               </button>
@@ -268,7 +268,7 @@ const ChangeClassPage = () => {
                 <button
                   onClick={handleUpdateClass}
                   disabled={!newClassId || updating}
-                  className="flex-1 px-6 py-4 bg-orange-600 text-white text-lg font-semibold rounded-lg hover:bg-orange-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-4 bg-green-600 text-white text-lg font-semibold rounded-lg hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {updating ? (
                     <>

@@ -198,10 +198,10 @@ function AdminStudentUpdate() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 py-10 px-4 md:px-8 lg:px-10">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4 md:px-8 lg:px-10">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-orange-700 to-red-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
+        <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">ايڊمن - اسٽوڊنٽ اپڊيٽ</h1>
           <p className="text-2xl font-bold opacity-90">{school?.school_name || 'اسڪول'}</p>
           {school?.semis_code && (
@@ -210,10 +210,10 @@ function AdminStudentUpdate() {
         </div>
 
         {/* Search Section */}
-        <div className="bg-white p-6 rounded-b-2xl shadow-lg border border-orange-100">
+        <div className="bg-white p-6 rounded-b-2xl shadow-lg border border-green-100">
           <div className="mb-6">
             <h2 className="text-2xl font-semibold text-gray-800 mb-5 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <p>اسٽوڊنٽ ڳولا (GR نمبر سان)</p>
@@ -225,13 +225,13 @@ function AdminStudentUpdate() {
                 value={searchGr}
                 onChange={(e) => setSearchGr(e.target.value)}
                 placeholder="مثال: 451"
-                className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm text-base md:text-lg"
+                className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm text-base md:text-lg"
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
               <button
                 onClick={handleSearch}
                 disabled={loading}
-                className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50 transition duration-300 flex items-center justify-center text-base md:text-lg gap-2"
+                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition duration-300 flex items-center justify-center text-base md:text-lg gap-2"
               >
                 {loading ? (
                   <>
@@ -600,7 +600,7 @@ function AdminStudentUpdate() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 px-6 py-4 bg-gradient-to-r from-orange-600 to-red-700 text-white text-lg font-bold rounded-lg hover:from-orange-700 hover:to-red-800 disabled:opacity-50 transition-all duration-300 shadow-lg flex items-center justify-center"
+                  className="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white text-lg font-bold rounded-lg hover:from-green-700 hover:to-green-800 disabled:opacity-50 transition-all duration-300 shadow-lg flex items-center justify-center"
                 >
                   {loading ? (
                     <>
