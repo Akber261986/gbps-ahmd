@@ -5,6 +5,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useSchool } from '@/contexts/SchoolContext';
 import Link from 'next/link';
 import Toast from '@/components/Toast';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Eye, EyeOff, LogIn, GraduationCap, Loader2 } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -92,24 +97,22 @@ export default function LoginPage() {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="max-w-md w-full relative z-10">
-        {/* Header Card */}
-        <div className="text-center mb-8 animate-fade-in">
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl mb-6 shadow-2xl transform hover:scale-105 transition-transform duration-300">
-            <svg className="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
+      <div className="max-w-md w-full relative z-10 space-y-8">
+        {/* Header */}
+        <div className="text-center animate-fade-in">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl mb-6 shadow-2xl transform hover:scale-105 transition-transform duration-300">
+            <GraduationCap className="w-12 h-12 text-white" />
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-3 tracking-tight">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
             {school?.school_name || 'اسڪول مئنيجمينٽ سسٽم'}
-          </h2>
-          <p className="text-lg text-gray-600 font-medium">
+          </h1>
+          <p className="text-lg text-gray-600">
             پنهنجي اڪائونٽ ۾ لاگ ان ڪريو
           </p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-black/10 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20 animate-slide-up">
+        <Card className="animate-slide-up">
           {error && (
             <Toast
               message={error}
@@ -119,143 +122,117 @@ export default function LoginPage() {
             />
           )}
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
-
-            <div className="space-y-5">
-              <div>
-                <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-2">
-                  اي ميل ايڊريس
-                </label>
-                <div className="relative group">
-                  <input
+          <CardContent className="pt-6">
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="email">اي ميل ايڊريس</Label>
+                  <Input
                     id="email"
                     name="email"
                     type="email"
                     autoComplete="email"
                     required
-                    className="appearance-none block w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-green-500/20 focus:border-green-500 transition-all duration-200 text-base bg-gray-50 hover:bg-white hover:border-gray-300"
                     placeholder="example@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={loading}
                   />
                 </div>
+
+                <div>
+                  <Label htmlFor="password">پاسورڊ</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="current-password"
+                      required
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      disabled={loading}
+                      className="pr-12"
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                      onClick={() => setShowPassword(!showPassword)}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? (
+                        <Eye className="w-5 h-5" />
+                      ) : (
+                        <EyeOff className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              <div className="relative">
-                <label htmlFor="password" className="block text-sm font-bold text-gray-700 mb-2">
-                  پاسورڊ
-                </label>
-                <div className="relative group">
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="current-password"
-                    required
-                    className="appearance-none block w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-green-500/20 focus:border-green-500 transition-all duration-200 text-base bg-gray-50 hover:bg-white hover:border-gray-300"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={loading}
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200 focus:outline-none"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                  {showPassword ? (
-                    // Inline SVG for "eye" icon
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.478 0-8.268-2.943-9.542-7z"
-                      />
-                    </svg>
-                  ) : (
-                    // Inline SVG for "eye slash" icon
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.977 9.977 0 012.524-4.217m4.478-2.671A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.977 9.977 0 01-4.137 5.114M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M3 3l18 18"
-                      />
-                    </svg>
-                  )}
-                </button>
+              <div className="flex items-center justify-end">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm font-bold text-green-600 hover:text-green-700 transition-colors hover:underline underline-offset-4"
+                >
+                  پاسورڊ وساريو؟
+                </Link>
               </div>
-            </div>
 
-            <div className="pt-2">
-              <button
+              <Button
                 type="submit"
                 disabled={loading}
-                className="w-full flex gap-3 justify-center items-center py-3.5 px-4 border border-transparent rounded-xl text-base font-bold text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-4 focus:ring-green-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0"
+                className="w-full"
+                size="lg"
               >
                 {loading ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                    <Loader2 className="w-5 h-5 animate-spin" />
                     لاگ ان ٿي رهيو آهي...
                   </>
                 ) : (
-                  'لاگ ان'
+                  <>
+                    <LogIn className="w-5 h-5" />
+                    لاگ ان
+                  </>
                 )}
-              </button>
-            </div>
+              </Button>
+            </form>
 
-            <div className="flex items-center justify-end text-lg ">
-              <Link
-                href="/forgot-password"
-                className="font-bold text-green-600 hover:text-green-700 transition-colors duration-200 hover:underline underline-offset-4 "
-              >
-                پاسورڊ وساريو؟
-              </Link>
-            </div>
-            </div>
-          </form>
-
-          <div className="mt-6">
-            <div className="relative">
+            {/* Divider */}
+            <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t-2 border-gray-200"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white/80 text-gray-500 font-semibold">يا</span>
+                <span className="px-4 bg-white text-gray-500 font-semibold">يا</span>
               </div>
             </div>
 
-            <div className="flex justify-center items-center mt-6 ">
+            {/* Google Sign-in */}
+            <div className="flex justify-center items-center">
               <div id="google-signin-container"></div>
             </div>
-          </div>
 
-          <div className="mt-6 pt-6 border-t-2 border-gray-100">
-            <p className="text-center text-sm text-gray-600">
-              اڪائونٽ نه آهي؟{' '}
-              <Link href="/register" className="font-bold text-green-600 hover:text-green-700 transition-colors duration-200 hover:underline underline-offset-2">
-                رجسٽر ڪريو
-              </Link>
-            </p>
-          </div>
-        </div>
+            {/* Sign up link */}
+            <div className="mt-6 pt-6 border-t-2 border-gray-100">
+              <p className="text-center text-sm text-gray-600">
+                اڪائونٽ نه آهي؟{' '}
+                <Link
+                  href="/register"
+                  className="font-bold text-green-600 hover:text-green-700 transition-colors hover:underline underline-offset-2"
+                >
+                  رجسٽر ڪريو
+                </Link>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Footer */}
-        <p className="mt-8 text-center text-sm text-gray-500 font-medium animate-fade-in">
-          {school?.school_name || 'گورنمينٽ پرائمري اسڪول مئنيجمينٽ سسٽم'}
+        <p className="text-center text-sm text-gray-500 animate-fade-in">
+          © 2026 {school?.school_name || 'گورنمينٽ پرائمري اسڪول مئنيجمينٽ سسٽم'}
         </p>
       </div>
     </div>

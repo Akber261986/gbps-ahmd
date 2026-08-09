@@ -49,7 +49,21 @@ export default function Sidebar() {
     { name: 'سيٽنگس', href: '/school-settings', icon: Settings },
   ];
 
-  if (!isAuthenticated || !hasSchool) {
+  // Routes that should show the sidebar
+  const shouldShowSidebar = isAuthenticated && hasSchool && (
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/admission') ||
+    pathname.startsWith('/students') ||
+    pathname.startsWith('/results') ||
+    pathname.startsWith('/leaving-certificate') ||
+    pathname.startsWith('/gr') ||
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/school-settings') ||
+    pathname.startsWith('/profile') ||
+    pathname.startsWith('/pending-students')
+  );
+
+  if (!shouldShowSidebar) {
     return null;
   }
 
@@ -60,7 +74,7 @@ export default function Sidebar() {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileOpen(!isMobileOpen)}
-        className="lg:hidden fixed top-20 left-4 z-50 p-2 rounded-lg bg-green-600 text-white shadow-lg hover:bg-green-700 transition-colors"
+        className="lg:hidden fixed top-20 left-4 z-50 p-2 rounded-lg bg-green-600 text-white shadow-lg hover:bg-green-700 transition-colors print:hidden"
         aria-label="Toggle menu"
       >
         {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -69,7 +83,7 @@ export default function Sidebar() {
       {/* Mobile Overlay */}
       {isMobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-30"
+          className="lg:hidden fixed inset-0 bg-black/50 z-30 print:hidden"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
@@ -77,7 +91,7 @@ export default function Sidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          fixed right-0 top-16 h-[calc(100vh-4rem)] bg-gradient-to-b from-green-50 to-white border-l border-gray-200 shadow-xl z-40 transition-all duration-300 ease-in-out
+          fixed right-0 top-16 h-[calc(100vh-4rem)] bg-gradient-to-b from-green-50 to-white border-l border-gray-200 shadow-xl z-40 transition-all duration-300 ease-in-out print:hidden
           ${isCollapsed ? 'lg:w-20' : 'lg:w-72'}
           ${isMobileOpen ? 'w-72 translate-x-0' : 'w-72 translate-x-full lg:translate-x-0'}
         `}

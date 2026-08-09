@@ -3,9 +3,11 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Lateef } from 'next/font/google'
 import Navigation from '@/components/Navigation'
+import Sidebar from '@/components/Sidebar'
 import FloatingChatbot from '@/components/FloatingChatbot'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { SchoolProvider } from '@/contexts/SchoolContext'
+import DashboardWrapper from '@/components/DashboardWrapper'
 
 const lateef = Lateef({
   subsets: ['arabic', 'latin'],
@@ -30,9 +32,10 @@ export default function RootLayout({
         <AuthProvider>
           <SchoolProvider>
             <Navigation />
-            <main>
+            <Sidebar />
+            <DashboardWrapper>
               {children}
-            </main>
+            </DashboardWrapper>
             <FloatingChatbot />
           </SchoolProvider>
         </AuthProvider>
