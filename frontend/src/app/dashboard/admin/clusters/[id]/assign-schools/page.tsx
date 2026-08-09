@@ -144,10 +144,10 @@ function AssignSchoolsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 py-10 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-10">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mb-4"></div>
             <p className="text-lg text-gray-600">Loading...</p>
           </div>
         </div>
@@ -156,13 +156,13 @@ function AssignSchoolsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 py-10 px-4 md:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-700 to-purple-800 text-white rounded-t-2xl shadow-lg p-7">
+        <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7">
           <button
             onClick={() => router.push('/dashboard/admin')}
-            className="mb-4 flex items-center gap-2 text-white hover:text-indigo-200 transition"
+            className="mb-4 flex items-center gap-2 text-white hover:text-green-200 transition"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -177,7 +177,7 @@ function AssignSchoolsPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-b-2xl shadow-lg p-6 border border-indigo-100">
+        <div className="bg-white rounded-b-2xl shadow-lg p-6 border border-green-100">
           {message && (
             <Toast
               message={message}
