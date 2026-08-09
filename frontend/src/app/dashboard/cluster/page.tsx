@@ -71,17 +71,17 @@ function ClusterDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 py-10 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-gradient-to-r from-purple-700 to-blue-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
+          <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
             <div className="animate-pulse">
-              <div className="h-8 bg-purple-600 rounded w-48 mx-auto mb-2"></div>
-              <div className="h-6 bg-purple-600 rounded w-32 mx-auto"></div>
+              <div className="h-8 bg-green-600 rounded w-48 mx-auto mb-2"></div>
+              <div className="h-6 bg-green-600 rounded w-32 mx-auto"></div>
             </div>
           </div>
-          <div className="bg-white rounded-b-2xl shadow-lg p-6 border border-purple-100">
+          <div className="bg-white rounded-b-2xl shadow-lg p-6 border border-green-100">
             <div className="text-center py-10">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mb-4"></div>
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mb-4"></div>
               <p className="text-lg text-gray-600">Loading...</p>
             </div>
           </div>
@@ -91,10 +91,10 @@ function ClusterDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 py-10 px-4 md:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-700 to-blue-800 text-white rounded-t-2xl shadow-lg p-7">
+        <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7">
           {/* Back Button for SUPER_ADMIN */}
           {user?.role === 'SUPER_ADMIN' && (
             <button
