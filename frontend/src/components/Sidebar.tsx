@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSchool } from '@/contexts/SchoolContext';
 import { useSidebar } from '@/contexts/SidebarContext';
@@ -22,7 +23,9 @@ import {
   ClipboardList,
   User,
   Building2,
-  LogOut
+  LogOut,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -34,6 +37,7 @@ interface NavItem {
 
 export default function Sidebar() {
   const { isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const pathname = usePathname();
   const { isAuthenticated, hasSchool, user, logout } = useAuth();
   const { school } = useSchool();
@@ -48,6 +52,7 @@ export default function Sidebar() {
     { name: 'سرٽيفڪيٽ ڏسو', href: '/leaving-certificates', icon: FileCheck },
     { name: 'جنرل رجسٽر', href: '/gr', icon: BookOpen },
     { name: 'ڪلاس مئنيجمينٽ', href: '/admin/classes', icon: GraduationCap },
+    { name: 'اسڪول سيٽنگس', href: '/school-settings', icon: Settings },
   ];
 
   // Routes that should show the sidebar
@@ -97,21 +102,115 @@ export default function Sidebar() {
           ${isMobileOpen ? 'w-72 translate-x-0' : 'w-72 translate-x-full lg:translate-x-0'}
         `}
       >
-        {/* School Info Header */}
-        <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-green-600 to-emerald-600 flex-shrink-0">
-          <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-              <GraduationCap className="w-6 h-6 text-green-600" />
+        {/* User Profile Header - Expandable */}
+        <div className="border-b border-gray-200 bg-gradient-to-r from-green-600 to-emerald-600 flex-shrink-0">
+          {/* User Avatar Button */}
+          <button
+            onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+            className={`w-full p-4 flex items-center gap-3 hover:bg-green-700/30 transition-colors ${
+              isCollapsed ? 'justify-center' : ''
+            }`}
+          >
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-white shadow-md">
+              {user?.profile_image_url ? (
+                <Image
+                  src={user.profile_image_url}
+                  alt="Profile"
+                  width={40}
+                  height={40}
+                  className="rounded-full object-cover"
+                />
+              ) : (
+                <span className="text-lg font-bold text-green-600">
+                  {user?.full_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}
+                </span>
+              )}
             </div>
             {!isCollapsed && (
-              <div className="flex-1 min-w-0">
-                <h2 className="font-bold text-white text-sm truncate">
-                  {school?.school_name || 'اسڪول سسٽم'}
-                </h2>
-                <p className="text-xs text-green-100 truncate">مئنيجمينٽ سسٽم</p>
-              </div>
+              <>
+                <div className="flex-1 min-w-0 text-left">
+                  <h2 className="font-bold text-white text-sm truncate">
+                    {user?.full_name || user?.email}
+                  </h2>
+                  <p className="text-xs text-green-100 truncate">{school?.school_name || 'اسڪول سسٽم'}</p>
+                </div>
+                {isUserMenuOpen ? (
+                  <ChevronUp className="w-4 h-4 text-white flex-shrink-0" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-white flex-shrink-0" />
+                )}
+              </>
             )}
-          </div>
+          </button>
+
+          {/* Expandable User Menu Dropdown */}
+          {isUserMenuOpen && !isCollapsed && (
+            <div className="border-t border-green-500/30 bg-green-700/20 p-2">
+              <div className="space-y-1">
+                <div className="px-3 py-2 rounded-lg">
+                  <p className="text-xs text-green-100 truncate">{user?.email}</p>
+                </div>
+
+                <Link
+                  href="/profile"
+                  onClick={() => setIsMobileOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg text-white hover:bg-white/10 transition-all"
+                >
+                  <User className="w-4 h-4" />
+                  <span className="text-sm font-medium">پروفائل سيٽنگس</span>
+                </Link>
+
+                <button
+                  onClick={() => {
+                    logout();
+                    setIsMobileOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-200 hover:bg-red-500/20 transition-all"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="text-sm font-medium">لاگ آئوٽ</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Collapsed state user menu - floating popup */}
+          {isUserMenuOpen && isCollapsed && (
+            <div className="absolute right-20 top-4 w-56 bg-white rounded-lg shadow-2xl border border-gray-200 p-2 z-50">
+              <div className="space-y-1">
+                <div className="px-3 py-2 border-b border-gray-100">
+                  <p className="font-bold text-sm text-gray-900 truncate">
+                    {user?.full_name || user?.email}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                </div>
+
+                <Link
+                  href="/profile"
+                  onClick={() => {
+                    setIsUserMenuOpen(false);
+                    setIsMobileOpen(false);
+                  }}
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-green-50 hover:text-green-700 transition-all"
+                >
+                  <User className="w-4 h-4 text-green-600" />
+                  <span className="text-sm font-medium">پروفائل سيٹنگس</span>
+                </Link>
+
+                <button
+                  onClick={() => {
+                    logout();
+                    setIsUserMenuOpen(false);
+                    setIsMobileOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition-all"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="text-sm font-medium">لاگ آئوٽ</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Navigation Items */}
