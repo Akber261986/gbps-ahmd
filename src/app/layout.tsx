@@ -1,0 +1,48 @@
+// app/layout.tsx
+import type { Metadata } from 'next'
+import './globals.css'
+import { Lateef } from 'next/font/google'
+import Navigation from '@/components/Navigation'
+import Sidebar from '@/components/Sidebar'
+import FloatingChatbot from '@/components/FloatingChatbot'
+import { AuthProvider } from '@/contexts/AuthContext'
+import { SchoolProvider } from '@/contexts/SchoolContext'
+import { SidebarProvider } from '@/contexts/SidebarContext'
+import DashboardWrapper from '@/components/DashboardWrapper'
+
+const lateef = Lateef({
+  subsets: ['arabic', 'latin'],
+  weight: ['400', '700'],
+  display: 'swap',
+  variable: '--font-lateef',
+})
+
+export const metadata: Metadata = {
+  title: 'School Management System',
+  description: 'An School Management System For Primary Schools in Sindh',
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="sd" dir="rtl">
+      <body className={`${lateef.variable} font-lateef antialiased bg-gray-50 text-lg md:text-xl leading-relaxed`}>
+        <AuthProvider>
+          <SchoolProvider>
+            <SidebarProvider>
+              <Navigation />
+              <Sidebar />
+              <DashboardWrapper>
+                {children}
+              </DashboardWrapper>
+              <FloatingChatbot />
+            </SidebarProvider>
+          </SchoolProvider>
+        </AuthProvider>
+      </body>
+    </html>
+  )
+}
