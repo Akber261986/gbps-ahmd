@@ -110,10 +110,10 @@ function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 py-10 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-10">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mb-4"></div>
             <p className="text-lg text-gray-600">Loading...</p>
           </div>
         </div>
@@ -122,15 +122,15 @@ function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 py-10 px-4 md:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-700 to-purple-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
+        <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">Super Admin Dashboard</h1>
           <p className="text-lg opacity-90">Cluster Management System</p>
         </div>
 
-        <div className="bg-white rounded-b-2xl shadow-lg p-6 border border-indigo-100">
+        <div className="bg-white rounded-b-2xl shadow-lg p-6 border border-green-100">
           {message && (
             <Toast
               message={message}
@@ -155,7 +155,7 @@ function AdminDashboard() {
               </button>
               <button
                 onClick={() => router.push('/dashboard/admin/users')}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-300 flex items-center gap-2"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 flex items-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -164,7 +164,7 @@ function AdminDashboard() {
               </button>
               <button
                 onClick={handleOpenCreateModal}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300 flex items-center gap-2"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 flex items-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -185,7 +185,7 @@ function AdminDashboard() {
               {clusters.map((cluster) => (
                 <div
                   key={cluster.id}
-                  className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-200 shadow-md hover:shadow-lg transition-shadow"
+                  className="bg-gradient-to-br from-green-50 to-blue-50 rounded-xl p-6 border border-green-200 shadow-md hover:shadow-lg transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div>
