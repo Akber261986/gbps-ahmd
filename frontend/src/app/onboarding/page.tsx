@@ -69,17 +69,17 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8" dir="rtl">
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white shadow-md rounded-lg p-8">
-          <div className="mb-8">
-            <h2 className="text-3xl font-extrabold text-gray-900 text-center">
-              اسڪول جي معلومات
-            </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
-              مهرباني ڪري پنهنجي اسڪول جي معلومات داخل ڪريو
-            </p>
-          </div>
+        <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
+          <h2 className="text-3xl font-bold mb-2">
+            اسڪول جي معلومات
+          </h2>
+          <p className="text-lg opacity-90">
+            مهرباني ڪري پنهنجي اسڪول جي معلومات داخل ڪريو
+          </p>
+        </div>
+        <div className="bg-white rounded-b-2xl shadow-lg p-8 border border-green-100">
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (

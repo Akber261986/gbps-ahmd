@@ -95,7 +95,7 @@ const PendingStudentsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-8 px-4" dir="rtl">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
