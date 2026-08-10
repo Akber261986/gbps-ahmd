@@ -40,7 +40,7 @@ export default function ForgotPasswordPage() {
       // Redirect to reset password page with token
       router.push(`/reset-password?token=${token}`);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'OTP جي تصديق ناکام ٿي وئي');
+      setError(err.response?.data?.detail || 'جي تصديق نہ ٿي سگهي OTP');
     } finally {
       setLoading(false);
     }
@@ -56,7 +56,7 @@ export default function ForgotPasswordPage() {
       // Show success message
       setError('نئون OTP موڪليو ويو');
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'OTP ٻيهر موڪلڻ ناکام ٿي وئي');
+      setError(err.response?.data?.detail || 'ٻيهر موڪلڻ ۾ ناڪامي OTP');
     } finally {
       setLoading(false);
     }
@@ -80,7 +80,7 @@ export default function ForgotPasswordPage() {
             </svg>
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-3 tracking-tight">
-            پاسورڊ وساريو
+            پاسورڊ وسري ويو
           </h2>
           <p className="text-lg text-gray-600 font-medium">
             پنهنجو اي ميل ايڊريس داخل ڪريو
@@ -133,7 +133,7 @@ export default function ForgotPasswordPage() {
                       موڪلي رهيو آهي...
                     </>
                   ) : (
-                    'OTP موڪليو'
+                    'موڪليو OTP'
                   )}
                 </button>
               </div>
@@ -149,7 +149,7 @@ export default function ForgotPasswordPage() {
 
               <div>
                 <label htmlFor="otp" className="block text-sm font-bold text-gray-700 mb-2">
-                  OTP داخل ڪريو
+                  داخل ڪريو OTP
                 </label>
                 <input
                   id="otp"
@@ -195,7 +195,7 @@ export default function ForgotPasswordPage() {
                   disabled={loading}
                   className="text-sm font-semibold text-green-600 hover:text-green-700 transition-colors duration-200 disabled:opacity-50"
                 >
-                  OTP ٻيهر موڪليو
+                  ٻيهر موڪليو OTP
                 </button>
                 <span className="mx-2 text-gray-400">|</span>
                 <button
