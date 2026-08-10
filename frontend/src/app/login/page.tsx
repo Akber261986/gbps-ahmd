@@ -82,7 +82,7 @@ export default function LoginPage() {
     try {
       await login({ email, password });
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'لاگ ان ناکام ٿيو. مهرباني ڪري ٻيهر ڪوشش ڪريو.');
+      setError(err.response?.data?.detail || 'لاگ ان ناڪام ٿيو. مهرباني ڪري ٻيهر ڪوشش ڪريو.');
     } finally {
       setLoading(false);
     }
@@ -178,7 +178,7 @@ export default function LoginPage() {
                   href="/forgot-password"
                   className="text-sm font-bold text-green-600 hover:text-green-700 transition-colors hover:underline underline-offset-4"
                 >
-                  پاسورڊ وساريو؟
+                  پاسورڊ وسري ويو؟
                 </Link>
               </div>
 
