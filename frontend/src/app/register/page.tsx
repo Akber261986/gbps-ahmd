@@ -69,7 +69,7 @@ export default function RegisterPage() {
             {school?.school_name || 'اسڪول مئنيجمينٽ سسٽم'}
           </h1>
           <p className="text-lg text-gray-600">
-            پنهنجي اڪائونٽ ۾ رجسٽر ڪريو
+            پنهنجي لاءِ ھڪ نئون اڪائونٽ ٺاھيو
           </p>
           </div>
         </div>
