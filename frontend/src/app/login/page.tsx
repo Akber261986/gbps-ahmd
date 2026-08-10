@@ -99,16 +99,18 @@ export default function LoginPage() {
 
       <div className="max-w-md w-full relative z-10 space-y-8">
         {/* Header */}
-        <div className="text-center animate-fade-in">
+        <div className="text-center animate-fade-in flex flex-row-reverse items-center justify-around">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl mb-6 shadow-2xl transform hover:scale-105 transition-transform duration-300">
             <GraduationCap className="w-12 h-12 text-white" />
           </div>
+          <div className="flex items-center justify-center flex-col">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             {school?.school_name || 'اسڪول مئنيجمينٽ سسٽم'}
           </h1>
           <p className="text-lg text-gray-600">
             پنهنجي اڪائونٽ ۾ لاگ ان ڪريو
           </p>
+          </div>
         </div>
 
         {/* Login Card */}
@@ -122,7 +124,7 @@ export default function LoginPage() {
             />
           )}
 
-          <CardContent className="pt-6">
+          <CardContent className="pt-2">
             <form className="space-y-5" onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div>
