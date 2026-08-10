@@ -408,7 +408,7 @@ const Dashboard = () => {
 
               <a
                 href="/students"
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-green-700 hover:to-green-800 transition-all duration-300"
+                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-blue-700 hover:to-blue-800 transition-all duration-300"
               >
                 <div className="flex items-center justify-center gap-2">
                   <svg
@@ -431,7 +431,7 @@ const Dashboard = () => {
 
               <a
                 href="/admin/students"
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-green-700 hover:to-green-800 transition-all duration-300"
+                className="bg-gradient-to-r from-red-600 to-red-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-red-700 hover:to-red-800 transition-all duration-300"
               >
                 <div className="flex items-center justify-center gap-2">
                   <svg
@@ -453,7 +453,7 @@ const Dashboard = () => {
               </a>
               <a
                 href="/results"
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-green-700 hover:to-green-800 transition-all duration-300"
+                className="bg-gradient-to-r from-cyan-600 to-cyan-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-cyan-700 hover:to-cyan-800 transition-all duration-300"
               >
                 <div className="flex items-center justify-center gap-2">
                   <svg
@@ -476,7 +476,7 @@ const Dashboard = () => {
 
               <a
                 href="/results/resultsheet"
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-green-700 hover:to-green-800 transition-all duration-300"
+                className="bg-gradient-to-r from-orange-600 to-orange-600 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-orange-700 hover:to-orange-800 transition-all duration-300"
               >
                 <div className="flex items-center justify-center gap-2">
                   <svg
@@ -499,7 +499,7 @@ const Dashboard = () => {
 
               <a
                 href="/results/manage"
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-green-700 hover:to-green-800 transition-all duration-300"
+                className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-indigo-700 hover:to-indigo-800 transition-all duration-300"
               >
                 <div className="flex items-center justify-center gap-2">
                   <svg
@@ -522,7 +522,7 @@ const Dashboard = () => {
 
               <a
                 href="/results"
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-green-700 hover:to-green-800 transition-all duration-300"
+                className="bg-gradient-to-r from-purple-600 to-purple-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-purple-700 hover:to-purple-800 transition-all duration-300"
               >
                 <div className="flex items-center justify-center gap-2">
                   <svg
@@ -544,7 +544,7 @@ const Dashboard = () => {
               </a>
               <a
                 href="/gr"
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-green-700 hover:to-green-800 transition-all duration-300"
+                className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-yellow-600 hover:to-yellow-700 transition-all duration-300"
               >
                 <div className="flex items-center justify-center gap-2">
                   <svg
@@ -566,7 +566,7 @@ const Dashboard = () => {
               </a>
               <a
                 href="/admin/classes"
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-green-700 hover:to-green-800 transition-all duration-300"
+                className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-indigo-700 hover:to-indigo-800 transition-all duration-300"
               >
                 <div className="flex items-center justify-center gap-2">
                   <svg
@@ -589,7 +589,7 @@ const Dashboard = () => {
 
               <a
                 href="/dashboard/change-class"
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-green-700 hover:to-green-800 transition-all duration-300"
+                className="bg-gradient-to-r from-orange-600 to-orange-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-orange-700 hover:to-orange-800 transition-all duration-300"
               >
                 <div className="flex items-center justify-center gap-2">
                   <svg
