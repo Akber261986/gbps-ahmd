@@ -71,7 +71,7 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8" dir="rtl">
       <div className="max-w-2xl mx-auto">
-        <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
+        <div className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-2xl shadow-lg p-7 text-center">
           <h2 className="text-3xl font-bold mb-2">
             اسڪول جي معلومات
           </h2>

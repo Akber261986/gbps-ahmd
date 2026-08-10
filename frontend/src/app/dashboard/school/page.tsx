@@ -53,7 +53,7 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header Skeleton */}
-          <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
+          <div className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-2xl shadow-lg p-7 text-center">
             <div className="animate-pulse">
               <div className="h-8 bg-green-600 rounded w-48 mx-auto mb-2"></div>
               <div className="h-6 bg-green-600 rounded w-32 mx-auto"></div>
@@ -108,7 +108,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
+        <div className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-2xl shadow-lg p-7 text-center">
           {/* School Logo */}
           {school?.logo_url && (
             <div className="flex justify-center mb-4">
@@ -385,7 +385,7 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <a
                 href="/admission"
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-green-700 hover:to-green-800 transition-all duration-300"
+                className="bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-4 px-6 rounded-lg shadow-md hover:from-green-600 hover:to-green-700 transition-all duration-300"
               >
                 <div className="flex items-center justify-center gap-2">
                   <svg

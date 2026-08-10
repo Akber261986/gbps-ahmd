@@ -251,7 +251,7 @@ const StudentsPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
+        <div className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-2xl shadow-lg p-7 text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">اسٽوڊنٽس</h1>
           <p className="text-2xl font-bold opacity-90">
             {school?.school_name || 'اسڪول'}

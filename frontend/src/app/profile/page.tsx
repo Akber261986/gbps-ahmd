@@ -177,7 +177,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7 text-center mb-0">
+        <div className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-2xl shadow-lg p-7 text-center mb-0">
           <h1 className="text-3xl md:text-4xl font-bold">پروفائل سيٽنگس</h1>
         </div>
         <div className="bg-white rounded-b-2xl shadow-lg p-6 md:p-8 border border-green-100">

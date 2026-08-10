@@ -73,7 +73,7 @@ function ClusterDashboard() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7 text-center">
+          <div className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-2xl shadow-lg p-7 text-center">
             <div className="animate-pulse">
               <div className="h-8 bg-green-600 rounded w-48 mx-auto mb-2"></div>
               <div className="h-6 bg-green-600 rounded w-32 mx-auto"></div>
@@ -94,7 +94,7 @@ function ClusterDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-10 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-700 to-green-800 text-white rounded-t-2xl shadow-lg p-7">
+        <div className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-2xl shadow-lg p-7">
           {/* Back Button for SUPER_ADMIN */}
           {user?.role === 'SUPER_ADMIN' && (
             <button
