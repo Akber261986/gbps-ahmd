@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
       await axios.post('/api/auth/forgot-password', { email });
       setStep('otp');
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'OTP موڪلڻ ناکام ٿي وئي');
+      setError(err.response?.data?.detail || ' موڪلڻ ۾ ناڪامي OTP');
     } finally {
       setLoading(false);
     }
