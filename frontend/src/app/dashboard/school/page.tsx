@@ -344,7 +344,7 @@ const Dashboard = () => {
                       <span className="text-blue-700 text-xl font-bold">♂</span>
                     </div>
                     <p className="text-2xl font-extrabold text-blue-800">
-                      {studentData.filter(s => s.gender === "ڇوڪرو").length}
+                      {studentData.filter(s => s.gender === "ڇوڪرو" && s.status === "active").length}
                     </p>
                     <p className="mt-1 font-semibold text-gray-700">ڇوڪرا</p>
                   </div>
@@ -355,7 +355,7 @@ const Dashboard = () => {
                       <span className="text-pink-700 text-xl font-bold">♀</span>
                     </div>
                     <p className="text-2xl font-extrabold text-pink-800">
-                      {studentData.filter(s => s.gender === "ڇوڪري").length}
+                      {studentData.filter(s => s.gender === "ڇوڪري" && s.status === "active").length}
                     </p>
                     <p className="mt-1 font-semibold text-gray-700">ڇوڪريون</p>
                   </div>
@@ -366,7 +366,7 @@ const Dashboard = () => {
                       <span className="text-gray-800 text-xl font-bold">∑</span>
                     </div>
                     <p className="text-3xl font-extrabold text-gray-900">
-                      {studentData.length}
+                      {studentData.filter(s => s.status === "active").length}
                     </p>
                     <p className="mt-1 font-semibold text-gray-800">ٽوٽل</p>
                   </div>
