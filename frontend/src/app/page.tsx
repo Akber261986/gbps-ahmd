@@ -43,10 +43,10 @@ export default function Home() {
                   New Admission
                 </Link>
                 <Link
-                  href="/students"
+                  href="/dashboard/school"
                   className="px-6 py-3 bg-white text-green-700 font-semibold rounded-lg shadow-md hover:bg-gray-50 transition duration-300 border border-green-700 text-center text-base md:text-lg"
                 >
-                  View Students
+                  Dashboard
                 </Link>
               </div>
             </div>
