@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inspection Report</title>
+
+<!--
+  Fixed 960 × 1512 canvas based on the supplied reference image.
+  All handwritten/inserted values and the rubber stamp have been removed.
+-->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600&display=swap');
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #ddd;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq",
+                 "Noto Naskh Arabic", serif;
+  }
+
+  .page {
+    position: relative;
+    width: 960px;
+    height: 1512px;
+    flex: 0 0 960px;
+    overflow: hidden;
+    background: #fff;
+    color: #111;
+  }
+
+  /* ---------- Header ---------- */
+
+  .title-box {
+    position: absolute;
+    left: 182px;
+    top: 108px;
+    width: 659px;
+    height: 114px;
+    border: 2px solid #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .title {
+    font-size: 43px;
+    line-height: 1;
+    font-weight: 400;
+    white-space: nowrap;
+    transform: translateY(-3px);
+  }
+
+  .school-name {
+    position: absolute;
+    top: 245px;
+    right: 184px;
+    font-size: 18px;
+    line-height: 1.8;
+    text-decoration: underline;
+    white-space: nowrap;
+  }
+
+  .field {
+    position: absolute;
+    right: 72px;
+    width: 405px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    font-size: 17px;
+    white-space: nowrap;
+  }
+
+  .field.one { top: 285px; }
+  .field.two { top: 336px; }
+
+  .field-label { font-weight: 400; }
+
+  .blank {
+    display: inline-block;
+    width: 145px;
+    border-bottom: 1px solid #333;
+    height: 25px;
+  }
+
+  .long-line {
+    position: absolute;
+    left: 228px;
+    top: 398px;
+    width: 665px;
+    border-top: 1px solid #333;
+  }
+
+  .time-line {
+    position: absolute;
+    top: 425px;
+    right: 124px;
+    width: 655px;
+    text-align: center;
+    font-size: 17px;
+    text-decoration: underline;
+    white-space: nowrap;
+  }
+
+  /* ---------- Main table ---------- */
+
+  .report-table {
+    position: absolute;
+    left: 84px;
+    top: 470px;
+    width: 786px;
+    height: 498px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    direction: rtl;
+    font-size: 16px;
+  }
+
+  .report-table th,
+  .report-table td {
+    border: 1px solid #444;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: 400;
+  }
+
+  .report-table thead tr:first-child { height: 79px; }
+  .report-table thead tr:last-child  { height: 43px; }
+
+  .report-table tbody tr { height: 62px; }
+  .report-table tbody tr:nth-child(3),
+  .report-table tbody tr:nth-child(4) { height: 66px; }
+  .report-table tbody tr:nth-child(5),
+  .report-table tbody tr:nth-child(6) { height: 73px; }
+
+  /* Right-side admission columns */
+  .col-name  { width: 104px; }
+  .col-grade { width: 48px; }
+  .col-total { width: 48px; }
+
+  /* Left-side yearly columns */
+  .col-wide { width: 100px; }
+
+  .admission-head {
+    height: 36px;
+    font-size: 17px;
+    line-height: 1.4;
+  }
+
+  .grade-head {
+    height: 43px;
+    font-size: 15px;
+    line-height: 1.25;
+  }
+
+  .vertical-head {
+    font-size: 16px;
+    line-height: 1.7;
+    padding: 2px 5px !important;
+  }
+
+  .empty-name {
+    font-size: 15px;
+  }
+
+  /* ---------- Bottom section ---------- */
+
+  .bottom-title {
+    position: absolute;
+    top: 1008px;
+    right: 456px;
+    font-size: 18px;
+    text-decoration: underline;
+    white-space: nowrap;
+  }
+
+  .bottom-area {
+    position: absolute;
+    left: 80px;
+    top: 1050px;
+    width: 810px;
+    height: 315px;
+    font-size: 17px;
+  }
+
+  .row {
+    position: relative;
+    width: 810px;
+    height: 71px;
+    border-bottom: 1px solid #555;
+  }
+
+  .first-row {
+    height: 74px;
+    border-bottom: 1px solid #555;
+  }
+
+  .first-label {
+    position: absolute;
+    right: 8px;
+    top: -3px;
+    white-space: nowrap;
+  }
+
+  .first-label.muslim { right: 188px; }
+  .first-label.total  { right: 515px; }
+
+  .bottom-blank {
+    position: absolute;
+    top: 28px;
+    width: 150px;
+    border-bottom: 1px solid #555;
+    height: 18px;
+  }
+
+  .bottom-blank.b1 { right: 0; }
+  .bottom-blank.b2 { right: 185px; }
+  .bottom-blank.b3 { right: 510px; }
+
+  .side-label {
+    position: absolute;
+    right: 0;
+    top: 21px;
+    white-space: nowrap;
+  }
+
+  .row2 .side-label { top: 18px; }
+  .row3 .side-label { top: 18px; }
+  .row4 .side-label { top: 18px; }
+
+  /* Keep the page visually faithful while allowing responsive viewing. */
+  @media (max-width: 1000px) {
+    body { padding: 0; }
+    .page {
+      transform-origin: top left;
+      transform: scale(calc((100vw - 0px) / 960));
+      margin-bottom: calc(-1512px + (1512px * (100vw / 960)));
+    }
+  }
+
+  @media print {
+    html, body {
+      background: white;
+      padding: 0;
+    }
+
+    .page {
+      transform: none !important;
+      margin: 0 !important;
+    }
+
+    @page {
+      size: 960px 1512px;
+      margin: 0;
+    }
+  }
+</style>
+</head>
+
+<body>
+<div class="page">
+
+  <div class="title-box">
+    <div class="title">انسپیکشن رپورٹ سال</div>
+  </div>
+
+  <div class="school-name">گورنمنٹ پرائمری اسکول ارباب حاجي محمد دل</div>
+
+  <div class="field one">
+    <span class="field-label">اسڪول کُلڻ جي تاريخ :</span>
+    <span class="blank"></span>
+  </div>
+
+  <div class="field two">
+    <span class="field-label">نزلي امتحان جي تاريخ :</span>
+    <span class="blank"></span>
+  </div>
+
+  <div class="long-line"></div>
+
+  <div class="time-line">
+    اونهاري 8:00am کان 1:00pm سياري 8:00am کان 1:30pm تائين
+  </div>
+
+  <table class="report-table">
+    <colgroup>
+      <col class="col-name">
+      <col class="col-grade">
+      <col class="col-grade">
+      <col class="col-grade">
+      <col class="col-grade">
+      <col class="col-grade">
+      <col class="col-total">
+      <col class="col-wide">
+      <col class="col-wide">
+      <col class="col-wide">
+      <col class="col-wide">
+    </colgroup>
+
+    <thead>
+      <tr>
+        <th rowspan="2" class="admission-head">داخل</th>
+        <th colspan="6" class="admission-head">درجوار داخلہ</th>
+        <th rowspan="2" class="vertical-head">گزريل سال<br>ماهوار<br>سراسري</th>
+        <th rowspan="2" class="vertical-head">گزريل سال<br>روزانو<br>سراسري</th>
+        <th rowspan="2" class="vertical-head">هلندڙ سال<br>ماهوار<br>سراسري</th>
+        <th rowspan="2" class="vertical-head">هلندڙ سال<br>روزاني<br>سراسري</th>
+      </tr>
+      <tr>
+        <th class="grade-head">1<br>درجو</th>
+        <th class="grade-head">2<br>درجو</th>
+        <th class="grade-head">3<br>درجو</th>
+        <th class="grade-head">4<br>درجو</th>
+        <th class="grade-head">5<br>درجو</th>
+        <th class="grade-head">ٽوٹل</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td class="empty-name"></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td class="empty-name"></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td class="empty-name"></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td class="empty-name"></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td class="empty-name"></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td class="empty-name"></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="bottom-title">ذاتين وار شاگرد</div>
+
+  <div class="bottom-area">
+    <div class="row first-row">
+      <span class="first-label">مسلمان :</span>
+      <span class="bottom-blank b1"></span>
+
+      <span class="first-label muslim">هندو :</span>
+      <span class="bottom-blank b2"></span>
+
+      <span class="first-label total">ٹوٹل :</span>
+      <span class="bottom-blank b3"></span>
+    </div>
+
+    <div class="row row2">
+      <span class="side-label">عيسائي :</span>
+    </div>
+
+    <div class="row row3">
+      <span class="side-label">ٻيا :</span>
+    </div>
+
+    <div class="row row4">
+      <span class="side-label">شاگردن جا دستخط :</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
