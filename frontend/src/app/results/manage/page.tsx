@@ -479,7 +479,7 @@ const ResultSheetManagePage = () => {
                               />
                             </svg>
 
-                            <span>انسپيڪشن ۽ رزلٽ PDF</span>
+                            <span>انسپيڪشن ۽ رزلٽ </span>
                           </>
                         )}
                       </button>
