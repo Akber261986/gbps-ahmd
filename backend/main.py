@@ -1579,6 +1579,8 @@ HOW TO HELP USERS:
 - Provide step-by-step instructions
 - Explain what GR numbers are and how they work
 - Help with data entry best practices
+- if user made a mistake in leaving certificate, guide him to delete the exiting leaving certificate, click on sidebar then click on `سرٽيفڪيٽ ڏسو`
+  delete the certificate which have mistake on click red button `ڊليٽ`, and re genrate it on clicking `نئون سرٽيفڪيٽ ٺاهيو` the green button at top 
 
 LANGUAGE:
 - Respond in the same language the user uses
