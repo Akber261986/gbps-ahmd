@@ -18,6 +18,7 @@ const ResultSheetManagePage = () => {
   const [creating, setCreating] = useState(false);
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
   const [downloadingSummary, setDownloadingSummary] = useState(false);
+  const [downloadingInspection, setDownloadingInspection] = useState(false);
 
   useEffect(() => {
     fetchResultSheets();
@@ -111,6 +112,24 @@ const ResultSheetManagePage = () => {
       console.error(err);
     } finally {
       setDownloadingId(null);
+    }
+  };
+
+  const handleDownloadInspectionFile = () => {
+    setDownloadingInspection(true);
+
+    try {
+      const link = document.createElement("a");
+      link.href = "/docs/inspection_and_result.pdf";
+      link.download = "inspection_and_result.pdf";
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } finally {
+      setTimeout(() => {
+        setDownloadingInspection(false);
+      }, 800);
     }
   };
 
@@ -410,6 +429,57 @@ const ResultSheetManagePage = () => {
                               />
                             </svg>
                             <span>اختصار رزلٽ شيٽ</span>
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={handleDownloadInspectionFile}
+                        disabled={downloadingInspection}
+                        className="flex-1 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                      >
+                        {downloadingInspection ? (
+                          <>
+                            <svg
+                              className="animate-spin h-4 w-4"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              />
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              />
+                            </svg>
+
+                            <span>ڊائونلوڊ ٿي رهيو آھي...</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-4 w-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
+                            </svg>
+
+                            <span>انسپيڪشن ۽ رزلٽ PDF</span>
                           </>
                         )}
                       </button>
