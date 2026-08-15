@@ -664,7 +664,7 @@ const StudentsPage = () => {
                       />
                     </svg>
 
-                    <span>Excel تيار ٿي رهي...</span>
+                    <span> Excel تيار ٿي رهي آهي...</span>
                   </>
                 ) : (
                   <>
@@ -683,7 +683,7 @@ const StudentsPage = () => {
                       />
                     </svg>
 
-                    <span>Download All Students</span>
+                    <span>سڀ شاگرد ڊائونلوڊ ڪريو</span>
                   </>
                 )}
               </button>
