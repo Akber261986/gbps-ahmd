@@ -47,7 +47,7 @@ const StudentsPage = () => {
     fetchData();
   }, []);
 
-  
+
 
   // Filter students based on selected class and search term
   const filteredStudents = students.filter((student) => {
@@ -56,8 +56,8 @@ const StudentsPage = () => {
       : true;
     const matchesSearch = searchTerm
       ? student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.father_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.gr_number.toLowerCase().includes(searchTerm.toLowerCase())
+      student.father_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.gr_number.toLowerCase().includes(searchTerm.toLowerCase())
       : true;
     return matchesClass && matchesSearch;
   });
@@ -83,11 +83,11 @@ const StudentsPage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       if (!response.ok) {
         throw new Error("Failed to generate PDF");
       }
-      
+
       // Create a blob from the response
       const blob = await response.blob();
 
@@ -98,7 +98,7 @@ const StudentsPage = () => {
       a.download = `admission-form-${selectedStudent.gr_number}.pdf`;
       document.body.appendChild(a);
       a.click();
-      
+
       // Cleanup
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
@@ -210,34 +210,34 @@ const StudentsPage = () => {
     }
   };
 
-  
+
 
   const handleDownloadStudents = async () => {
     setDownloadingStudents(true);
-  
+
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/students/export`
       );
-  
+
       if (!response.ok) {
         throw new Error("Failed to download students");
       }
-  
+
       const blob = await response.blob();
-  
+
       const url = window.URL.createObjectURL(blob);
-  
+
       const link = document.createElement("a");
       link.href = url;
       link.download = "active_students.xlsx";
-  
+
       document.body.appendChild(link);
       link.click();
-  
+
       link.remove();
       window.URL.revokeObjectURL(url);
-  
+
     } catch (error) {
       console.error("Student export failed:", error);
     } finally {
@@ -399,14 +399,14 @@ const StudentsPage = () => {
                   filteredStudents.map((student, index) => (
                     <tr
                       key={index}
-                      className={` ${index %2 === 0 ? "bg-gray-300" : "bg-blue-50"} rounded-lg`}
+                      className={` ${index % 2 === 0 ? "bg-gray-300" : "bg-blue-50"} rounded-lg`}
                     >
                       <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
                         {student.gr_number}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                         {index + 1}
-                        </td>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                         {student.name}
                       </td>
@@ -422,13 +422,12 @@ const StudentsPage = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`px-2 inline-flex text-md leading-5 font-semibold rounded-full ${
-                            student.status === "active"
+                          className={`px-2 inline-flex text-md leading-5 font-semibold rounded-full ${student.status === "active"
                               ? "bg-green-100 text-green-800"
                               : student.status === "left"
                                 ? "bg-red-100 text-red-800"
                                 : "bg-yellow-100 text-yellow-800"
-                          }`}
+                            }`}
                         >
                           {student.status === "active"
                             ? "ايڪٽو"
@@ -531,13 +530,12 @@ const StudentsPage = () => {
                       <p className="text-sm text-gray-600">GR: {student.gr_number}</p>
                     </div>
                     <span
-                      className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        student.status === "active"
+                      className={`px-2 py-1 text-xs font-semibold rounded-full ${student.status === "active"
                           ? "bg-green-100 text-green-800"
                           : student.status === "left"
                             ? "bg-red-100 text-red-800"
                             : "bg-yellow-100 text-yellow-800"
-                      }`}
+                        }`}
                     >
                       {student.status === "active"
                         ? "فعال"
@@ -610,33 +608,86 @@ const StudentsPage = () => {
           {/* Summary */}
           <div className="flex justify-between items-center">
 
-          <div className="mt-6 flex flex-wrap gap-4">
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <p className="text-sm text-gray-600">ڪل اسٽوڊنٽس</p>
-              <p className="text-xl font-bold text-blue-700">
-                {filteredStudents.length}
-              </p>
+            <div className="mt-6 flex flex-wrap gap-4">
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <p className="text-sm text-gray-600">ڪل اسٽوڊنٽس</p>
+                <p className="text-xl font-bold text-blue-700">
+                  {filteredStudents.length}
+                </p>
+              </div>
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <p className="text-sm text-gray-600">ايڪٽو اسٽوڊنٽس</p>
+                <p className="text-xl font-bold text-green-700">
+                  {filteredStudents.filter((s) => s.status === "active").length}
+                </p>
+              </div>
+              <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                <p className="text-sm text-gray-600">اسڪول ڇڏيل اسٽوڊنٽس</p>
+                <p className="text-xl font-bold text-red-700">
+                  {filteredStudents.filter((s) => s.status === "left").length}
+                </p>
+              </div>
+              <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <p className="text-sm text-gray-600">گريجوئيٽ (پاس آئوٽ)</p>
+                <p className="text-xl font-bold text-purple-700">
+                  {filteredStudents.filter((s) => s.status === "graduated").length}
+                </p>
+              </div>
             </div>
-            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-              <p className="text-sm text-gray-600">ايڪٽو اسٽوڊنٽس</p>
-              <p className="text-xl font-bold text-green-700">
-                {filteredStudents.filter((s) => s.status === "active").length}
-              </p>
+            <div>
+              <button
+                onClick={handleDownloadStudents}
+                disabled={downloadingStudents}
+                className="flex-1 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+              >
+                {downloadingStudents ? (
+                  <>
+                    <svg
+                      className="animate-spin h-4 w-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+
+                    <span>Excel تيار ٿي رهي...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+
+                    <span>Download All Students</span>
+                  </>
+                )}
+              </button>
             </div>
-            <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-              <p className="text-sm text-gray-600">اسڪول ڇڏيل اسٽوڊنٽس</p>
-              <p className="text-xl font-bold text-red-700">
-                {filteredStudents.filter((s) => s.status === "left").length}
-              </p>
-            </div>
-            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-              <p className="text-sm text-gray-600">گريجوئيٽ (پاس آئوٽ)</p>
-              <p className="text-xl font-bold text-purple-700">
-                {filteredStudents.filter((s) => s.status === "graduated").length}
-              </p>
-            </div>
-          </div>
-          <div>All students</div>
           </div>
         </div>
 
