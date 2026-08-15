@@ -48,6 +48,7 @@ from datetime import timedelta
 from routes import images as images_router
 from routes import clusters as clusters_router
 from routes import admin as admin_router
+from routes import student as student_router
 
 
 Base.metadata.create_all(bind=engine)
@@ -88,6 +89,7 @@ app.add_middleware(
 app.include_router(images_router.router, prefix="/images", tags=["images"])
 app.include_router(clusters_router.router, prefix="/clusters", tags=["clusters"])
 app.include_router(admin_router.router, prefix="/admin", tags=["admin"])
+app.include_router(student_router, prefix="/import_student", tags=["import_student"])
 
 # Create uploads directory only if not in serverless environment
 if not IS_SERVERLESS:
