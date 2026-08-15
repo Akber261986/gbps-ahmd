@@ -89,7 +89,7 @@ app.add_middleware(
 app.include_router(images_router.router, prefix="/images", tags=["images"])
 app.include_router(clusters_router.router, prefix="/clusters", tags=["clusters"])
 app.include_router(admin_router.router, prefix="/admin", tags=["admin"])
-app.include_router(student_router, prefix="/import_student", tags=["import_student"])
+app.include_router(student_router.router, prefix="", tags=["export_student"])
 
 # Create uploads directory only if not in serverless environment
 if not IS_SERVERLESS:

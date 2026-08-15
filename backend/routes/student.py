@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
-from sqlmodel import Session, select
-
+from sqlmodel import select
+from sqlalchemy.orm import Session
 from schema.schemas import StudentOut
-from database import get_session
+from database import get_db
 from services.excel.student_export import generate_students_excel
 
 
@@ -15,7 +15,7 @@ router = APIRouter(
 
 @router.get("/export")
 def export_active_students(
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_db)
 ):
 
     # Get active students
