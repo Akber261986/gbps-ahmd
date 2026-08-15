@@ -1,9 +1,11 @@
+from types import SimpleNamespace
+
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
-from sqlmodel import select
 from sqlalchemy.orm import Session
-from schema.schemas import StudentOut
+
 from database import get_db
+from models import Class, Student
 from services.excel.student_export import generate_students_excel
 
 
@@ -18,14 +20,25 @@ def export_active_students(
     session: Session = Depends(get_db)
 ):
 
-    # Get active students
-    statement = (
-        select(StudentOut)
-        .where(StudentOut.status == "active")
-        .order_by(StudentOut.current_class_id, StudentOut.name)
+    rows = (
+        session.query(Student, Class.name.label("class_name"))
+        .outerjoin(Class, Student.current_class_id == Class.id)
+        .filter(Student.status == "active")
+        .order_by(Student.current_class_id, Student.name)
+        .all()
     )
 
-    students = session.exec(statement).all()
+    students = [
+        SimpleNamespace(
+            gr_no=student.gr_number,
+            name=student.name,
+            father_name=student.father_name,
+            class_name=class_name or "",
+            medium="",
+            religion=student.qom or "",
+        )
+        for student, class_name in rows
+    ]
 
     # Generate Excel
     excel_file = generate_students_excel(
