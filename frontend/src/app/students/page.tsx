@@ -24,6 +24,7 @@ const StudentsPage = () => {
   const [showLeavingCertModal, setShowLeavingCertModal] = useState(false);
   const [leavingCertData, setLeavingCertData] = useState<any>(null);
   const [loadingCert, setLoadingCert] = useState(false);
+  const [downloadingStudents, setDownloadingStudents] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -206,6 +207,41 @@ const StudentsPage = () => {
       alert("PDF ڊائونلوڊ ڪرڻ ۾ مسئلو آيو");
     } finally {
       setLoadingPdf(false);
+    }
+  };
+
+  
+
+  const handleDownloadStudents = async () => {
+    setDownloadingStudents(true);
+  
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/students/export`
+      );
+  
+      if (!response.ok) {
+        throw new Error("Failed to download students");
+      }
+  
+      const blob = await response.blob();
+  
+      const url = window.URL.createObjectURL(blob);
+  
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "active_students.xlsx";
+  
+      document.body.appendChild(link);
+      link.click();
+  
+      link.remove();
+      window.URL.revokeObjectURL(url);
+  
+    } catch (error) {
+      console.error("Student export failed:", error);
+    } finally {
+      setDownloadingStudents(false);
     }
   };
 
@@ -572,6 +608,8 @@ const StudentsPage = () => {
           </div>
 
           {/* Summary */}
+          <div className="flex justify-between items-center">
+
           <div className="mt-6 flex flex-wrap gap-4">
             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
               <p className="text-sm text-gray-600">ڪل اسٽوڊنٽس</p>
@@ -597,6 +635,8 @@ const StudentsPage = () => {
                 {filteredStudents.filter((s) => s.status === "graduated").length}
               </p>
             </div>
+          </div>
+          <div>All students</div>
           </div>
         </div>
 
