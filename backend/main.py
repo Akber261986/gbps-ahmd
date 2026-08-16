@@ -9,7 +9,7 @@ import os
 import shutil
 from pathlib import Path
 import uuid
-from backend.tools.agent_tool import get_student_by_gr
+from tools.agent_tool import get_student_by_gr
 from schema.schemas import (
     StudentCreate, StudentUpdate, StudentOut, ClassCreate, ClassOut,
     SchoolLeavingCertificateCreate, SchoolLeavingCertificateOut,
