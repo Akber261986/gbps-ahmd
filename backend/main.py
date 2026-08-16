@@ -9,6 +9,7 @@ import os
 import shutil
 from pathlib import Path
 import uuid
+from backend.tools.agent_tool import get_student_by_gr
 from schema.schemas import (
     StudentCreate, StudentUpdate, StudentOut, ClassCreate, ClassOut,
     SchoolLeavingCertificateCreate, SchoolLeavingCertificateOut,
@@ -1597,6 +1598,7 @@ Remember: You are an assistant that GUIDES users. You cannot directly perform ac
             system_instruction=system_instruction
         )
 
+        tools = [get_student_by_gr]
         # Build conversation history - map 'assistant' to 'model' for Gemini
         history = []
         for msg in request.history:
@@ -1610,7 +1612,7 @@ Remember: You are an assistant that GUIDES users. You cannot directly perform ac
         chat = model.start_chat(history=history)
 
         # Send message and get response
-        response = chat.send_message(request.message)
+        response = chat.send_message(request.message, tools=tools)
 
         return ChatResponse(response=response.text)
 
