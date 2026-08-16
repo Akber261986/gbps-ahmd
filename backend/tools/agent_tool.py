@@ -1,7 +1,7 @@
 from agents import function_tool
 
-from backend.database import SessionLocal
-from backend.models import Student
+from database import SessionLocal
+from models import Student
 
 @function_tool
 async def get_student_by_gr(gr_number:int):
