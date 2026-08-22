@@ -58,6 +58,7 @@ class SimpleCache:
 # Global cache instances
 user_cache = SimpleCache(default_ttl_seconds=300)  # 5 minutes for user data
 school_cache = SimpleCache(default_ttl_seconds=600)  # 10 minutes for school data
+endpoint_cache = SimpleCache(default_ttl_seconds=180)  # 3 minutes for endpoint responses
 
 def invalidate_user_cache(user_id: int) -> None:
     """Invalidate cache for a specific user."""
@@ -68,3 +69,11 @@ def invalidate_school_cache(school_id: int) -> None:
     school_cache.delete(f"school:{school_id}")
     # Also invalidate all users from this school
     user_cache.delete_pattern(f"user:")
+
+def invalidate_endpoint_cache(pattern: str) -> None:
+    """Invalidate endpoint cache by pattern."""
+    endpoint_cache.delete_pattern(pattern)
+
+def get_cache_key(user_id: int, endpoint: str, params: str = "") -> str:
+    """Generate cache key for endpoint response."""
+    return f"endpoint:{user_id}:{endpoint}:{params}"

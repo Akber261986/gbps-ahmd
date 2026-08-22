@@ -50,7 +50,8 @@ from routes import images as images_router
 from routes import clusters as clusters_router
 from routes import admin as admin_router
 from routes import student as student_router
-from cache import user_cache, school_cache, invalidate_user_cache, invalidate_school_cache
+from cache import user_cache, school_cache, invalidate_user_cache, invalidate_school_cache, endpoint_cache, invalidate_endpoint_cache, get_cache_key
+import json
 
 
 Base.metadata.create_all(bind=engine)
@@ -800,10 +801,26 @@ def list_classes(
     current_user: User = Depends(require_school),
     db: Session = Depends(get_db)
 ):
-    """List all classes for the current user's school."""
-    return db.query(Class).filter(
+    """List all classes for the current user's school with caching."""
+    # Check cache first
+    cache_key = get_cache_key(current_user.id, "classes", "")
+    cached_data = endpoint_cache.get(cache_key)
+
+    if cached_data is not None:
+        return cached_data
+
+    # Cache miss - query database
+    classes = db.query(Class).filter(
         Class.school_id == current_user.school_id
     ).order_by(Class.id).all()
+
+    # Convert to response model for caching
+    result = [ClassOut.model_validate(cls) for cls in classes]
+
+    # Cache the result
+    endpoint_cache.set(cache_key, result, ttl_seconds=180)
+
+    return result
 
 
 @app.get("/students/", response_model=List[StudentOut])
@@ -813,11 +830,27 @@ def get_students(
     current_user: User = Depends(require_school),
     db: Session = Depends(get_db)
 ):
-    """List all students for the current user's school."""
+    """List all students for the current user's school with caching."""
+    # Check cache first
+    cache_key = get_cache_key(current_user.id, "students", f"class_id={class_id}")
+    cached_data = endpoint_cache.get(cache_key)
+
+    if cached_data is not None:
+        return cached_data
+
+    # Cache miss - query database
     query = db.query(Student).filter(Student.school_id == current_user.school_id)
     if class_id:
         query = query.filter(Student.class_id == class_id)
-    return query.order_by(Student.gr_number).all()
+    students = query.order_by(Student.gr_number).all()
+
+    # Convert to response model for caching
+    result = [StudentOut.model_validate(student) for student in students]
+
+    # Cache the result
+    endpoint_cache.set(cache_key, result, ttl_seconds=180)
+
+    return result
 
 
 @app.get("/students/{student_id}", response_model=StudentOut)
