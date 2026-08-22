@@ -576,6 +576,9 @@ def upload_school_logo(
     school.logo_url = file_path
     db.commit()
 
+    # Invalidate school cache
+    invalidate_school_cache(school.id)
+
     return {"logo_url": file_path}
 
 

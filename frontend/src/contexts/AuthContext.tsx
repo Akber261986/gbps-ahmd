@@ -195,6 +195,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     removeToken();
     setUser(null);
     setTokenState(null);
+    localStorage.removeItem('user_data_timestamp');
+    localStorage.removeItem('school_data');
+    localStorage.removeItem('school_data_timestamp');
     router.push('/login');
   };
 
@@ -205,6 +208,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
       setUser(response.data);
       saveUser(response.data);
+      localStorage.setItem('user_data_timestamp', Date.now().toString());
     } catch (error) {
       console.error('Failed to refresh user:', error);
       throw error;

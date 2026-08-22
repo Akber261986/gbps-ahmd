@@ -19,16 +19,43 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const { isAuthenticated } = useAuth();
 
-  const fetchSchool = async () => {
+  const fetchSchool = async (forceRefresh: boolean = false) => {
     try {
       setLoading(true);
       setError(null);
+
+      // Check cache first if not forcing refresh
+      if (!forceRefresh) {
+        const cachedSchool = localStorage.getItem('school_data');
+        const cachedTimestamp = localStorage.getItem('school_data_timestamp');
+
+        if (cachedSchool && cachedTimestamp) {
+          const now = Date.now();
+          const tenMinutes = 10 * 60 * 1000;
+          const isStale = (now - parseInt(cachedTimestamp)) > tenMinutes;
+
+          if (!isStale) {
+            // Use cached data
+            setSchool(JSON.parse(cachedSchool));
+            setLoading(false);
+            return;
+          }
+        }
+      }
+
+      // Fetch from server
       const response = await schoolApi.getMySchool();
       setSchool(response.data);
+
+      // Cache the data
+      localStorage.setItem('school_data', JSON.stringify(response.data));
+      localStorage.setItem('school_data_timestamp', Date.now().toString());
     } catch (err: any) {
       // If 401 (unauthenticated), keep school as null - don't show any school data
       if (err.response?.status === 401) {
         setSchool(null);
+        localStorage.removeItem('school_data');
+        localStorage.removeItem('school_data_timestamp');
       } else {
         // For other errors, log and set error message
         console.error('Failed to fetch school data:', err);
@@ -42,16 +69,18 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (isAuthenticated) {
-      fetchSchool();
+      fetchSchool(false);
     } else {
       // Clear school data when user is not authenticated
       setSchool(null);
       setLoading(false);
+      localStorage.removeItem('school_data');
+      localStorage.removeItem('school_data_timestamp');
     }
   }, [isAuthenticated]);
 
   const refreshSchool = async () => {
-    await fetchSchool();
+    await fetchSchool(true); // Force refresh
   };
 
   return (
