@@ -62,22 +62,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (savedToken && savedUser) {
         setTokenState(savedToken);
         setUser(savedUser);
-        // Optionally refresh user data from server
-        try {
-          const response = await axios.get<User>('/api/auth/me', {
-            headers: getAuthHeader()
-          });
-          setUser(response.data);
-          saveUser(response.data);
-        } catch (error: any) {
-          console.error('Failed to refresh user data:', error);
-          // Only clear token if we get 401 (unauthorized), not for network errors
-          if (error.response?.status === 401) {
-            removeToken();
-            setUser(null);
-            setTokenState(null);
+
+        // Check if cached data is stale (older than 5 minutes)
+        const userDataTimestamp = localStorage.getItem('user_data_timestamp');
+        const now = Date.now();
+        const fiveMinutes = 5 * 60 * 1000;
+        const isStale = !userDataTimestamp || (now - parseInt(userDataTimestamp)) > fiveMinutes;
+
+        // Only refresh from server if data is stale
+        if (isStale) {
+          try {
+            const response = await axios.get<User>('/api/auth/me', {
+              headers: getAuthHeader()
+            });
+            setUser(response.data);
+            saveUser(response.data);
+            localStorage.setItem('user_data_timestamp', now.toString());
+          } catch (error: any) {
+            console.error('Failed to refresh user data:', error);
+            // Only clear token if we get 401 (unauthorized), not for network errors
+            if (error.response?.status === 401) {
+              removeToken();
+              setUser(null);
+              setTokenState(null);
+              localStorage.removeItem('user_data_timestamp');
+            }
+            // For other errors (network issues, timeouts), keep the user logged in with cached data
           }
-          // For other errors (network issues, timeouts), keep the user logged in with cached data
         }
       }
       setLoading(false);
@@ -101,6 +112,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       setUser(userResponse.data);
       saveUser(userResponse.data);
+      localStorage.setItem('user_data_timestamp', Date.now().toString());
 
       // Small delay to ensure state updates are complete
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -141,6 +153,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       setUser(userResponse.data);
       saveUser(userResponse.data);
+      localStorage.setItem('user_data_timestamp', Date.now().toString());
 
       // Small delay to ensure state updates are complete
       await new Promise(resolve => setTimeout(resolve, 100));
