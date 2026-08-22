@@ -638,6 +638,9 @@ def create_student(
     db.commit()
     db.refresh(db_student)
 
+    # Invalidate students cache for this user
+    invalidate_endpoint_cache(f"endpoint:{current_user.id}:students")
+
     return {
         "id": db_student.id,
         "gr_number": db_student.gr_number,
@@ -761,6 +764,9 @@ def batch_create_students(
     if success_count > 0:
         db.commit()
 
+        # Invalidate students cache for this user
+        invalidate_endpoint_cache(f"endpoint:{current_user.id}:students")
+
     return {
         "success_count": success_count,
         "failed_count": failed_count,
@@ -792,6 +798,10 @@ def add_class(
     db.add(db_class)
     db.commit()
     db.refresh(db_class)
+
+    # Invalidate classes cache for this user
+    invalidate_endpoint_cache(f"endpoint:{current_user.id}:classes")
+
     return {"id": db_class.id, "name": db_class.name, "message": "Class added successfully"}
 
 
@@ -931,6 +941,10 @@ def update_student(
 
     db.commit()
     db.refresh(db_student)
+
+    # Invalidate students cache for this user
+    invalidate_endpoint_cache(f"endpoint:{current_user.id}:students")
+
     return {
         "id": db_student.id,
         "gr_number": db_student.gr_number,
@@ -962,6 +976,10 @@ def delete_student(
 
     db.delete(student)
     db.commit()
+
+    # Invalidate students cache for this user
+    invalidate_endpoint_cache(f"endpoint:{current_user.id}:students")
+
     return {"message": "Student and associated leaving certificate (if any) deleted successfully"}
 
 
@@ -1005,6 +1023,9 @@ def change_student_class(
 
     db.commit()
     db.refresh(student)
+
+    # Invalidate students cache for this user
+    invalidate_endpoint_cache(f"endpoint:{current_user.id}:students")
 
     return {
         "message": f"Student class changed from {old_class_name} to {new_class.name}",
@@ -1238,6 +1259,10 @@ def create_subject(
     db.add(db_subject)
     db.commit()
     db.refresh(db_subject)
+
+    # Invalidate subjects cache for this user
+    invalidate_endpoint_cache(f"endpoint:{current_user.id}:subjects")
+
     return db_subject
 
 
@@ -1248,7 +1273,15 @@ def list_subjects(
     current_user: User = Depends(require_school),
     db: Session = Depends(get_db)
 ):
-    """List all subjects for the current user's school, ordered by result sheet sequence."""
+    """List all subjects for the current user's school, ordered by result sheet sequence with caching."""
+    # Check cache first
+    cache_key = get_cache_key(current_user.id, "subjects", f"class_id={class_id}")
+    cached_data = endpoint_cache.get(cache_key)
+
+    if cached_data is not None:
+        return cached_data
+
+    # Cache miss - query database
     query = db.query(Subject).filter(Subject.school_id == current_user.school_id)
     if class_id:
         query = query.filter(Subject.class_id == class_id)
@@ -1268,7 +1301,13 @@ def list_subjects(
     # Sort subjects by the defined order
     subjects.sort(key=get_order_index)
 
-    return subjects
+    # Convert to response model for caching
+    result = [SubjectOut.model_validate(subject) for subject in subjects]
+
+    # Cache the result
+    endpoint_cache.set(cache_key, result, ttl_seconds=180)
+
+    return result
 
 
 # ============ Grade/Marksheet Endpoints (Multi-tenant) ============
@@ -1456,6 +1495,9 @@ def save_student_marks_batch(
                     pass
 
         db.commit()
+
+        # Invalidate students cache since student status/class may have changed
+        invalidate_endpoint_cache(f"endpoint:{current_user.id}:students")
 
         # Determine promotion status
         if marks_entry.is_absent:
