@@ -61,7 +61,7 @@ def verify_token(token: str) -> dict:
 
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> models.User:
-    """Get the current authenticated user from the token."""
+    """Get the current authenticated user from the token with caching."""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -77,12 +77,44 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     except (JWTError, ValueError):
         raise credentials_exception
 
+    # Try to get user from cache first
+    cache_key = f"user:{user_id}"
+    cached_user = user_cache.get(cache_key)
+
+    if cached_user is not None:
+        # Return cached user data as a User object
+        # We need to reconstruct the SQLAlchemy object from cached data
+        user = models.User(**cached_user)
+        # Attach to session without querying database
+        db.expunge_all()  # Clear session
+        return user
+
+    # Cache miss - query database
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if user is None:
         raise credentials_exception
 
     if not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
+
+    # Store user data in cache (convert to dict for serialization)
+    user_dict = {
+        'id': user.id,
+        'email': user.email,
+        'full_name': user.full_name,
+        'hashed_password': user.hashed_password,
+        'role': user.role,
+        'school_id': user.school_id,
+        'cluster_id': user.cluster_id,
+        'is_active': user.is_active,
+        'is_superuser': user.is_superuser,
+        'oauth_provider': user.oauth_provider,
+        'oauth_provider_id': user.oauth_provider_id,
+        'profile_image_url': user.profile_image_url,
+        'created_at': user.created_at,
+        'updated_at': user.updated_at
+    }
+    user_cache.set(cache_key, user_dict, ttl_seconds=300)  # Cache for 5 minutes
 
     return user
 
