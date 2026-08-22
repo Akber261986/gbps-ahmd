@@ -50,6 +50,7 @@ from routes import images as images_router
 from routes import clusters as clusters_router
 from routes import admin as admin_router
 from routes import student as student_router
+from cache import user_cache, school_cache, invalidate_user_cache, invalidate_school_cache
 
 
 Base.metadata.create_all(bind=engine)
