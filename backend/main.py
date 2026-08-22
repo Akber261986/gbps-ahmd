@@ -317,6 +317,9 @@ async def upload_profile_image(
         db.commit()
         db.refresh(user)
 
+        # Invalidate user cache
+        invalidate_user_cache(user.id)
+
         return {"profile_image_url": user.profile_image_url}
 
     except Exception as e:
