@@ -548,6 +548,10 @@ def update_my_school(
 
     db.commit()
     db.refresh(school)
+
+    # Invalidate school cache
+    invalidate_school_cache(school.id)
+
     return school
 
 
