@@ -235,6 +235,9 @@ def update_user_profile(
     if profile_data.full_name is not None:
         user.full_name = profile_data.full_name
 
+    # Invalidate user cache when profile is updated
+    invalidate_user_cache(user.id)
+
     # Handle password change for non-OAuth users
     if profile_data.new_password:
         # Check if user is OAuth user
