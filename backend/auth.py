@@ -79,14 +79,16 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 
     # Try to get user from cache first
     cache_key = f"user:{user_id}"
-    cached_user = user_cache.get(cache_key)
+    cached_user_data = user_cache.get(cache_key)
 
-    if cached_user is not None:
-        # Return cached user data as a User object
-        # We need to reconstruct the SQLAlchemy object from cached data
-        user = models.User(**cached_user)
-        # Attach to session without querying database
-        db.expunge_all()  # Clear session
+    if cached_user_data is not None:
+        # Create a User object from cached data without database query
+        user = models.User()
+        for key, value in cached_user_data.items():
+            setattr(user, key, value)
+
+        # Make the object "detached" so SQLAlchemy doesn't try to refresh it
+        db.expunge(user) if user in db else None
         return user
 
     # Cache miss - query database
