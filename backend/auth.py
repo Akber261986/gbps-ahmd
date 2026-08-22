@@ -10,6 +10,7 @@ from database import get_db
 import models
 import os
 from dotenv import load_dotenv
+from cache import user_cache
 
 load_dotenv()
 
