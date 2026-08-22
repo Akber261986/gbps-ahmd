@@ -505,6 +505,9 @@ def onboard_school(
     db.commit()
     db.refresh(current_user)
 
+    # Invalidate user cache since school_id changed
+    invalidate_user_cache(current_user.id)
+
     return new_school
 
 
