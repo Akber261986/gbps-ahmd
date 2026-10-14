@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { studentApi, classApi, Student } from "@/lib/api";
+import { Student } from "@/lib/api";
+import { cachedStudentApi, cachedClassApi } from "@/lib/cachedApi";
+import { useClasses, useStudents } from "@/lib/hooks";
 import { useSchool } from "@/contexts/SchoolContext";
 import Star from "@/components/star";
 import { convertToSindhiDate } from "@/lib/sindhi-date";
@@ -58,39 +60,46 @@ const initialForm: StudentFormData = {
 
 function AdmissionForm() {
   const { school } = useSchool();
-  const [allStudents, setAllStudents] = useState<Student[]>([]);
+  const router = useRouter();
+
+  // Use cached hooks for classes and students
+  const { data: classes, loading: classesLoading } = useClasses();
+  const { data: allStudents, refresh: refreshStudents } = useStudents();
+
   const [formData, setFormData] = useState<StudentFormData>(initialForm);
-  const [classes, setClasses] = useState<{ id: number; name: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [offlineMode, setOfflineMode] = useState(true);
   const [pendingCount, setPendingCount] = useState(0);
-  const router = useRouter();
 
-  // Load classes on mount and update pending count
+  // Set default class IDs when classes load
   useEffect(() => {
-    classApi
-      .getAll()
-      .then((res) => {
-        setClasses(res.data);
-        // Set default class IDs to the first class if available
-        if (res.data.length > 0 && formData.admission_class_id === 0) {
-          setFormData((prev) => ({
-            ...prev,
-            admission_class_id: res.data[0].id,
-            current_class_id: res.data[0].id,
-          }));
-        }
-      })
-      .catch((err) => console.error("Failed to load classes", err));
+    if (classes && classes.length > 0 && formData.admission_class_id === 0) {
+      setFormData((prev) => ({
+        ...prev,
+        admission_class_id: classes[0].id,
+        current_class_id: classes[0].id,
+      }));
+    }
+  }, [classes]);
 
-    // Update pending count
+  // Update pending count on mount
+  useEffect(() => {
     setPendingCount(getPendingStudentsCount());
-    // get all students
-    studentApi.getAll().then((res) => {
-      setAllStudents(res.data);
-    });
   }, []);
+
+  // Function to reset form with proper defaults
+  const resetFormWithDefaults = () => {
+    if (classes && classes.length > 0) {
+      setFormData({
+        ...initialForm,
+        admission_class_id: classes[0].id,
+        current_class_id: classes[0].id,
+      });
+    } else {
+      setFormData(initialForm);
+    }
+  };
 
 
   // Handle input changes
@@ -117,7 +126,7 @@ function AdmissionForm() {
     }
 
     // Check for duplicate GR number
-    const isDuplicate = allStudents.some(
+    const isDuplicate = allStudents?.some(
       (student) => student.gr_number === formData.gr_number
     );
     if (isDuplicate) {
@@ -172,12 +181,16 @@ function AdmissionForm() {
         const newCount = getPendingStudentsCount();
         setPendingCount(newCount);
         setMessage(`آف لائن محفوظ ٿيو! (${newCount} شاگرد انتظار ۾)`);
-        setFormData(initialForm);
+        resetFormWithDefaults();
       } else {
-        // Upload immediately
-        const res = await studentApi.create(payload);
+        // Upload immediately using cached API (auto-invalidates cache)
+        const res = await cachedStudentApi.create(payload);
         setMessage(`GR Number: ${res.data.gr_number} - ڪاميابي سان داخل ٿيو`);
-        setFormData(initialForm);
+
+        // Refresh student list - the cache will automatically be updated
+        await refreshStudents();
+
+        resetFormWithDefaults();
       }
     } catch (err: any) {
       setMessage("غلطي: " + (err.response?.data?.detail || "ڪو مسئلو ٿيو"));
@@ -283,7 +296,7 @@ function AdmissionForm() {
                 <div className="bg-green-50 p-4 rounded-xl">
                   <label className="flex items-center gap-2 text-lg md:text-xl font-medium text-gray-700 mb-2">
                     {/* check if gr_number is already in the database */}
-                    {allStudents.filter((student) => student.gr_number === formData.gr_number).length > 0 && (
+                    {allStudents && allStudents.filter((student) => student.gr_number === formData.gr_number).length > 0 && (
                       <span className="text-red-500">{allStudents.filter((student) => student.gr_number === formData.gr_number)[0].name}  GR نمبر {formData.gr_number} ڊيٽا بيس ۾ اڳ موجود آھي </span>
                     )}
                     <Star />
@@ -499,12 +512,17 @@ function AdmissionForm() {
                       }))
                     }
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm text-base md:text-lg"
+                    disabled={!classes || classes.length === 0}
                   >
-                    {classes.map((cls) => (
-                      <option key={cls.id} value={cls.id}>
-                        {cls.name}
-                      </option>
-                    ))}
+                    {!classes || classes.length === 0 ? (
+                      <option value="">لوڊ ٿي رهيو آهي...</option>
+                    ) : (
+                      classes.map((cls) => (
+                        <option key={cls.id} value={cls.id}>
+                          {cls.name}
+                        </option>
+                      ))
+                    )}
                   </select>
                   <p className="text-xs text-gray-500 mt-1">GR ۽ داخلا فارم ۾ استعمال ٿيندو</p>
                 </div>
@@ -525,12 +543,17 @@ function AdmissionForm() {
                       }))
                     }
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm text-base md:text-lg"
+                    disabled={!classes || classes.length === 0}
                   >
-                    {classes.map((cls) => (
-                      <option key={cls.id} value={cls.id}>
-                        {cls.name}
-                      </option>
-                    ))}
+                    {!classes || classes.length === 0 ? (
+                      <option value="">لوڊ ٿي رهيو آهي...</option>
+                    ) : (
+                      classes.map((cls) => (
+                        <option key={cls.id} value={cls.id}>
+                          {cls.name}
+                        </option>
+                      ))
+                    )}
                   </select>
                   <p className="text-xs text-gray-500 mt-1">نتيجا ۽ گريڊ ڪارڊ ۾ استعمال ٿيندو</p>
                 </div>
