@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Student } from "@/lib/api";
 import { cachedStudentApi, cachedClassApi } from "@/lib/cachedApi";
 import { useClasses, useStudents } from "@/lib/hooks";
@@ -40,9 +40,9 @@ const initialForm: StudentFormData = {
   admission_date: "",
   name: "",
   father_name: "",
-  qom: null,
+  qom: "مسلمان", // Default value for religion
   caste: null,
-  relation_with_guardian: null,
+  relation_with_guardian: "پيءُ", // Default value for relation (Father)
   guardian_name: null,
   guardian_occupation: null,
   place_of_birth: null,
@@ -61,6 +61,7 @@ const initialForm: StudentFormData = {
 function AdmissionForm() {
   const { school } = useSchool();
   const router = useRouter();
+  const firstFieldRef = useRef<HTMLInputElement> (null);
 
   // Use cached hooks for classes and students
   const { data: classes, loading: classesLoading } = useClasses();
@@ -196,6 +197,13 @@ function AdmissionForm() {
       setMessage("غلطي: " + (err.response?.data?.detail || "ڪو مسئلو ٿيو"));
     }
     setLoading(false);
+
+    firstFieldRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+
+    firstFieldRef.current?.focus()
   };
   useEffect(() => {
     if (message) {
@@ -306,6 +314,7 @@ function AdmissionForm() {
                     name="gr_number"
                     value={formData.gr_number}
                     onChange={handleChange}
+                    ref={firstFieldRef as React.RefObject<HTMLInputElement>}
                     required
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm text-base md:text-lg"
                     placeholder="GR-XXXX"
@@ -366,8 +375,9 @@ function AdmissionForm() {
                   </label>
                   <select
                     name="qom"
-                    value={formData.qom || ""}
+                    value={formData.qom || "مسلمان"}
                     onChange={handleChange}
+                    required
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm text-base md:text-lg"
                   >
                     <option value="مسلمان">مسلمان</option>
@@ -469,7 +479,7 @@ function AdmissionForm() {
                   </label>
                   <select
                     name="relation_with_guardian"
-                    value={formData.relation_with_guardian || ""}
+                    value={formData.relation_with_guardian || "پيءُ"}
                     onChange={handleChange}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent shadow-sm text-base md:text-lg"
                   >
