@@ -90,7 +90,6 @@ html, body {
 body {
   font-family: 'MB-Supreen-Shabir-Kumbhar-Bold-2.0';
   direction: rtl;
-  background: #e0e0e0;
   display: flex;
   justify-content: center;
   padding: 10px;
