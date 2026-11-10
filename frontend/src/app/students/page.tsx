@@ -372,19 +372,19 @@ const StudentsPage = () => {
                     scope="col"
                     className="px-6 py-3 text-right text-md font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    جنس
+                    ڄمڻ جي تاريخ
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-right text-md font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    داخلا جي تاريخ
                   </th>
                   <th
                     scope="col"
                     className="px-6 py-3 text-right text-md font-medium text-gray-500 uppercase tracking-wider"
                   >
                     حالت
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-right text-md font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    ڊيٽا
                   </th>
                   <th
                     scope="col"
@@ -418,11 +418,27 @@ const StudentsPage = () => {
                           "N/A"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                        {student.gender}
+                        {new Date(student.date_of_birth).toLocaleDateString("en-GB",
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          },
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                        {new Date(student.admission_date).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          },
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`px-2 inline-flex text-md leading-5 font-semibold rounded-full ${student.status === "active"
+                          className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${student.status === "active"
                               ? "bg-green-100 text-green-800"
                               : student.status === "left"
                                 ? "bg-red-100 text-red-800"
@@ -435,16 +451,6 @@ const StudentsPage = () => {
                               ? "ڇڏي چڪو"
                               : "منتقل ٿيل"}
                         </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(student.admission_date).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          },
-                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         {student.status === "left" ? (
