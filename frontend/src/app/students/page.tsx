@@ -427,22 +427,19 @@ const StudentsPage = () => {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                        {new Date(student.admission_date).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          },
-                        )}
+                        {new Date(student.admission_date).toLocaleDateString("en-GB", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${student.status === "active"
-                              ? "bg-green-100 text-green-800"
-                              : student.status === "left"
-                                ? "bg-red-100 text-red-800"
-                                : "bg-yellow-100 text-yellow-800"
+                            ? "bg-green-100 text-green-800"
+                            : student.status === "left"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-yellow-100 text-yellow-800"
                             }`}
                         >
                           {student.status === "active"
@@ -537,10 +534,10 @@ const StudentsPage = () => {
                     </div>
                     <span
                       className={`px-2 py-1 text-xs font-semibold rounded-full ${student.status === "active"
-                          ? "bg-green-100 text-green-800"
-                          : student.status === "left"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-yellow-100 text-yellow-800"
+                        ? "bg-green-100 text-green-800"
+                        : student.status === "left"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-yellow-100 text-yellow-800"
                         }`}
                     >
                       {student.status === "active"
