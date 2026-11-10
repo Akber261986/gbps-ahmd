@@ -427,11 +427,15 @@ const StudentsPage = () => {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                        {new Date(student.admission_date).toLocaleDateString("en-GB", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
+                        {new Date(student.admission_date)
+                          .toLocaleDateString("en-US", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                          .replace(",", "")
+                          .replace(/^(\w+)\s+(\d+)\s+(\d+)$/, "$2 $1 $3")
+                          .toUpperCase()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
